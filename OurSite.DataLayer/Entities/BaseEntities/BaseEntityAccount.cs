@@ -4,13 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OurSite.DataLayer.Entities.BaseEntities
 {
-	public class BaseEntityAccount
+	public class BaseEntityAccount:BaseEntity
 	{
-        [Key]
-        public long Id { get; set; }
-        public DateTime CreateDate { get; set; }
-        public bool IsRemove { get; set; }
-
+  
 
 
         [Required(ErrorMessage = "این فیلد اجباری است")]

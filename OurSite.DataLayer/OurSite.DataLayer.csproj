@@ -12,6 +12,8 @@
     <None Remove="Microsoft.EntityFrameworkCore.SqlServer" />
     <None Remove="Microsoft.EntityFrameworkCore.Tools" />
     <None Remove="Contexts\" />
+    <None Remove="Interfaces\" />
+    <None Remove="Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
@@ -27,5 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contexts\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
 </Project>
