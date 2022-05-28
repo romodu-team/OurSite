@@ -5,6 +5,7 @@ namespace OurSite.DataLayer.Interfaces
 {
 	public interface IGenericReopsitories<TEntity> : IDisposable  where TEntity : BaseEntity
 	{
+
 	}
 }
 
