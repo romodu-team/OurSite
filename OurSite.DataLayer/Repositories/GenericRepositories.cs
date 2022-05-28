@@ -6,8 +6,9 @@ using OurSite.DataLayer.Interfaces;
 
 namespace OurSite.DataLayer.Repositories
 {
-    public class GenericRepositories<Tentity> : IGenericReopsitories<Tentity> where Tentity : BaseEntity
+    public class GenericRepositories <Tentity> : IGenericReopsitories <Tentity> where Tentity : BaseEntity
     {
+        
         private readonly DbSet<Tentity> dbset;
         private DataBaseContext context;
         public GenericRepositories(DataBaseContext context)
