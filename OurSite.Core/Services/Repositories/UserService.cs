@@ -1,6 +1,5 @@
 ﻿using OurSite.Core.Services.Interfaces;
 using OurSite.DataLayer.Entities.Accounts;
-using OurSite.DataLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +11,10 @@ namespace OurSite.Core.Services.Repositories
     public class UserService : IUserService
     {
         #region constructor
-        private readonly IGenericReopsitories<User> userService;
-        public UserService(IGenericReopsitories<User> userService)
+        
+        public UserService()
         {
-            this.userService = userService;
+         
             
         }
         #endregion
@@ -28,7 +27,7 @@ namespace OurSite.Core.Services.Repositories
         #region Dispose
         public void Dispose()
         {
-            userService?.Dispose();
+            
         }
         #endregion
 
