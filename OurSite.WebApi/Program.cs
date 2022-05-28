@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OurSite.Core.Utilities;
 using OurSite.DataLayer.Contexts;
-using OurSite.DataLayer.Interfaces;
-using OurSite.DataLayer.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-#region addservices
-builder.Services.AddScoped(typeof(IGenericReopsitories<>), typeof(GenericRepositories<>));
-#endregion
+
 
 #region Autentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
