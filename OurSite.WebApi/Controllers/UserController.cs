@@ -23,41 +23,31 @@ namespace OurSite.WebApi.Controllers
         private IPasswordHelper passwordHelper;
         public UserController(IUserService userService, IPasswordHelper passwordHelper)
         {
-            this.userservice = userservice;
+            this.userservice = userService;
             this.passwordHelper = passwordHelper;
         }
-
-        public async Task<IActionResult> LoginUser(ReqLoginUserDto request)
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody]ReqLoginUserDto request)
         {
             request.Password = passwordHelper.EncodePasswordMd5(request.Password);
             var res = await userservice.LoginUser(request);
             switch (res)
             {
                 case ResLoginDto.Success:
-                    //jwt token
+                 
                     var user =await userservice.GetUserByUserPass(request.UserName, request.Password);
-                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sajjadhaniehfaezeherfanmobinsinamehdi"));
-                    var signInCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                    var tokenOption = new JwtSecurityToken(
-                        issuer: "https://localhost:7181",
-                        claims: new List<Claim>()
-                        {
-                                new Claim(ClaimTypes.Name, String.Concat(user.FirstName,user.LastName)),
-                                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
-                        },
-                        expires: DateTime.Now.AddDays(5),
-                        signingCredentials: signInCredentials
-                    );
-                    var token = new JwtSecurityTokenHandler().WriteToken(tokenOption);
-                    return JsonStatusResponse.Success();
-                    break;
+                    var token = AuthenticationHelper.GenrateUserToken(user, 3);
+                    HttpContext.Response.StatusCode = 200;
+                    return new JsonResult(new {Token=token,Expire=3,UserId=user.Id,FirstName=user.FirstName,LastName=user.LastName});
+                  
                 case ResLoginDto.IncorrectData:
-                    return JsonStatusResponse.Error(new { message = "Incorrect Data" });
-                    break;
+                    return new JsonResult(new { message = "نام کاربری یا رمز عبور اشتباه است" });
+               
                 case ResLoginDto.NotActived:
-                    return JsonStatusResponse.Error(new { message = "Not Actived" });
-                    break;
-                
+                    return new JsonResult(new { message = "حساب کاربری شما فعال نیست" });
+                default:
+                    HttpContext.Response.StatusCode = 400;
+                    return new JsonResult(new { message = "عملیات با خطا مواجه شد" });
             }
         }
         

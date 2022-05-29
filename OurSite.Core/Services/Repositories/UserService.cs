@@ -40,23 +40,40 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
+        public async Task<bool> IsUserActiveByUserName(string userName)
+        {
+            return await userService.GetAllEntity().Where(u=>u.UserName==userName).AnyAsync(x=> x.IsActive == true);
+        }
+
+        public async Task<User> GetUserByUserPass(string username, string password)
+        {
+            var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => u.UserName == username && u.Password == password && u.IsRemove==false);
+            return user;
+        }
+
+        public Task<singup> SingUp(ReqSingupUserDto userDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpDate(ReqUpdateUserDto userdto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ViewProfile(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+
         #region Dispose
         public void Dispose()
         {
             userService?.Dispose();
         }
 
-        public async Task<bool> IsUserActiveByUserName(string userName)
-        {
-            return await userService.GetAllEntity().AnyAsync(u => u.Email == userName && u.IsActive==true);
-        }
-
-        public async Task<User> GetUserByUserPass(string username, string password)
-        {
-            var user =await userService.GetAllEntity().SingleOrDefaultAsync(u => u.UserName == username && u.Password == password);
-            return user;
-        }
-
+       
 
         #endregion
 

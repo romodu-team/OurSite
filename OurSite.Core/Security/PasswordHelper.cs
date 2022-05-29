@@ -2,8 +2,9 @@
   using System.Security.Cryptography;
   using System.Text;
   using OurSite.Core.Security;
-
-  public class PasswordHelper: IPasswordHelper
+namespace OurSite.Core.Security
+{
+    public class PasswordHelper : IPasswordHelper
     {
         public string EncodePasswordMd5(string password) //Encrypt using MD5    
         {
@@ -18,4 +19,6 @@
             return BitConverter.ToString(encodedBytes);
         }
     }
+
+}
 
