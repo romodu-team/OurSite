@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OurSite.Core.DTOs;
+using OurSite.DataLayer.Entities.Accounts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +11,9 @@ namespace OurSite.Core.Services.Interfaces
 {
     public interface IUserService:IDisposable
     {
+        Task<bool> IsUserActiveByUserName(string userName);
+        Task<User> GetUserByUserPass(string username,string password);
+        Task<ResLoginDto> LoginUser(ReqLoginUserDto login);
 
         Task<singup> SingUp(ReqSingupUserDto userDto);
         Task UpDate(ReqUpdateUserDto userdto);
