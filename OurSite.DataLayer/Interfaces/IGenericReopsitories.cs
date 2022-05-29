@@ -10,7 +10,7 @@ namespace OurSite.DataLayer.Interfaces
 		Task<bool> DeleteEntity(long Id);
 		void UpDateEntity(TEntity entity);
 		Task SaveEntity();
-		IQueryable GetAllEntity();
+		IQueryable<TEntity> GetAllEntity();
 		Task<TEntity> GetEntity(long Id);
 
 

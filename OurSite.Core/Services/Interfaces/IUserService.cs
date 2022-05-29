@@ -11,8 +11,8 @@ namespace OurSite.Core.Services.Interfaces
     {
 
         Task<singup> SingUp(ReqSingupUserDto userDto);
-        Task Login(ReqLoginUserDto userDto);
         Task UpDate(ReqUpdateUserDto userdto);
+        Task ViewProfile(long id);
 
 
     }
