@@ -20,16 +20,16 @@ namespace OurSite.WebApi.Controllers
     public class UserController : Controller
     {
         private IUserService userservice;
-        private IPasswordHelper passwordHelper;
-        public UserController(IUserService userService, IPasswordHelper passwordHelper)
+
+        public UserController(IUserService userService)
         {
             this.userservice = userService;
-            this.passwordHelper = passwordHelper;
+
         }
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody]ReqLoginUserDto request)
         {
-            request.Password = passwordHelper.EncodePasswordMd5(request.Password);
+            
             var res = await userservice.LoginUser(request);
             switch (res)
             {
@@ -38,19 +38,47 @@ namespace OurSite.WebApi.Controllers
                     var user =await userservice.GetUserByUserPass(request.UserName, request.Password);
                     var token = AuthenticationHelper.GenrateUserToken(user, 3);
                     HttpContext.Response.StatusCode = 200;
-                    return new JsonResult(new {Token=token,Expire=3,UserId=user.Id,FirstName=user.FirstName,LastName=user.LastName});
-                  
+                    //  return new JsonResult(new {Token=token,Expire=3,UserId=user.Id,FirstName=user.FirstName,LastName=user.LastName});
+                    return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName },"ورود با موفقیت انجام شد");
                 case ResLoginDto.IncorrectData:
-                    return new JsonResult(new { message = "نام کاربری یا رمز عبور اشتباه است" });
+                    //return new JsonResult(new { message = "نام کاربری یا رمز عبور اشتباه است" });
+                    return JsonStatusResponse.NotFound("نام کاربری یا رمز عبور اشتباه است");
                
                 case ResLoginDto.NotActived:
-                    return new JsonResult(new { message = "حساب کاربری شما فعال نیست" });
+                    //return new JsonResult(new { message = "حساب کاربری شما فعال نیست" });
+                    return JsonStatusResponse.Error("حساب کاربری شما فعال نیست");
                 default:
                     HttpContext.Response.StatusCode = 400;
-                    return new JsonResult(new { message = "عملیات با خطا مواجه شد" });
+                    return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+
             }
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody]ReqForgotPassword request)
+        {
+            var res =await userservice.ForgotPassword(request);
+            if (res)
+                return JsonStatusResponse.Success("رمز عبور با موفقیت تغییر کرد");
+            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+        }
         
+        [HttpPost("SendEmail-ResetPass")]
+        public async Task<IActionResult> SendResetPassLink([FromBody]string EmailOrUserName)
+        {
+            var res = await userservice.SendResetPassEmail(EmailOrUserName);
+            switch (res)
+            {
+                case ResLoginDto.Success:
+                    return JsonStatusResponse.Success("ایمیل بازنشانی رمز عبور با موفقیت ارسال شد");
+                case ResLoginDto.IncorrectData:
+                    return JsonStatusResponse.NotFound("حساب کاربری یافت نشد");
+ 
+                default:
+                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+            }
+
+        }
     }
 }
 

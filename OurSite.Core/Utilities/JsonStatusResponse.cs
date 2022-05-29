@@ -9,33 +9,33 @@ namespace OurSite.Core.Utilities
 {
     public static class JsonStatusResponse
     {
-        public static JsonResult Success()
+        public static JsonResult Success(string message)
         {
-            return new JsonResult(new { Status = "Success" });
+            return new JsonResult(new { Status = "Success",Message=message });
         }
 
-        public static JsonResult Success(object ReturnData)
+        public static JsonResult Success(object ReturnData, string message)
         {
-            return new JsonResult(new { Status = "Success", Data = ReturnData });
+            return new JsonResult(new { Status = "Success", Data = ReturnData, Message = message });
         }
 
-        public static JsonResult Error()
+        public static JsonResult Error(string message)
         {
-            return new JsonResult(new { Status = "Error" });
+            return new JsonResult(new { Status = "Error", Message = message });
         }
 
-        public static JsonResult Error(object ReturnData)
+        public static JsonResult Error(object ReturnData, string message)
         {
-            return new JsonResult(new { Status = "Error", Data = ReturnData });
+            return new JsonResult(new { Status = "Error", Data = ReturnData, Message = message });
         }
-        public static JsonResult NotFound()
+        public static JsonResult NotFound(string message)
         {
-            return new JsonResult(new { Status = "NotFound" });
+            return new JsonResult(new { Status = "NotFound", Message = message });
         }
 
-        public static JsonResult NotFound(object ReturnData)
+        public static JsonResult NotFound(object ReturnData, string message)
         {
-            return new JsonResult(new { Status = "NotFound", Data = ReturnData });
+            return new JsonResult(new { Status = "NotFound", Data = ReturnData, Message = message });
         }
 
     }

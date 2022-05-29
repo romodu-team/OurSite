@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OurSite.Core.DTOs;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.Core.Services.Repositories;
+using OurSite.Core.Services.Repositories.Mail;
 using OurSite.Core.Utilities;
 using OurSite.DataLayer.Contexts;
 using OurSite.DataLayer.Interfaces;
@@ -23,6 +26,8 @@ builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(b
 builder.Services.AddScoped(typeof(IGenericReopsitories<>), typeof(GenericRepositories<>));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
+builder.Services.Configure<MailSettingsDto>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddTransient<IMailService, MailService>();
 #endregion
 #region Autentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

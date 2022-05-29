@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
+using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
 using System;
@@ -15,16 +17,20 @@ namespace OurSite.Core.Services.Repositories
     {
         #region constructor
         private readonly IGenericReopsitories<User> userService;
-        public UserService(IGenericReopsitories<User> userService)
+        private IPasswordHelper passwordHelper;
+        private IMailService mailService;
+        public UserService(IGenericReopsitories<User> userService, IPasswordHelper passwordHelper, IMailService mailService)
         {
             this.userService = userService;
-      
+            this.passwordHelper = passwordHelper;
+            this.mailService = mailService;
         }
         #endregion
 
         #region Login
         public async Task<ResLoginDto> LoginUser(ReqLoginUserDto login)
         {
+            login.Password = passwordHelper.EncodePasswordMd5(login.Password);
             var user = await GetUserByUserPass(login.UserName, login.Password);
             if (user != null)
             {
@@ -39,6 +45,46 @@ namespace OurSite.Core.Services.Repositories
             
         }
         #endregion
+
+        #region forgot password
+        public async Task<bool> ForgotPassword(ReqForgotPassword request)
+        {
+            try
+            {
+                var user = await userService.GetEntity(request.UserId);
+                user.Password = passwordHelper.EncodePasswordMd5(request.Password);
+                userService.UpDateEntity(user);
+                await userService.SaveEntity();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+            
+        }
+
+        #endregion
+
+        public async Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName)
+        {
+            var user =await GetUserByEmailOrUserName(EmailOrUserName);
+            if (user != null)
+            {
+              var res= await mailService.SendResetPasswordEmailAsync(new ResetPassEmailDto { Id=user.Id ,ToEmail=user.Email,UserName=user.UserName});
+                if (res)
+                    return ResLoginDto.Success;
+                else
+                    return ResLoginDto.Error;
+            }
+            return ResLoginDto.IncorrectData;
+
+        }
+        public async Task<User> GetUserByEmailOrUserName(string EmailOrUserName)
+        {
+            return await userService.GetAllEntity().SingleOrDefaultAsync(u => u.Email == EmailOrUserName || u.UserName == EmailOrUserName && u.IsRemove==false);
+        }
 
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
@@ -72,8 +118,6 @@ namespace OurSite.Core.Services.Repositories
         {
             userService?.Dispose();
         }
-
-       
 
         #endregion
 

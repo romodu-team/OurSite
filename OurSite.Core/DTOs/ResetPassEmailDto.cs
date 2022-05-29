@@ -6,17 +6,10 @@ using System.Threading.Tasks;
 
 namespace OurSite.Core.DTOs
 {
-    public class ReqLoginUserDto
+    public class ResetPassEmailDto
     {
+        public string ToEmail { get; set; }
+        public long Id { get; set; }
         public string UserName { get; set; }
-        public string Password { get; set; }
-    }
-
-    public enum ResLoginDto
-    {
-        Success,
-        IncorrectData,
-        NotActived,
-        Error
     }
 }
