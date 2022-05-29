@@ -50,7 +50,7 @@ namespace OurSite.DataLayer.Repositories
             throw new NotImplementedException();
         }
 
-        public IQueryable GetAllEntity()
+        public IQueryable<Tentity> GetAllEntity()
         {
             return dbset.AsQueryable();
            
