@@ -34,7 +34,7 @@ namespace OurSite.Core.Services.Repositories
             var user = await GetUserByUserPass(login.UserName, login.Password);
             if (user != null)
             {
-                if (await IsUserActiveByUserName(login.UserName))
+                if (await IsUserActiveByUserName(login.UserName.ToLower().Trim()))
                 {
                     return ResLoginDto.Success;
                 }
@@ -69,7 +69,7 @@ namespace OurSite.Core.Services.Repositories
 
         public async Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName)
         {
-            var user =await GetUserByEmailOrUserName(EmailOrUserName);
+            var user =await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
             if (user != null)
             {
               var res= await mailService.SendResetPasswordEmailAsync(new ResetPassEmailDto { Id=user.Id ,ToEmail=user.Email,UserName=user.UserName});
@@ -83,17 +83,17 @@ namespace OurSite.Core.Services.Repositories
         }
         public async Task<User> GetUserByEmailOrUserName(string EmailOrUserName)
         {
-            return await userService.GetAllEntity().SingleOrDefaultAsync(u => u.Email == EmailOrUserName || u.UserName == EmailOrUserName && u.IsRemove==false);
+            return await userService.GetAllEntity().SingleOrDefaultAsync(u => u.Email == EmailOrUserName.ToLower().Trim() || u.UserName == EmailOrUserName.ToLower().Trim() && u.IsRemove==false);
         }
 
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
-            return await userService.GetAllEntity().Where(u=>u.UserName==userName).AnyAsync(x=> x.IsActive == true);
+            return await userService.GetAllEntity().Where(u=>u.UserName==userName.ToLower().Trim()).AnyAsync(x=> x.IsActive == true);
         }
 
         public async Task<User> GetUserByUserPass(string username, string password)
         {
-            var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => u.UserName == username && u.Password == password && u.IsRemove==false);
+            var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => u.UserName == username.ToLower().Trim() && u.Password == password && u.IsRemove==false);
             return user;
         }
 
