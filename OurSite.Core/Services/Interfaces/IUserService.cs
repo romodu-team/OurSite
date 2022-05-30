@@ -17,6 +17,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<bool> ForgotPassword(ReqForgotPassword request);
         Task<User> GetUserByEmailOrUserName(string Password);
         Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName);
+        Task<ResActiveUser> ActiveUser(string activationCode);
 
         Task<singup> SingUp(ReqSingupUserDto userDto);
         Task UpDate(ReqUpdateUserDto userdto);

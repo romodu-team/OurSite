@@ -79,6 +79,21 @@ namespace OurSite.WebApi.Controllers
             }
 
         }
+
+        [HttpGet("Active-User/{ActivationCode}")]
+        public async Task<IActionResult> ActiveUser([FromRoute]string ActivationCode)
+        {
+           var res= await userservice.ActiveUser(ActivationCode);
+            switch (res)
+            {
+                case ResActiveUser.Success:
+                    return JsonStatusResponse.Success("حساب کاربری شما با موفقیت فعال شد");
+                case ResActiveUser.Failed:
+                    return JsonStatusResponse.Success("لینک فعالسازی نامعتبر است یا حساب کاربری قبلا فعال شده است");
+                default:
+                    return JsonStatusResponse.Success("عملیات با شکست مواجه شد");
+            }
+        }
     }
 }
 

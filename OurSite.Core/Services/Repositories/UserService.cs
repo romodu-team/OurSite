@@ -97,6 +97,28 @@ namespace OurSite.Core.Services.Repositories
             return user;
         }
 
+        public async Task<ResActiveUser> ActiveUser(string activationCode)
+        {
+            var user =await userService.GetAllEntity().SingleOrDefaultAsync(u => u.IsActive == false && u.ActivationCode == activationCode && u.IsRemove == false);
+            if (user !=null)
+            {
+                user.IsActive = true;
+                user.ActivationCode = new Guid().ToString();
+                try
+                {
+                    userService.UpDateEntity(user);
+                    await userService.SaveEntity();
+                    return ResActiveUser.Success;
+                }
+                catch (Exception)
+                {
+
+                    return ResActiveUser.Failed;
+                }
+              
+            }
+            return ResActiveUser.Failed;
+        }
         public Task<singup> SingUp(ReqSingupUserDto userDto)
         {
             throw new NotImplementedException();
@@ -118,6 +140,7 @@ namespace OurSite.Core.Services.Repositories
         {
             userService?.Dispose();
         }
+
 
         #endregion
 
