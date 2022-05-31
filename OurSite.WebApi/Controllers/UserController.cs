@@ -19,6 +19,7 @@ namespace OurSite.WebApi.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
+        #region constructor
         private IUserService userservice;
 
         public UserController(IUserService userService)
@@ -26,6 +27,9 @@ namespace OurSite.WebApi.Controllers
             this.userservice = userService;
 
         }
+        #endregion
+
+        #region Login
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody]ReqLoginDto request)
         {
@@ -38,14 +42,12 @@ namespace OurSite.WebApi.Controllers
                     var user =await userservice.GetUserByUserPass(request.UserName, request.Password);
                     var token = AuthenticationHelper.GenrateUserToken(user, 3);
                     HttpContext.Response.StatusCode = 200;
-                    //  return new JsonResult(new {Token=token,Expire=3,UserId=user.Id,FirstName=user.FirstName,LastName=user.LastName});
                     return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName },"ورود با موفقیت انجام شد");
                 case ResLoginDto.IncorrectData:
-                    //return new JsonResult(new { message = "نام کاربری یا رمز عبور اشتباه است" });
+
                     return JsonStatusResponse.NotFound("نام کاربری یا رمز عبور اشتباه است");
                
                 case ResLoginDto.NotActived:
-                    //return new JsonResult(new { message = "حساب کاربری شما فعال نیست" });
                     return JsonStatusResponse.Error("حساب کاربری شما فعال نیست");
                 default:
                     HttpContext.Response.StatusCode = 400;
@@ -53,7 +55,9 @@ namespace OurSite.WebApi.Controllers
 
             }
         }
+        #endregion
 
+        #region Forget Password
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody]ReqForgotPassword request)
         {
@@ -62,7 +66,9 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.Success("رمز عبور با موفقیت تغییر کرد");
             return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
         }
-        
+        #endregion
+
+        #region Reset Password
         [HttpPost("SendEmail-ResetPass")]
         public async Task<IActionResult> SendResetPassLink([FromBody]string EmailOrUserName)
         {
@@ -79,11 +85,13 @@ namespace OurSite.WebApi.Controllers
             }
 
         }
+        #endregion
 
+        #region Active User
         [HttpGet("Active-User/{ActivationCode}")]
-        public async Task<IActionResult> ActiveUser([FromRoute]string ActivationCode)
+        public async Task<IActionResult> ActiveUser([FromRoute] string ActivationCode)
         {
-           var res= await userservice.ActiveUser(ActivationCode);
+            var res = await userservice.ActiveUser(ActivationCode);
             switch (res)
             {
                 case ResActiveUser.Success:
@@ -94,6 +102,27 @@ namespace OurSite.WebApi.Controllers
                     return JsonStatusResponse.Success("عملیات با شکست مواجه شد");
             }
         }
+        #endregion
+
+        public async Task<IActionResult> SingupUser(ReqSingupUserDto userDto)
+        {
+            var add = await userservice.SingUp(userDto);
+            switch (add)
+            {
+                case singup.success:
+                    return JsonStatusResponse.Success("ثبت نام با موفقیت انجام شد");
+                case singup.Failed:
+                    return JsonStatusResponse.Error("ثبت نام با خطا مواجه شد. مجدد ثبت نام کنید.");
+                case singup.Exist:
+                    return JsonStatusResponse.Error("نام کاربری یا ایمیل قبلا ثبت نام شده است");
+                default:
+                    HttpContext.Response.StatusCode = 400;
+                    return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+
+
+            }
+        }
+
     }
 }
 
