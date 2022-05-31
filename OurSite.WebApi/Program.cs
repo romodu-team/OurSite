@@ -41,6 +41,7 @@ options.TokenValidationParameters = new TokenValidationParameters()
     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sajjadhaniehfaezeherfanmobinsinamehdi"))
 });
 #endregion
+builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddAuthorization();
 var app = builder.Build();
 

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
+using OurSite.DataLayer.Entities.ContactWithUs;
 
 namespace OurSite.DataLayer.Contexts
 {
@@ -16,6 +17,7 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<User> Users { get; set; }
 		public DbSet<Role> Roles { get; set; }
 		public DbSet<AccounInRole> AccounInRoles { get; set; }
+		public DbSet<ContactWithUs> contactWithUs { get; set; }
 	}
 }
 
