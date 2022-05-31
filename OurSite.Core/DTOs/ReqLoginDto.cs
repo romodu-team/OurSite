@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OurSite.Core.DTOs
 {
-    public class ReqLoginUserDto
+    public class ReqLoginDto
     {
         public string UserName { get; set; }
         public string Password { get; set; }

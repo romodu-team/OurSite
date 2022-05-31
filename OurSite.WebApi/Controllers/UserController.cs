@@ -27,7 +27,7 @@ namespace OurSite.WebApi.Controllers
 
         }
         [HttpPost("login")]
-        public async Task<IActionResult> LoginUser([FromBody]ReqLoginUserDto request)
+        public async Task<IActionResult> LoginUser([FromBody]ReqLoginDto request)
         {
             
             var res = await userservice.LoginUser(request);

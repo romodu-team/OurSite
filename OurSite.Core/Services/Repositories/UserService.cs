@@ -28,7 +28,7 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Login
-        public async Task<ResLoginDto> LoginUser(ReqLoginUserDto login)
+        public async Task<ResLoginDto> LoginUser(ReqLoginDto login)
         {
             login.Password = passwordHelper.EncodePasswordMd5(login.Password);
             var user = await GetUserByUserPass(login.UserName, login.Password);
