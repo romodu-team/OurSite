@@ -16,7 +16,7 @@ namespace OurSite.Core.Services.Interfaces
 
 		Task<Role> GetAdminRole(long adminId);
 		Task<bool> DeleteAdmin(long adminId);
-		Task<Admin> UpdateAdmin();
+		Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req);
 		
 	}
 }

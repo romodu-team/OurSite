@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
+using System.Linq;
 
 namespace OurSite.WebApi.Controllers
 {
@@ -18,7 +20,7 @@ namespace OurSite.WebApi.Controllers
             this.userService = userService;
         }
         [HttpPost("login-Admin")]
-        public async Task<IActionResult> LoginAdmin(ReqLoginDto reqLogin)
+        public async Task<IActionResult> LoginAdmin([FromBody]ReqLoginDto reqLogin)
         {
             var admin = await adminService.Login(reqLogin);
             if (admin == null)
@@ -37,5 +39,35 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.Success("وضعیت کاربر تغییر کرد");
             return JsonStatusResponse.Error("عملیات نا موفق بود");
         }
+
+        [Authorize(Roles ="General Manager")]
+        [HttpPost("Update-Admin")]
+        public async Task<IActionResult> UpdateAdmin([FromBody]ReqUpdateAdminDto req)
+        {
+      
+                var res = await adminService.UpdateAdmin(req);
+                switch (res)
+                {
+                    case resUpdateAdmin.Success:
+                        return JsonStatusResponse.Success("با موفقیت ویرایش شد");
+                    case resUpdateAdmin.NotFound:
+                        return JsonStatusResponse.NotFound("حساب کاربری پیدا نشد");
+                    case resUpdateAdmin.Error:
+                        return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
+                    default:
+                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                }
+
+        }
+
+        [Authorize(Roles = "General Manager")]
+        [HttpDelete("delete-admin")]
+        public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
+        {
+           var res= await adminService.DeleteAdmin(adminId);
+            if (res)
+                return JsonStatusResponse.Success("با موفقیت حذف شد");
+            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+        } 
     }
 }
