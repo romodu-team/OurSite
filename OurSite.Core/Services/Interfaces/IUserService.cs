@@ -23,7 +23,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<singup> SingUp(ReqSingupUserDto userDto);
         Task UpDate(ReqUpdateUserDto userdto);
         Task<User>ViewProfile(long id);
-
+        Task<bool> ChangeUserStatus(long userId);
 
     }
 }

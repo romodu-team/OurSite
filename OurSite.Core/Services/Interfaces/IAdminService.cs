@@ -14,8 +14,10 @@ namespace OurSite.Core.Services.Interfaces
 
 		Task<Admin> Login(ReqLoginDto req);
 
-	//	Task<Admin> GetAdminByUserPass(ReqLoginDto req);
 		Task<Role> GetAdminRole(long adminId);
+		Task<bool> DeleteAdmin(long adminId);
+		Task<Admin> UpdateAdmin();
+		
 	}
 }
 

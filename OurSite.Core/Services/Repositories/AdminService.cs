@@ -30,6 +30,22 @@ namespace OurSite.Core.Services.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<bool> DeleteAdmin(long adminId)
+        {
+            try
+            {
+                  await adminRepository.DeleteEntity(adminId);
+                await adminRepository.SaveEntity();
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+        }
+
         public Task<bool> DeleteUser(long id)
         {
             throw new NotImplementedException();
@@ -41,11 +57,6 @@ namespace OurSite.Core.Services.Repositories
             accounInRoleRepository.Dispose();
             
         }
-
-        //public Task<Admin> GetAdminByUserPass(ReqLoginDto req)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public async Task<Role> GetAdminRole(long adminId)
         {
@@ -64,6 +75,11 @@ namespace OurSite.Core.Services.Repositories
             var admin = await adminRepository.GetAllEntity().SingleOrDefaultAsync(a=>(a.UserName==req.UserName || a.Email==req.UserName)&& a.Password==req.Password&& a.IsRemove==false);
             return admin;
                
+        }
+
+        public Task<Admin> UpdateAdmin(ReqUpdateAdminDto req)
+        {
+            
         }
 
         public Task<ResViewuserAdminDto> ViewUser(string find)

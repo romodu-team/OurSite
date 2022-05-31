@@ -233,7 +233,27 @@ namespace OurSite.Core.Services.Repositories
 
 
         }
+
         #endregion
 
+
+
+        public async Task<bool> ChangeUserStatus(long userId)
+        {
+            try
+            {
+                var user = await userService.GetEntity(userId);
+                user.IsActive = !user.IsActive;
+                userService.UpDateEntity(user);
+                await userService.SaveEntity();
+                return true;
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+         
+        }
     }
 }
