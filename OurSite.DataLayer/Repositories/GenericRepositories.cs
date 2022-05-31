@@ -47,7 +47,7 @@ namespace OurSite.DataLayer.Repositories
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            context.Dispose();
         }
 
         public IQueryable<Tentity> GetAllEntity()

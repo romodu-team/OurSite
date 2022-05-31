@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Repositories;
 using OurSite.Core.Utilities;
@@ -21,6 +22,7 @@ builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(b
 #region addservices
 builder.Services.AddScoped(typeof(IGenericReopsitories<>), typeof(GenericRepositories<>));
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
 #endregion
 #region Autentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
