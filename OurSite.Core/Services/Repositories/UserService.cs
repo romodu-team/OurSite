@@ -99,7 +99,7 @@ namespace OurSite.Core.Services.Repositories
         #region Active user by username
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
-            return await userService.GetAllEntity().Where(u => u.UserName == userName.ToLower().Trim()).AnyAsync(x => x.IsActive == true);
+            return await userService.GetAllEntity().Where(u=>u.UserName==userName.ToLower().Trim()|| u.Email == userName.ToLower().Trim()).AnyAsync(x=> x.IsActive == true);
         }
 
         #endregion
@@ -107,7 +107,7 @@ namespace OurSite.Core.Services.Repositories
         #region Get user by password
         public async Task<User> GetUserByUserPass(string username, string password)
         {
-            var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => u.UserName == username.ToLower().Trim() && u.Password == password && u.IsRemove == false);
+            var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => (u.UserName == username.ToLower().Trim()|| u.Email== username.ToLower().Trim()) && u.Password == password && u.IsRemove==false);
             return user;
         }
 
