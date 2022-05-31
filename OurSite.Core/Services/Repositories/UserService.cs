@@ -1,8 +1,17 @@
+<<<<<<< HEAD
+﻿using OurSite.Core.DTOs;
+using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Utilities;
+=======
 ﻿using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
+<<<<<<< HEAD
 using OurSite.Core.Services.Interfaces.Mail;
+=======
+>>>>>>> fe90a30f340e1a5fc962ef902ceedb40a475f1ee
+>>>>>>> Hanieh
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
 using System;
@@ -145,6 +154,30 @@ namespace OurSite.Core.Services.Repositories
 
 
         #endregion
+
+
+        #region singup
+        public async Task<singup> SingUp(ReqSingupUserDto userDto)
+        {
+            User user = new User();
+           await userService.AddEntity(user);
+           await userService.SaveEntity();
+
+            
+        }
+        #endregion
+
+
+        public Task UpDate(ReqUpdateUserDto userdto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ViewProfile(long id)
+        {
+            throw new NotImplementedException();
+        }
+        
 
     }
 }
