@@ -18,10 +18,11 @@ namespace OurSite.Core.Services.Interfaces
         Task<User> GetUserByEmailOrUserName(string Password);
         Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName);
         Task<ResActiveUser> ActiveUser(string activationCode);
+        Task<bool> GetUserEmailandUserName(string Email , string UserName);
 
         Task<singup> SingUp(ReqSingupUserDto userDto);
         Task UpDate(ReqUpdateUserDto userdto);
-        Task ViewProfile(long id);
+        Task<User>ViewProfile(long id);
 
 
     }
