@@ -72,7 +72,7 @@ namespace OurSite.Core.Services.Repositories
             var user =await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
             if (user != null)
             {
-              var res= await mailService.SendResetPasswordEmailAsync(new ResetPassEmailDto { Id=user.Id ,ToEmail=user.Email,UserName=user.UserName});
+              var res= await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter=user.Id.ToString() ,ToEmail=user.Email,UserName=user.UserName});
                 if (res)
                     return ResLoginDto.Success;
                 else
@@ -119,9 +119,11 @@ namespace OurSite.Core.Services.Repositories
             }
             return ResActiveUser.Failed;
         }
-        public Task<singup> SingUp(ReqSingupUserDto userDto)
+        public async Task<singup> SingUp(ReqSingupUserDto userDto)
         {
             throw new NotImplementedException();
+            //if signup is success , send email activation code
+            await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail=userDto.Email,UserName=userDto.UserName,Parameter="کد فعالسازی ساخته شده اینجا قرار گیرد"});
         }
 
         public Task UpDate(ReqUpdateUserDto userdto)

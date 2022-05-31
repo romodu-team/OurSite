@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace OurSite.Core.DTOs
 {
-    public class ResetPassEmailDto
+    public class SendEmailDto
     {
         public string ToEmail { get; set; }
-        public long Id { get; set; }
+        public string Parameter { get; set; }
         public string UserName { get; set; }
     }
 }

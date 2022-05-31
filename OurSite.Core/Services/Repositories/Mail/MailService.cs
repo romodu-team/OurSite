@@ -21,6 +21,38 @@ namespace OurSite.Core.Services.Repositories.Mail
         {
             _mailSettings = mailSettings.Value;
         }
+
+        public async Task<bool> SendActivationCodeEmail(SendEmailDto request)
+        {
+            try
+            {
+                string FilePath = Directory.GetCurrentDirectory() + "\\Templates\\ActivationLinkTemplate.html";
+                StreamReader str = new StreamReader(FilePath);
+                string MailText = str.ReadToEnd();
+                str.Close();
+                MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[activationLink]", request.Parameter);
+                var email = new MimeMessage();
+                email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+                email.To.Add(MailboxAddress.Parse(request.ToEmail));
+                email.Subject = $"لینک فعالسازی حساب کاربری:{request.UserName}";
+                var builder = new BodyBuilder();
+                builder.HtmlBody = MailText;
+                email.Body = builder.ToMessageBody();
+                using var smtp = new SmtpClient();
+                smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+                smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+                await smtp.SendAsync(email);
+                smtp.Disconnect(true);
+
+                return true;
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task SendEmailAsync(MailRequestDto mailRequest)
         {
             var email = new MimeMessage();
@@ -53,7 +85,7 @@ namespace OurSite.Core.Services.Repositories.Mail
             smtp.Disconnect(true);
         }
 
-        public async Task<bool> SendResetPasswordEmailAsync(ResetPassEmailDto request)
+        public async Task<bool> SendResetPasswordEmailAsync(SendEmailDto request)
         {
             try
             {
@@ -61,7 +93,7 @@ namespace OurSite.Core.Services.Repositories.Mail
                 StreamReader str = new StreamReader(FilePath);
                 string MailText = str.ReadToEnd();
                 str.Close();
-                MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[resetLink]", $"{PathTools.Domain}/ResetPassword?id={request.Id}");
+                MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[resetLink]", $"{PathTools.Domain}/ResetPassword?id={request.Parameter}");
                 var email = new MimeMessage();
                 email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
                 email.To.Add(MailboxAddress.Parse(request.ToEmail));

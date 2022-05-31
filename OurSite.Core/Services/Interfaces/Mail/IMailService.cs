@@ -11,6 +11,8 @@ namespace OurSite.Core.Services.Interfaces.Mail
     {
         Task SendEmailAsync(MailRequestDto mailRequest);
 
-        Task<bool> SendResetPasswordEmailAsync(ResetPassEmailDto request);
+        Task<bool> SendResetPasswordEmailAsync(SendEmailDto request);
+
+        Task<bool> SendActivationCodeEmail(SendEmailDto request);
     }
 }
