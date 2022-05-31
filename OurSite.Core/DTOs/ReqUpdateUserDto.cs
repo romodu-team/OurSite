@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace OurSite.Core.DTOs
 {
 	public class ReqUpdateUserDto
@@ -10,7 +12,8 @@ namespace OurSite.Core.DTOs
         public string Email { get; set; }
         public string Mobile { get; set; }
         public string Password { get; set; }
-        public string UserName { get; set; }
+        [Compare("Password" , ErrorMessage = "رمز‌های عبور با یکدیگر مغایرت ندارد")]
+        public string ConfrimPassword { get; set; }
         public gender Gender { get; set; }
         public string Address { get; set; }
         public string ImageName { get; set; }
