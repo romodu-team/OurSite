@@ -13,7 +13,11 @@ namespace OurSite.Core.Services.Interfaces
     {
         Task<bool> IsUserActiveByUserName(string userName);
         Task<User> GetUserByUserPass(string username,string password);
-        Task<ResLoginDto> LoginUser(ReqLoginUserDto login);
+        Task<ResLoginDto> LoginUser(ReqLoginDto login);
+        Task<bool> ForgotPassword(ReqForgotPassword request);
+        Task<User> GetUserByEmailOrUserName(string Password);
+        Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName);
+        Task<ResActiveUser> ActiveUser(string activationCode);
 
         Task<singup> SingUp(ReqSingupUserDto userDto);
         Task UpDate(ReqUpdateUserDto userdto);

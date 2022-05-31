@@ -19,5 +19,11 @@ namespace OurSite.Core.DTOs
 		Failed,
 		Exist
     };
+
+    public enum ResActiveUser
+    {
+        Success,
+        Failed
+    }
 }
 
