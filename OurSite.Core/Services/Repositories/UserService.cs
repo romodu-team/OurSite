@@ -1,4 +1,6 @@
-﻿using OurSite.Core.Services.Interfaces;
+﻿using OurSite.Core.DTOs;
+using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
 using System;
@@ -31,6 +33,30 @@ namespace OurSite.Core.Services.Repositories
             userService?.Dispose();
         }
         #endregion
+
+
+        #region singup
+        public async Task<singup> SingUp(ReqSingupUserDto userDto)
+        {
+            User user = new User();
+           await userService.AddEntity(user);
+           await userService.SaveEntity();
+
+            
+        }
+        #endregion
+
+
+        public Task UpDate(ReqUpdateUserDto userdto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ViewProfile(long id)
+        {
+            throw new NotImplementedException();
+        }
+        
 
     }
 }
