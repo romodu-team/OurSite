@@ -7,6 +7,7 @@ using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
+using OurSite.DataLayer.Entities.BaseEntities;
 using OurSite.DataLayer.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -67,7 +68,7 @@ namespace OurSite.Core.Services.Repositories
             var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId);
             return role.Role;
         }
-
+        
 
         public async Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req)
         {
@@ -121,14 +122,78 @@ namespace OurSite.Core.Services.Repositories
                 return resUpdateAdmin.Error;
             }
         }
-        //not finished
-        public async Task<ResViewAdminDto> GetAdmin(long adminId)
+   
+        public async Task<ResViewAdminDto> GetAdminById(long adminId)
         {
             var admin =await adminRepository.GetEntity(adminId);
             var adminRole=await GetAdminRole(adminId);
-            ResViewAdminDto res = mapper.Map<ResViewAdminDto>(admin);
-            res.RoleName = adminRole.Name;
+            ResViewAdminDto res = new ResViewAdminDto
+            {
+                Address = admin.Address,
+                Birthday = admin.Birthday,
+                CreateDate = admin.CreateDate,
+                LastName = admin.LastName,
+                FirstName = admin.FirstName,
+                LastUpdate = admin.LastUpdate,
+                Email = admin.Email,
+                Gender = admin.Gender.Value.ToString(),
+                Id = admin.Id,
+                ImageName = admin.ImageName,
+                IsRemove = admin.IsRemove,
+                Mobile = admin.Mobile,
+                NationalCode = admin.NationalCode,      
+                UserName = admin.UserName,
+                RoleName = adminRole.Title
+            };
+            
             return res;
+        }
+
+        public async Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req)
+        {
+            var check =await IsAdminExist(req.UserName.Trim().ToLower(), req.Email.ToLower().Trim());
+            if (check)
+                return RessingupDto.Exist;
+            Admin newAdmin= new Admin()
+            {
+                UserName = req.UserName,
+                Email = req.Email,
+                FirstName=req.Name,
+                LastName=req.Family,
+                Mobile=req.phone,
+                Password=passwordHelper.EncodePasswordMd5(req.Password),
+                CreateDate=DateTime.Now,
+                LastUpdate=DateTime.Now
+            };
+
+            
+            try
+            {
+               
+                await adminRepository.AddEntity(newAdmin);
+                await adminRepository.SaveEntity();
+                var accountInRole = new AccounInRole
+                {
+                    AdminId = newAdmin.Id,
+                    RoleId = req.AdminRoleId.Value,
+                    CreateDate = DateTime.Now,
+                    LastUpdate = DateTime.Now
+                };
+                await accounInRoleRepository.AddEntity(accountInRole);
+                await accounInRoleRepository.SaveEntity();
+                return RessingupDto.success;
+
+            }
+            catch (Exception)
+            {
+
+                return RessingupDto.Failed;
+            }
+           
+        }
+        public async Task<bool> IsAdminExist(string UserName,string Email)
+        {
+            return await adminRepository.GetAllEntity().AnyAsync(a=>a.UserName==UserName||a.Email==Email);
         }
         #endregion
 
@@ -171,7 +236,8 @@ namespace OurSite.Core.Services.Repositories
             RoleRepository.Dispose();
         }
 
- 
+   
+
         #endregion
 
     }

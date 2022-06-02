@@ -162,11 +162,11 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region singup
-        public async Task<singup> SingUp(ReqSingupUserDto userDto)
+        public async Task<RessingupDto> SingUp(ReqSingupUserDto userDto)
         {
             var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
             if (check == true)
-               return singup.Exist;
+               return RessingupDto.Exist;
             
             try
             {
@@ -188,12 +188,12 @@ namespace OurSite.Core.Services.Repositories
                 await userService.SaveEntity();
                 await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode});
 
-                return singup.success;
+                return RessingupDto.success;
 
             }
             catch (Exception ex)
             {
-               return singup.Failed;
+               return RessingupDto.Failed;
 
             }
 

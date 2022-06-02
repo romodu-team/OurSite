@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 using System.Linq;
@@ -76,13 +77,29 @@ namespace OurSite.WebApi.Controllers
         } 
 
         [HttpGet("view-admin/{adminId}")]
-        public async Task<IActionResult> GetAdmin(long adminId)
+        public async Task<IActionResult> GetAdmin([FromRoute]long adminId)
         {
-            var res =await adminService.GetAdmin(adminId);
+            var res =await adminService.GetAdminById(adminId);
             if (res != null)
                 return JsonStatusResponse.Success(res, "موفق");
             HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound("پیدا نشد");
+        }
+
+        [HttpPost("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody]ReqSingupUserDto req)
+        {
+            var res =await adminService.RegisterAdmin(req);
+            switch (res)
+            {
+                case RessingupDto.success:
+                    HttpContext.Response.StatusCode = 201;
+                    return JsonStatusResponse.Success("اطلاعات با موفقیت ثبت شد");
+                case RessingupDto.Exist:
+                    return JsonStatusResponse.Error("نام کاربری یا ایمیل تکراری است");
+                default:
+                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+            }
         }
     }
 }

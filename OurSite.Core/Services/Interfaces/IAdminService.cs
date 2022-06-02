@@ -20,8 +20,10 @@ namespace OurSite.Core.Services.Interfaces
 		Task<bool> DeleteAdmin(long adminId);
 		Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req);
 
-		Task<ResViewAdminDto> GetAdmin(long adminId);
-		
+		Task<ResViewAdminDto> GetAdminById(long adminId);
+		Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req);
+
+		Task<bool> IsAdminExist(string UserName,string Email);
 	}
 }
 

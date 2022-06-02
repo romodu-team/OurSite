@@ -13,15 +13,15 @@ namespace OurSite.Core.DTOs.UserDtos
         public string ConmfrimPassword { get; set; }
         public string phone { get; set; }
         public string Email { get; set; }
-        public singup Singup { get; set; }
-
+     //   public singup Singup { get; set; }
+        public long? AdminRoleId { get; set; }
     }
 
-	public enum singup
+	public enum RessingupDto
     {
 		success,
 		Failed,
-		Exist
+		Exist,
     };
 
     public enum ResActiveUser
