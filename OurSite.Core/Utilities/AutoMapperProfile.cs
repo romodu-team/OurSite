@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.AdminDtos;
 using OurSite.DataLayer.Entities.Accounts;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace OurSite.Core.Utilities
     {
         public AutoMapperProfile()
         {
-            CreateMap<ReqUpdateAdminDto, Admin>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<ResViewAdminDto, Admin>();
         }
     }
 }

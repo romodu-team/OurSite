@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.AdminDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace OurSite.WebApi.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
+        #region Constructor
         private readonly IAdminService adminService;
         private readonly IUserService userService;
         public AdminController(IAdminService adminService, IUserService userService)
@@ -19,6 +21,8 @@ namespace OurSite.WebApi.Controllers
             this.adminService = adminService;
             this.userService = userService;
         }
+        #endregion
+
         [HttpPost("login-Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody]ReqLoginDto reqLogin)
         {
@@ -31,6 +35,7 @@ namespace OurSite.WebApi.Controllers
             HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, FirstName = admin.FirstName, LastName = admin.LastName }, "ورود با موفقیت انجام شد");
         }
+
         [HttpGet("change-user-status/{userId}")]
         public async Task<IActionResult> ChangeUserStatus([FromRoute]long userId)
         {
@@ -69,5 +74,15 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.Success("با موفقیت حذف شد");
             return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
         } 
+
+        [HttpGet("view-admin/{adminId}")]
+        public async Task<IActionResult> GetAdmin(long adminId)
+        {
+            var res =await adminService.GetAdmin(adminId);
+            if (res != null)
+                return JsonStatusResponse.Success(res, "موفق");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("پیدا نشد");
+        }
     }
 }

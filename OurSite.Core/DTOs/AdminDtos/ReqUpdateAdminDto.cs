@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OurSite.Core.DTOs.UserDtos;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.DTOs
+namespace OurSite.Core.DTOs.AdminDtos
 {
     public class ReqUpdateAdminDto
     {

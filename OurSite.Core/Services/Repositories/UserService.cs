@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OurSite.Core.DTOs.UserDtos;
+using OurSite.Core.DTOs.MailDtos;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -57,6 +59,7 @@ namespace OurSite.Core.Services.Repositories
             {
                 var user = await userService.GetEntity(request.UserId);
                 user.Password = passwordHelper.EncodePasswordMd5(request.Password);
+                user.LastUpdate = DateTime.Now;
                 userService.UpDateEntity(user);
                 await userService.SaveEntity();
                 return true;
@@ -96,7 +99,7 @@ namespace OurSite.Core.Services.Repositories
 
         #endregion
 
-        #region Active user by username
+        #region check Active user by username
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
             return await userService.GetAllEntity().Where(u=>u.UserName==userName.ToLower().Trim()|| u.Email == userName.ToLower().Trim()).AnyAsync(x=> x.IsActive == true);
@@ -123,6 +126,7 @@ namespace OurSite.Core.Services.Repositories
                 user.ActivationCode = new Guid().ToString();
                 try
                 {
+                    user.LastUpdate = DateTime.Now;
                     userService.UpDateEntity(user);
                     await userService.SaveEntity();
                     return ResActiveUser.Success;
@@ -178,6 +182,8 @@ namespace OurSite.Core.Services.Repositories
                     
 
                 };
+                user.CreateDate = DateTime.Now;
+                user.LastUpdate = user.CreateDate;
                 await userService.AddEntity(user);
                 await userService.SaveEntity();
                 await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode});
@@ -217,7 +223,7 @@ namespace OurSite.Core.Services.Repositories
                 BusinessCode = userdto.BusinessCode,
                 RegistrationNumber = userdto.RegistrationNumber
             };
-
+             user.LastUpdate = DateTime.Now;
              userService.UpDateEntity(user);
             await userService.SaveEntity();
 
@@ -244,6 +250,7 @@ namespace OurSite.Core.Services.Repositories
             {
                 var user = await userService.GetEntity(userId);
                 user.IsActive = !user.IsActive;
+                user.LastUpdate = DateTime.Now;
                 userService.UpDateEntity(user);
                 await userService.SaveEntity();
                 return true;

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
 using OurSite.DataLayer.Entities.Access;
@@ -16,30 +18,29 @@ namespace OurSite.Core.Services.Repositories
 {
     public class AdminService : IAdminService
     {
-
+        #region Constructor
         private IGenericReopsitories<Admin> adminRepository;
         private IGenericReopsitories<AccounInRole> accounInRoleRepository;
         private IGenericReopsitories<Role> RoleRepository;
         private IPasswordHelper passwordHelper;
         private IMapper mapper;
-        public AdminService(IGenericReopsitories<Role> RoleRepository, IMapper mapper, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper, IGenericReopsitories<AccounInRole> accounInRoleRepository)
+
+        public AdminService(IMapper mapper, IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper, IGenericReopsitories<AccounInRole> accounInRoleRepository)
         {
+            this.mapper = mapper;
             this.adminRepository = adminRepository;
             this.passwordHelper = passwordHelper;
             this.accounInRoleRepository = accounInRoleRepository;
-            this.mapper = mapper;
             this.RoleRepository = RoleRepository;
         }
-        public Task AddUser(ReqSingupUserDto userDto)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
 
+        #region Admin management
         public async Task<bool> DeleteAdmin(long adminId)
         {
-            var accountInRole =await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove == false);
-           
-           
+            var accountInRole = await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove == false);
+
+
             try
             {
                 if (accountInRole != null)
@@ -61,36 +62,12 @@ namespace OurSite.Core.Services.Repositories
             }
         }
 
-        public Task<bool> DeleteUser(long id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            adminRepository.Dispose();
-            accounInRoleRepository.Dispose();
-
-        }
-
         public async Task<Role> GetAdminRole(long adminId)
         {
             var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId);
             return role.Role;
         }
 
-        public Task GetAlluser()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Admin> Login(ReqLoginDto req)
-        {
-            req.Password = passwordHelper.EncodePasswordMd5(req.Password);
-            var admin = await adminRepository.GetAllEntity().SingleOrDefaultAsync(a => (a.UserName == req.UserName || a.Email == req.UserName) && a.Password == req.Password && a.IsRemove == false);
-            return admin;
-
-        }
 
         public async Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req)
         {
@@ -122,12 +99,12 @@ namespace OurSite.Core.Services.Repositories
             //update admin role
             if (!string.IsNullOrWhiteSpace(req.RoleName))
             {
-                var role =await RoleRepository.GetAllEntity().SingleOrDefaultAsync(r => r.Name == req.RoleName);
-                var accountinrole =await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(a => a.AdminId == req.adminId && a.IsRemove == false);
+                var role = await RoleRepository.GetAllEntity().SingleOrDefaultAsync(r => r.Name == req.RoleName);
+                var accountinrole = await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(a => a.AdminId == req.adminId && a.IsRemove == false);
                 accountinrole.RoleId = role.Id;
                 accountinrole.LastUpdate = DateTime.Now;
                 accounInRoleRepository.UpDateEntity(accountinrole);
-               
+
 
             }
             try
@@ -144,10 +121,58 @@ namespace OurSite.Core.Services.Repositories
                 return resUpdateAdmin.Error;
             }
         }
+        //not finished
+        public async Task<ResViewAdminDto> GetAdmin(long adminId)
+        {
+            var admin =await adminRepository.GetEntity(adminId);
+            var adminRole=await GetAdminRole(adminId);
+            ResViewAdminDto res = mapper.Map<ResViewAdminDto>(admin);
+            res.RoleName = adminRole.Name;
+            return res;
+        }
+        #endregion
 
+        #region User management
+        public Task AddUser(ReqSingupUserDto userDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteUser(long id)
+        {
+            throw new NotImplementedException();
+        }
         public Task<ResViewuserAdminDto> ViewUser(string find)
         {
             throw new NotImplementedException();
         }
+        public Task GetAlluser()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region login
+        public async Task<Admin> Login(ReqLoginDto req)
+        {
+            req.Password = passwordHelper.EncodePasswordMd5(req.Password);
+            var admin = await adminRepository.GetAllEntity().SingleOrDefaultAsync(a => (a.UserName == req.UserName || a.Email == req.UserName) && a.Password == req.Password && a.IsRemove == false);
+            return admin;
+
+        }
+
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            adminRepository.Dispose();
+            accounInRoleRepository.Dispose();
+            RoleRepository.Dispose();
+        }
+
+ 
+        #endregion
+
     }
 }
