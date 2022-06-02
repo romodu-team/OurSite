@@ -104,6 +104,7 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
+        #region Singup 
         public async Task<IActionResult> SingupUser(ReqSingupUserDto userDto)
         {
             var add = await userservice.SingUp(userDto);
@@ -122,7 +123,28 @@ namespace OurSite.WebApi.Controllers
 
             }
         }
+        #endregion
 
+        #region Update profile
+        public async Task<IActionResult> UpDate(ReqUpdateUserDto userdto)
+        {
+            if(ModelState.IsValid)
+            {
+                var res = await userservice.UpDate(userdto);
+                if (res)
+                {
+                    return JsonStatusResponse.Success("پروفایل کاربری با موفقیت بروزرسانی شد");
+
+                }
+                else
+                {
+                    return JsonStatusResponse.Error("بروزرسانی پروفایل کاربری با خطا موجه شد. مجددا تلاش نمایید.");
+                }
+            }
+            return JsonStatusResponse.Error("اطلاعات ارسالی اشتباه است");
+
+        }
+        #endregion
     }
 }
 

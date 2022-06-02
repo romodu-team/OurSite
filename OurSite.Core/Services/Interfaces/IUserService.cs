@@ -21,7 +21,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<bool> GetUserEmailandUserName(string Email , string UserName);
 
         Task<singup> SingUp(ReqSingupUserDto userDto);
-        Task UpDate(ReqUpdateUserDto userdto);
+        Task<bool> UpDate(ReqUpdateUserDto userdto);
         Task<User>ViewProfile(long id);
 
 

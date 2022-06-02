@@ -71,7 +71,7 @@ namespace OurSite.Core.Services.Repositories
 
         #endregion
 
-        #region Rest Password
+        #region RestPassword Email
         public async Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName)
         {
             var user =await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
@@ -197,29 +197,44 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Update profile by user
-        public async Task UpDate(ReqUpdateUserDto userdto)
+        public async Task<bool> UpDate(ReqUpdateUserDto userdto)
         {
-            User user = new User()
+            var user = await userService.GetEntity(userdto.id);
+            if (user != null)
             {
-                FirstName = userdto.FirstName,
-                LastName = userdto.LastName,
-                NationalCode = userdto.NationalCode,
-                Email = userdto.Email,
-                Mobile = userdto.Mobile,
-                Password = userdto.Password,
-                Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender,
-                Address = userdto.Address,
-                ImageName = userdto.ImageName,
-                Birthday = userdto.Birthday,
-                Phone = userdto.Phone,
-                ShabaNumbers = userdto.ShabaNumbers,
-                AccountType = (DataLayer.Entities.Accounts.accountType)userdto.AccountType,
-                BusinessCode = userdto.BusinessCode,
-                RegistrationNumber = userdto.RegistrationNumber
-            };
+                user.FirstName = userdto.FirstName;
+                user.LastName = userdto.LastName;
+                user.NationalCode = userdto.NationalCode;
+                user.Email = userdto.Email;
+                user.Mobile = userdto.Mobile;
+                user.Password = userdto.Password;
+                user.Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender;
+                user.Address = userdto.Address;
+                user.ImageName = userdto.ImageName;
+                user.Birthday = userdto.Birthday;
+                user.Phone = userdto.Phone;
+                user.ShabaNumbers = userdto.ShabaNumbers;
+                user.AccountType = (DataLayer.Entities.Accounts.accountType)userdto.AccountType;
+                user.BusinessCode = userdto.BusinessCode;
+                user.RegistrationNumber = userdto.RegistrationNumber;
+                try
+                {
 
-             userService.UpDateEntity(user);
-            await userService.SaveEntity();
+                    userService.UpDateEntity(user);
+                    await userService.SaveEntity();
+                    return true;
+
+                }
+                catch (Exception ex)
+                {
+                    return false;
+
+
+                }
+
+            }
+            return false;
+
 
 
         }
