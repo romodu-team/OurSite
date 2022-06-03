@@ -10,6 +10,6 @@ namespace OurSite.Core.Services.Interfaces
     public interface IContactWithUsService : IDisposable
     {
         Task<bool> SendContactForm(ContactWithUsDto contactWithUsDto);
-       
+
     }
 }

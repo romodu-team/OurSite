@@ -20,7 +20,7 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        public Task<bool> SendContactForm(ContactWithUsDto contactWithUsDto)
+        public async Task<bool> SendContactForm(ContactWithUsDto contactWithUsDto)
         {
             ContactWithUs form1 = new ContactWithUs()
             {
@@ -30,8 +30,18 @@ namespace OurSite.Core.Services.Repositories
                 UserPhoneNumber = contactWithUsDto.UserPhoneNumber,
                 Expration = contactWithUsDto.Expration,
             };
-            return (Task<bool>)contactWithUsRepo.AddEntity(form1);
+            try
+            {
+                await contactWithUsRepo.AddEntity(form1);
+                await contactWithUsRepo.SaveEntity();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
+
 
         #region Dispose
         public void Dispose()
