@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.UserDtos;
 
 namespace OurSite.Core.Services.Interfaces
 {
@@ -20,10 +20,11 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResActiveUser> ActiveUser(string activationCode);
         Task<bool> GetUserEmailandUserName(string Email , string UserName);
 
-        Task<singup> SingUp(ReqSingupUserDto userDto);
         Task<bool> UpDate(ReqUpdateUserDto userdto);
-        Task<User>ViewProfile(long id);
+        Task<RessingupDto> SingUp(ReqSingupUserDto userDto);
 
+        Task<User>ViewProfile(long id);
+        Task<bool> ChangeUserStatus(long userId);
 
     }
 }

@@ -3,6 +3,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.MailDtos;
 using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.Core.Utilities;
 using System;

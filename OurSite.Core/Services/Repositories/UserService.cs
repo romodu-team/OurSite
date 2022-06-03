@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OurSite.Core.DTOs.UserDtos;
+using OurSite.Core.DTOs.MailDtos;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -57,6 +59,7 @@ namespace OurSite.Core.Services.Repositories
             {
                 var user = await userService.GetEntity(request.UserId);
                 user.Password = passwordHelper.EncodePasswordMd5(request.Password);
+                user.LastUpdate = DateTime.Now;
                 userService.UpDateEntity(user);
                 await userService.SaveEntity();
                 return true;
@@ -71,7 +74,7 @@ namespace OurSite.Core.Services.Repositories
 
         #endregion
 
-        #region RestPassword Email
+        #region Send Rest Password Email
         public async Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName)
         {
             var user =await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
@@ -88,7 +91,7 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region Get User by email and username
+        #region Get User by email Or username
         public async Task<User> GetUserByEmailOrUserName(string EmailOrUserName)
         {
             return await userService.GetAllEntity().SingleOrDefaultAsync(u => u.Email == EmailOrUserName.ToLower().Trim() || u.UserName == EmailOrUserName.ToLower().Trim() && u.IsRemove == false);
@@ -96,15 +99,15 @@ namespace OurSite.Core.Services.Repositories
 
         #endregion
 
-        #region Active user by username
+        #region Check user activation by username
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
-            return await userService.GetAllEntity().Where(u=>u.UserName==userName.ToLower().Trim()|| u.Email == userName.ToLower().Trim()).AnyAsync(x=> x.IsActive == true);
+            return await userService.GetAllEntity().AnyAsync(u=>(u.UserName==userName.ToLower().Trim()|| u.Email == userName.ToLower().Trim())&& u.IsActive==true);
         }
 
         #endregion
 
-        #region Get user by password
+        #region Get user by Username and password
         public async Task<User> GetUserByUserPass(string username, string password)
         {
             var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => (u.UserName == username.ToLower().Trim()|| u.Email== username.ToLower().Trim()) && u.Password == password && u.IsRemove==false);
@@ -123,6 +126,7 @@ namespace OurSite.Core.Services.Repositories
                 user.ActivationCode = new Guid().ToString();
                 try
                 {
+                    user.LastUpdate = DateTime.Now;
                     userService.UpDateEntity(user);
                     await userService.SaveEntity();
                     return ResActiveUser.Success;
@@ -158,11 +162,11 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region singup
-        public async Task<singup> SingUp(ReqSingupUserDto userDto)
+        public async Task<RessingupDto> SingUp(ReqSingupUserDto userDto)
         {
             var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
             if (check == true)
-               return singup.Exist;
+               return RessingupDto.Exist;
             
             try
             {
@@ -178,16 +182,18 @@ namespace OurSite.Core.Services.Repositories
                     
 
                 };
+                user.CreateDate = DateTime.Now;
+                user.LastUpdate = user.CreateDate;
                 await userService.AddEntity(user);
                 await userService.SaveEntity();
                 await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode});
 
-                return singup.success;
+                return RessingupDto.success;
 
             }
             catch (Exception ex)
             {
-               return singup.Failed;
+               return RessingupDto.Failed;
 
             }
 
@@ -246,6 +252,28 @@ namespace OurSite.Core.Services.Repositories
           var user=  await userService.GetEntity(id);
             return user;
 
+
+        }
+
+        #endregion
+
+        #region Change user status
+        public async Task<bool> ChangeUserStatus(long userId)
+        {
+            try
+            {
+                var user = await userService.GetEntity(userId);
+                user.IsActive = !user.IsActive;
+                user.LastUpdate = DateTime.Now;
+                userService.UpDateEntity(user);
+                await userService.SaveEntity();
+                return true;
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
 
         }
         #endregion

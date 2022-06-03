@@ -1,5 +1,5 @@
 ﻿using System;
-namespace OurSite.Core.DTOs
+namespace OurSite.Core.DTOs.UserDtos
 {
 	public class ReqViewUserDto
 	{

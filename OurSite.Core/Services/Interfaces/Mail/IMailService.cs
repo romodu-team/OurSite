@@ -1,4 +1,5 @@
 ﻿using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.MailDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
