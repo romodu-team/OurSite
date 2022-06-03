@@ -20,8 +20,9 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResActiveUser> ActiveUser(string activationCode);
         Task<bool> GetUserEmailandUserName(string Email , string UserName);
 
+        Task<bool> UpDate(ReqUpdateUserDto userdto);
         Task<RessingupDto> SingUp(ReqSingupUserDto userDto);
-        Task UpDate(ReqUpdateUserDto userdto);
+
         Task<User>ViewProfile(long id);
         Task<bool> ChangeUserStatus(long userId);
 
