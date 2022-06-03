@@ -111,11 +111,11 @@ namespace OurSite.WebApi.Controllers
             var add = await userservice.SingUp(userDto);
             switch (add)
             {
-                case singup.success:
+                case RessingupDto.success:
                     return JsonStatusResponse.Success("ثبت نام با موفقیت انجام شد");
-                case singup.Failed:
+                case RessingupDto.Failed:
                     return JsonStatusResponse.Error("ثبت نام با خطا مواجه شد. مجدد ثبت نام کنید.");
-                case singup.Exist:
+                case RessingupDto.Exist:
                     return JsonStatusResponse.Error("نام کاربری یا ایمیل قبلا ثبت نام شده است");
                 default:
                     HttpContext.Response.StatusCode = 400;
