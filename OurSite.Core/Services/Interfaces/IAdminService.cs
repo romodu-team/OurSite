@@ -7,23 +7,32 @@ using OurSite.DataLayer.Entities.Accounts;
 
 namespace OurSite.Core.Services.Interfaces
 {
-	public interface IAdminService : IDisposable
-	{
-		Task<ResViewuserAdminDto> ViewUser(string find);
-		Task GetAlluser();
-		Task<bool> DeleteUser(long id);
-		Task AddUser(ReqSingupUserDto userDto);
+    public interface IAdminService : IDisposable
+    {
+        #region Admin management
+        Task<Role> GetAdminRole(long adminId);
+        Task<bool> DeleteAdmin(long adminId);
+        Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req);
 
-		Task<Admin> Login(ReqLoginDto req);
+        Task<ResViewAdminDto> GetAdminById(long adminId);
+        Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req);
 
-		Task<Role> GetAdminRole(long adminId);
-		Task<bool> DeleteAdmin(long adminId);
-		Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req);
+        Task<bool> IsAdminExist(string UserName, string Email);
+        #endregion
 
-		Task<ResViewAdminDto> GetAdminById(long adminId);
-		Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req);
+        #region User Management
+        Task<ResViewuserAdminDto> ViewUser(string find);
+        Task GetAlluser();
+        Task<bool> DeleteUser(long id);
+        Task AddUser(ReqSingupUserDto userDto);
+        #endregion
 
-		Task<bool> IsAdminExist(string UserName,string Email);
-	}
+        #region Login
+        Task<Admin> Login(ReqLoginDto req);
+        #endregion
+
+
+
+    }
 }
 

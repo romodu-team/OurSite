@@ -74,7 +74,7 @@ namespace OurSite.Core.Services.Repositories
 
         #endregion
 
-        #region Rest Password
+        #region Send Rest Password Email
         public async Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName)
         {
             var user =await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
@@ -91,7 +91,7 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region Get User by email and username
+        #region Get User by email Or username
         public async Task<User> GetUserByEmailOrUserName(string EmailOrUserName)
         {
             return await userService.GetAllEntity().SingleOrDefaultAsync(u => u.Email == EmailOrUserName.ToLower().Trim() || u.UserName == EmailOrUserName.ToLower().Trim() && u.IsRemove == false);
@@ -99,15 +99,15 @@ namespace OurSite.Core.Services.Repositories
 
         #endregion
 
-        #region check Active user by username
+        #region Check user activation by username
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
-            return await userService.GetAllEntity().Where(u=>u.UserName==userName.ToLower().Trim()|| u.Email == userName.ToLower().Trim()).AnyAsync(x=> x.IsActive == true);
+            return await userService.GetAllEntity().AnyAsync(u=>(u.UserName==userName.ToLower().Trim()|| u.Email == userName.ToLower().Trim())&& u.IsActive==true);
         }
 
         #endregion
 
-        #region Get user by password
+        #region Get user by Username and password
         public async Task<User> GetUserByUserPass(string username, string password)
         {
             var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => (u.UserName == username.ToLower().Trim()|| u.Email== username.ToLower().Trim()) && u.Password == password && u.IsRemove==false);
@@ -242,8 +242,7 @@ namespace OurSite.Core.Services.Repositories
 
         #endregion
 
-
-
+        #region Change user status
         public async Task<bool> ChangeUserStatus(long userId)
         {
             try
@@ -260,7 +259,9 @@ namespace OurSite.Core.Services.Repositories
             {
                 return false;
             }
-         
+
         }
+        #endregion
+
     }
 }
