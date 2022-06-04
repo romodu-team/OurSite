@@ -65,7 +65,7 @@ namespace OurSite.Core.Services.Repositories
 
         public async Task<Role> GetAdminRole(long adminId)
         {
-            var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId);
+            var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove==false);
             return role.Role;
         }
         
@@ -98,9 +98,9 @@ namespace OurSite.Core.Services.Repositories
                 admin.UserName = req.UserName;
 
             //update admin role
-            if (!string.IsNullOrWhiteSpace(req.RoleName))
+            if (!string.IsNullOrWhiteSpace(req.RoleId))
             {
-                var role = await RoleRepository.GetAllEntity().SingleOrDefaultAsync(r => r.Name == req.RoleName);
+                var role = await RoleRepository.GetEntity(Convert.ToInt64(req.RoleId));
                 var accountinrole = await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(a => a.AdminId == req.adminId && a.IsRemove == false);
                 accountinrole.RoleId = role.Id;
                 accountinrole.LastUpdate = DateTime.Now;
@@ -193,7 +193,7 @@ namespace OurSite.Core.Services.Repositories
         }
         public async Task<bool> IsAdminExist(string UserName,string Email)
         {
-            return await adminRepository.GetAllEntity().AnyAsync(a=>a.UserName==UserName||a.Email==Email);
+            return await adminRepository.GetAllEntity().AnyAsync(a=>(a.UserName==UserName||a.Email==Email)&& a.IsRemove==false);
         }
         #endregion
 

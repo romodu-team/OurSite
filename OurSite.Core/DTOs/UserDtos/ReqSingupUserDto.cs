@@ -27,7 +27,8 @@ namespace OurSite.Core.DTOs.UserDtos
     public enum ResActiveUser
     {
         Success,
-        Failed
+        Failed,
+        NotFoundOrActivated
     }
 }
 

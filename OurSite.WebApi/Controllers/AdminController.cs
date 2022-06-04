@@ -32,11 +32,12 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.NotFound("اطلاعات کاربری اشتباه است");
             var role = await adminService.GetAdminRole(admin.Id);
 
-            var token = AuthenticationHelper.GenrateAdminToken(admin,role,3);
+            var token = AuthenticationHelper.GenerateAdminToken(admin,role,3);
             HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, FirstName = admin.FirstName, LastName = admin.LastName }, "ورود با موفقیت انجام شد");
         }
 
+        [Authorize(Roles = "General Manager,Admin")]
         [HttpGet("change-user-status/{userId}")]
         public async Task<IActionResult> ChangeUserStatus([FromRoute]long userId)
         {
@@ -74,8 +75,8 @@ namespace OurSite.WebApi.Controllers
             if (res)
                 return JsonStatusResponse.Success("با موفقیت حذف شد");
             return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-        } 
-
+        }
+        [Authorize(Roles = "General Manager")]
         [HttpGet("view-admin/{adminId}")]
         public async Task<IActionResult> GetAdmin([FromRoute]long adminId)
         {
@@ -85,7 +86,7 @@ namespace OurSite.WebApi.Controllers
             HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound("پیدا نشد");
         }
-
+        [Authorize(Roles = "General Manager")]
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody]ReqSingupUserDto req)
         {

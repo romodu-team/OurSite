@@ -138,7 +138,7 @@ namespace OurSite.Core.Services.Repositories
                 }
 
             }
-            return ResActiveUser.Failed;
+            return ResActiveUser.NotFoundOrActivated;
         }
 
         #endregion

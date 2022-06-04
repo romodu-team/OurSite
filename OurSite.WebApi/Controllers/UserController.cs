@@ -41,7 +41,7 @@ namespace OurSite.WebApi.Controllers
                 case ResLoginDto.Success:
                  
                     var user =await userservice.GetUserByUserPass(request.UserName, request.Password);
-                    var token = AuthenticationHelper.GenrateUserToken(user, 3);
+                    var token = AuthenticationHelper.GenerateUserToken(user, 3);
                     HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName },"ورود با موفقیت انجام شد");
                 case ResLoginDto.IncorrectData:
@@ -97,7 +97,7 @@ namespace OurSite.WebApi.Controllers
             {
                 case ResActiveUser.Success:
                     return JsonStatusResponse.Success("حساب کاربری شما با موفقیت فعال شد");
-                case ResActiveUser.Failed:
+                case ResActiveUser.NotFoundOrActivated:
                     return JsonStatusResponse.Success("لینک فعالسازی نامعتبر است یا حساب کاربری قبلا فعال شده است");
                 default:
                     return JsonStatusResponse.Success("عملیات با شکست مواجه شد");
