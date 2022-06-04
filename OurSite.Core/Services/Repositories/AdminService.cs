@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.MailDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Entities.BaseEntities;
@@ -21,40 +23,34 @@ namespace OurSite.Core.Services.Repositories
     {
         #region Constructor
         private IGenericReopsitories<Admin> adminRepository;
-        private IGenericReopsitories<AccounInRole> accounInRoleRepository;
-        private IGenericReopsitories<Role> RoleRepository;
+        //  private IGenericReopsitories<AccounInRole> accounInRoleRepository;
+        // private IGenericReopsitories<Role> RoleRepository;
+        private IRoleService roleService;
         private IPasswordHelper passwordHelper;
         private IMapper mapper;
+        private IMailService mailService;
 
-        public AdminService(IMapper mapper, IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper, IGenericReopsitories<AccounInRole> accounInRoleRepository)
+        public AdminService(IRoleService roleService, IMailService mailService, IMapper mapper, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper)
         {
             this.mapper = mapper;
             this.adminRepository = adminRepository;
             this.passwordHelper = passwordHelper;
-            this.accounInRoleRepository = accounInRoleRepository;
-            this.RoleRepository = RoleRepository;
+            this.mailService = mailService;
+            this.roleService = roleService;
         }
         #endregion
 
         #region Admin management
         public async Task<bool> DeleteAdmin(long adminId)
         {
-            var accountInRole = await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove == false);
-
-
+            
             try
             {
-                if (accountInRole != null)
-                {
-                    accountInRole.IsRemove = true;
-                    accountInRole.LastUpdate = DateTime.Now;
-                    await accounInRoleRepository.DeleteEntity(accountInRole.Id);
-                    await accounInRoleRepository.SaveEntity();
-                }
                 await adminRepository.DeleteEntity(adminId);
                 await adminRepository.SaveEntity();
-
-                return true;
+                var res = await roleService.DeleteAdminRole(adminId);
+                
+                return res;
             }
             catch (Exception)
             {
@@ -63,11 +59,11 @@ namespace OurSite.Core.Services.Repositories
             }
         }
 
-        public async Task<Role> GetAdminRole(long adminId)
-        {
-            var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove==false);
-            return role.Role;
-        }
+        //public async Task<Role> GetAdminRole(long adminId)
+        //{
+        //    var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove==false);
+        //    return role.Role;
+        //}
         
 
         public async Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req)
@@ -98,13 +94,12 @@ namespace OurSite.Core.Services.Repositories
                 admin.UserName = req.UserName;
 
             //update admin role
-            if (!string.IsNullOrWhiteSpace(req.RoleId))
+            if (!string.IsNullOrWhiteSpace(req.RoleName))
             {
-                var role = await RoleRepository.GetEntity(Convert.ToInt64(req.RoleId));
-                var accountinrole = await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(a => a.AdminId == req.adminId && a.IsRemove == false);
+                var role = await roleService.GetRoleByName(req.RoleName);
+                var accountinrole =await roleService.GetAdminInRole(req.adminId);
                 accountinrole.RoleId = role.Id;
-                accountinrole.LastUpdate = DateTime.Now;
-                accounInRoleRepository.UpDateEntity(accountinrole);
+                var res=await roleService.UpdateAdminRole(accountinrole);
 
 
             }
@@ -113,7 +108,6 @@ namespace OurSite.Core.Services.Repositories
                 admin.LastUpdate = DateTime.Now;
                 adminRepository.UpDateEntity(admin);
                 await adminRepository.SaveEntity();
-                await accounInRoleRepository.SaveEntity();
                 return resUpdateAdmin.Success;
             }
             catch (Exception)
@@ -126,7 +120,7 @@ namespace OurSite.Core.Services.Repositories
         public async Task<ResViewAdminDto> GetAdminById(long adminId)
         {
             var admin =await adminRepository.GetEntity(adminId);
-            var adminRole=await GetAdminRole(adminId);
+            var adminRole=await roleService.GetAdminRole(adminId);
             ResViewAdminDto res = new ResViewAdminDto
             {
                 Address = admin.Address,
@@ -179,9 +173,10 @@ namespace OurSite.Core.Services.Repositories
                     CreateDate = DateTime.Now,
                     LastUpdate = DateTime.Now
                 };
-                await accounInRoleRepository.AddEntity(accountInRole);
-                await accounInRoleRepository.SaveEntity();
-                return RessingupDto.success;
+                var res= await roleService.AddRoleToAdmin(accountInRole);
+                if(res)
+                    return RessingupDto.success;
+                return RessingupDto.Failed;
 
             }
             catch (Exception)
@@ -195,6 +190,53 @@ namespace OurSite.Core.Services.Repositories
         {
             return await adminRepository.GetAllEntity().AnyAsync(a=>(a.UserName==UserName||a.Email==Email)&& a.IsRemove==false);
         }
+
+        #region Reset password
+        public async Task<bool> ResetPassword(ReqResetPassword request)
+        {
+            try
+            {
+                var admin = await adminRepository.GetEntity(request.UserId);
+                admin.Password = passwordHelper.EncodePasswordMd5(request.Password);
+                admin.LastUpdate = DateTime.Now;
+                adminRepository.UpDateEntity(admin);
+                await adminRepository.SaveEntity();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region Send Rest Password Email
+        public async Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName)
+        {
+            var admin = await GetAdminByEmailOrUserName(EmailOrUserName.ToLower().Trim());
+            if (admin is not null)
+            {
+                var res = await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter = admin.Id.ToString(), ToEmail = admin.Email, UserName = admin.UserName });
+                if (res)
+                    return ResLoginDto.Success;
+                else
+                    return ResLoginDto.Error;
+            }
+            return ResLoginDto.IncorrectData;
+
+        }
+        #endregion
+
+        #region Get admin by email Or username
+        public async Task<Admin> GetAdminByEmailOrUserName(string EmailOrUserName)
+        {
+            return await adminRepository.GetAllEntity().SingleOrDefaultAsync(u => u.Email == EmailOrUserName.ToLower().Trim() || u.UserName == EmailOrUserName.ToLower().Trim() && u.IsRemove == false);
+        }
+
+        #endregion
         #endregion
 
         #region User management
@@ -232,8 +274,7 @@ namespace OurSite.Core.Services.Repositories
         public void Dispose()
         {
             adminRepository.Dispose();
-            accounInRoleRepository.Dispose();
-            RoleRepository.Dispose();
+            roleService.Dispose();
         }
 
    

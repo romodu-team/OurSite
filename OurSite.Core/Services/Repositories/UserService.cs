@@ -36,6 +36,11 @@ namespace OurSite.Core.Services.Repositories
         #region Login
         public async Task<ResLoginDto> LoginUser(ReqLoginDto login)
         {
+            if (String.IsNullOrWhiteSpace(login.UserName))
+                return ResLoginDto.Error;
+            if (String.IsNullOrWhiteSpace(login.Password))
+                return ResLoginDto.Error;
+
             login.Password = passwordHelper.EncodePasswordMd5(login.Password);
             var user = await GetUserByUserPass(login.UserName, login.Password);
             if (user != null)
@@ -52,8 +57,8 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region forgot password
-        public async Task<bool> ForgotPassword(ReqForgotPassword request)
+        #region Reset password
+        public async Task<bool> ResetPassword(ReqResetPassword request)
         {
             try
             {
