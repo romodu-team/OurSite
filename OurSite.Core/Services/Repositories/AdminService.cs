@@ -25,14 +25,16 @@ namespace OurSite.Core.Services.Repositories
         private IGenericReopsitories<Role> RoleRepository;
         private IPasswordHelper passwordHelper;
         private IMapper mapper;
+        private IGenericReopsitories<User> userService;
 
-        public AdminService(IMapper mapper, IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper, IGenericReopsitories<AccounInRole> accounInRoleRepository)
+        public AdminService(IMapper mapper, IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper, IGenericReopsitories<AccounInRole> accounInRoleRepository , IGenericReopsitories<User> userService)
         {
             this.mapper = mapper;
             this.adminRepository = adminRepository;
             this.passwordHelper = passwordHelper;
             this.accounInRoleRepository = accounInRoleRepository;
             this.RoleRepository = RoleRepository;
+            this.userService = userService;
         }
         #endregion
 
@@ -211,9 +213,10 @@ namespace OurSite.Core.Services.Repositories
         {
             throw new NotImplementedException();
         }
-        public Task GetAlluser()
+        public Task GetAlluser() //for return a list of user that singup in our site for admin
         {
-            throw new NotImplementedException();
+            var list = userService.GetAllEntity().ToListAsync();    //use the genric interface options and save values in variable
+            return list;
         }
         #endregion
 
