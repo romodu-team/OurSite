@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using OurSite.Core.DTOs;
@@ -127,7 +128,8 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Update profile
-        public async Task<IActionResult> UpDate(ReqUpdateUserDto userdto)
+        [HttpPut("Update-Profile")]
+        public async Task<IActionResult> UpDate([FromBody]ReqUpdateUserDto userdto)
         {
             if(ModelState.IsValid)
             {
@@ -143,6 +145,19 @@ namespace OurSite.WebApi.Controllers
                 }
             }
             return JsonStatusResponse.Error("اطلاعات ارسالی اشتباه است");
+
+        }
+        #endregion
+
+        #region view profile
+        [Authorize]
+        [HttpGet("View-Profile")]
+        public async Task<IActionResult> ViewProfile()
+        {
+            var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userdto = await userservice.ViewProfile(Convert.ToInt64(userid));
+            return JsonStatusResponse.Success(userdto , "موفق");
+           
 
         }
         #endregion

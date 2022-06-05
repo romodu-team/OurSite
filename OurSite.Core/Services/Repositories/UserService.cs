@@ -247,12 +247,32 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region view profile by user
-        public async Task<User> ViewProfile(long id)
+        public async Task<ReqViewUserDto> ViewProfile(long id)
         {
-          var user=  await userService.GetEntity(id);
-            return user;
+           var user = await userService.GetEntity(id);
+            ReqViewUserDto userdto = new ReqViewUserDto();
+            if (user is not null)
+            {
+                userdto.UserName = user.UserName;
+                userdto.FirstName = user.FirstName;
+                userdto.LastName = user.LastName;
+                userdto.NationalCode = user.NationalCode;
+                userdto.Email = user.Email;
+                userdto.Mobile = user.Mobile;
+                userdto.Gender = (gender?)user.Gender;
+                userdto.Address = user.Address;
+                userdto.ImageName = user.ImageName;
+                userdto.Phone = user.Phone;
+                userdto.Birthday = user.Birthday;
+                userdto.ShabaNumbers = user.ShabaNumbers;
+                userdto.AccountType = (DTOs.UserDtos.accountType?)user.AccountType;
+                userdto.BusinessCode = user.BusinessCode;
+                userdto.RegistrationNumber = user.RegistrationNumber;
 
-
+                return userdto;
+            }
+            return null;
+                
         }
 
         #endregion
