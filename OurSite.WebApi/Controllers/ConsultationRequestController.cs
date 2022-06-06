@@ -31,22 +31,13 @@ namespace OurSite.WebApi.Controllers
             if (sendConsultationFormWithFile.SubmittedFile != null)
             {
                 string path = Directory.GetCurrentDirectory() + "\\wwwroot\\uploads\\";
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                string FileName = Guid.NewGuid().ToString() + Path.GetExtension(sendConsultationFormWithFile.SubmittedFile.FileName);
-                using (FileStream fileStream = System.IO.File.Create(path + FileName))
-                {
-                    sendConsultationFormWithFile.SubmittedFile.CopyTo(fileStream);
-                    fileStream.Flush();
-
-                }
-                sendConsultationFormWithFile.FileName = FileName;
+                var res1 = await FileUploader.UploadFile(path, sendConsultationFormWithFile.SubmittedFile);
+                if(res1.Status==200)
+                     sendConsultationFormWithFile.FileName = res1.FileName;
             }
-            
-           var res= await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile);
-            if(res)
+
+            var res = await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile);
+            if (res)
                 return JsonStatusResponse.Success("درخواست با موفقیت ارسال گردید");
             return JsonStatusResponse.Error("درخواست شما ارسال نگردید");
         }
