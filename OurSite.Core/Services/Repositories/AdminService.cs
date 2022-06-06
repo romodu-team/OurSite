@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using MailKit;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.MailDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
@@ -26,6 +28,7 @@ namespace OurSite.Core.Services.Repositories
         private IPasswordHelper passwordHelper;
         private IMapper mapper;
         private IGenericReopsitories<User> userService;
+        private IMailService mailService;
 
         public AdminService(IMapper mapper, IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper, IGenericReopsitories<AccounInRole> accounInRoleRepository , IGenericReopsitories<User> userService)
         {
@@ -202,12 +205,20 @@ namespace OurSite.Core.Services.Repositories
         #region User management
         public async Task AddUser(ReqSingupUserDto userDto)
         {
-            User add = new User()
+            User user = new User()
             {
-               
-            }
+                UserName = userDto.UserName,
+                FirstName = userDto.Name,
+                LastName = userDto.Family,
+                Password = userDto.Password,
+                Phone = userDto.phone,
+                Email = userDto.Email,
+                ActivationCode = new Guid().ToString()
+            };
 
-            
+            await userService.AddEntity(user);
+            await userService.SaveEntity();
+            await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
 
         }
 
