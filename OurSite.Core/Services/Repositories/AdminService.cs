@@ -209,9 +209,11 @@ namespace OurSite.Core.Services.Repositories
         {
             throw new NotImplementedException();
         }
-        public Task<ResViewuserAdminDto> ViewUser(string find)
+
+
+        public Task<ResViewuserAdminDto> ViewUser(long id)
         {
-            throw new NotImplementedException();
+            
         }
         public Task GetAlluser() //for return a list of user that singup in our site for admin
         {
