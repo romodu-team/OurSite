@@ -42,7 +42,6 @@ namespace OurSite.Core.Services.Repositories
             }
         }
 
-
         #region Dispose
         public void Dispose()
         {

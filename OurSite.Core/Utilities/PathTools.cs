@@ -9,5 +9,8 @@ namespace OurSite.Core.Utilities
     public static class PathTools
     {
         public const string Domain = "https://localhost:7181";
+
+        public const string ConsultationFile = Domain + "/upload/";
+
     }
 }

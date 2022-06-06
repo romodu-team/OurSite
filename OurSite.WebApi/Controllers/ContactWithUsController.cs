@@ -18,9 +18,9 @@ namespace OurSite.WebApi.Controllers
         }
 
         [HttpPost("send-form")]
-        public async Task<IActionResult> SendContactWithUsForm([FromBody]ContactWithUsDto send)
+        public async Task<IActionResult> SendContactWithUsForm([FromBody]ContactWithUsDto sendContactForm)
         {
-            await contactWithUsService.SendContactForm(send);
+            await contactWithUsService.SendContactForm(sendContactForm);
             return new JsonResult("درخواست شما با موفقیت ارسال شد");
         }
     }

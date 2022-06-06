@@ -42,6 +42,7 @@ options.TokenValidationParameters = new TokenValidationParameters()
 });
 #endregion
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
+builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddAuthorization();
 var app = builder.Build();
 
@@ -55,7 +56,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();
