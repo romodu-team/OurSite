@@ -210,11 +210,6 @@ namespace OurSite.Core.Services.Repositories
             throw new NotImplementedException();
         }
 
-
-        public Task<ResViewuserAdminDto> ViewUser(long id)
-        {
-            
-        }
         public Task GetAlluser() //for return a list of user that singup in our site for admin
         {
             var list = userService.GetAllEntity().ToListAsync();    //use the genric interface options and save values in variable

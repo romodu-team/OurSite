@@ -21,7 +21,6 @@ namespace OurSite.Core.Services.Interfaces
         #endregion
 
         #region User Management
-        Task<ResViewuserAdminDto> ViewUser(long id);
         Task GetAlluser();
         Task<bool> DeleteUser(long id);
         Task AddUser(ReqSingupUserDto userDto);

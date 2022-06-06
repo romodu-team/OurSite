@@ -298,7 +298,7 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region view user
+        #region view user by admin
         //profile view for admin
         public async Task<ResViewuserAdminDto> ViewUser(long id)
         {
