@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MailKit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
@@ -30,7 +30,7 @@ namespace OurSite.Core.Services.Repositories
         private IGenericReopsitories<User> userService;
         private IMailService mailService;
 
-        public AdminService(IMapper mapper, IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper, IGenericReopsitories<AccounInRole> accounInRoleRepository , IGenericReopsitories<User> userService)
+        public AdminService(IMapper mapper, IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper, IGenericReopsitories<AccounInRole> accounInRoleRepository , IGenericReopsitories<User> userService , IMailService mailService)
         {
             this.mapper = mapper;
             this.adminRepository = adminRepository;
@@ -38,6 +38,7 @@ namespace OurSite.Core.Services.Repositories
             this.accounInRoleRepository = accounInRoleRepository;
             this.RoleRepository = RoleRepository;
             this.userService = userService;
+            this.mailService = mailService;
         }
         #endregion
 
@@ -203,6 +204,7 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region User management
+        [Authorize(Roles = "نقش مدنظر")]
         public async Task AddUser(ReqSingupUserDto userDto)
         {
             User user = new User()
