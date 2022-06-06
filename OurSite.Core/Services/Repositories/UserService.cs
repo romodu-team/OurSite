@@ -298,5 +298,41 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
+        #region view user
+        //profile view for admin
+        public async Task<ResViewuserAdminDto> ViewUser(long id)
+        {
+            //connect user model options with userdto model options
+            var user = await userService.GetEntity(id);
+            ResViewuserAdminDto adminview = new ResViewuserAdminDto();
+            if (user is not null)
+            {
+                adminview.Id = user.Id;
+                adminview.CreateDate = user.CreateDate;
+                adminview.IsRemove = user.IsRemove;
+                adminview.LastUpdate = user.LastUpdate;
+                adminview.UserName = user.UserName;
+                adminview.FirstName = user.FirstName;
+                adminview.LastName = user.LastName;
+                adminview.NationalCode = user.NationalCode;
+                adminview.Email = user.Email;
+                adminview.Mobile = user.Mobile;
+                adminview.Gender = (gender?)user.Gender;
+                adminview.Address = user.Address;
+                adminview.ImageName = user.ImageName;
+                adminview.Phone = user.Phone;
+                adminview.Birthday = user.Birthday;
+                adminview.ShabaNumbers = user.ShabaNumbers;
+                adminview.AccountType = (DTOs.UserDtos.accountType?)user.AccountType;
+                adminview.BusinessCode = user.BusinessCode;
+                adminview.RegistrationNumber = user.RegistrationNumber;
+
+                return adminview;
+            }
+            return null;
+
+        }
+        #endregion
+
     }
 }
