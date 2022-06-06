@@ -200,9 +200,15 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region User management
-        public Task AddUser(ReqSingupUserDto userDto)
+        public async Task AddUser(ReqSingupUserDto userDto)
         {
-            throw new NotImplementedException();
+            User add = new User()
+            {
+               
+            }
+
+            
+
         }
 
         public Task<bool> DeleteUser(long id)
