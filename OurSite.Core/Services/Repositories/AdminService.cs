@@ -204,7 +204,11 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
+
         #region User management
+
+
+        #region add
         //add user by admin
         [Authorize(Roles = "نقش مدنظر")]
         public async Task AddUser(ReqSingupUserDto userDto)
@@ -226,18 +230,28 @@ namespace OurSite.Core.Services.Repositories
             await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
 
         }
+        #endregion
 
+
+        #region delete user
         public Task<bool> DeleteUser(long id)
         {
             throw new NotImplementedException();
         }
+        #endregion
 
+
+        #region Get user list
         public Task GetAlluser() //for return a list of user that singup in our site for admin
         {
             var list = userService.GetAllEntity().ToListAsync();    //use the genric interface options and save values in variable
             return list;
         }
         #endregion
+
+
+        #endregion
+
 
         #region login
         public async Task<Admin> Login(ReqLoginDto req)
