@@ -7,6 +7,7 @@ using OurSite.Core.DTOs.MailDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Entities.BaseEntities;
@@ -204,9 +205,11 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region User management
+        //add user by admin
         [Authorize(Roles = "نقش مدنظر")]
         public async Task AddUser(ReqSingupUserDto userDto)
         {
+            //connect user model options to userdto options model
             User user = new User()
             {
                 UserName = userDto.UserName,

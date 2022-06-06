@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.DTOs.MailDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -300,6 +301,7 @@ namespace OurSite.Core.Services.Repositories
 
         #region view user by admin
         //profile view for admin
+        [Authorize(Roles = "نقش مدنظر")]
         public async Task<ResViewuserAdminDto> ViewUser(long id)
         {
             //connect user model options with userdto model options
