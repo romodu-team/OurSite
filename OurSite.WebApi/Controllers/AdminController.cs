@@ -101,5 +101,53 @@ namespace OurSite.WebApi.Controllers
                     return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
             }
         }
+
+
+        public async Task<IActionResult> ViewUser(long userid)
+        {
+           var user = await userService.ViewUser(userid);
+            ResViewuserAdminDto adminview = new ResViewuserAdminDto();
+            if (user is not null)
+            {
+                adminview.Id = user.Id;
+                adminview.CreateDate = user.CreateDate;
+                adminview.IsRemove = user.IsRemove;
+                adminview.LastUpdate = user.LastUpdate;
+                adminview.UserName = user.UserName;
+                adminview.FirstName = user.FirstName;
+                adminview.LastName = user.LastName;
+                adminview.NationalCode = user.NationalCode;
+                adminview.Email = user.Email;
+                adminview.Mobile = user.Mobile;
+                adminview.Gender = (gender?)user.Gender;
+                adminview.Address = user.Address;
+                adminview.ImageName = user.ImageName;
+                adminview.Phone = user.Phone;
+                adminview.Birthday = user.Birthday;
+                adminview.ShabaNumbers = user.ShabaNumbers;
+                adminview.AccountType = (Core.DTOs.UserDtos.accountType?)user.AccountType;
+                adminview.BusinessCode = user.BusinessCode;
+                adminview.RegistrationNumber = user.RegistrationNumber;
+
+                return JsonStatusResponse.Success(message:"success",ReturnData:adminview);
+            }
+            return JsonStatusResponse.Error(message: "کاربر پیدا نشد");
+        }
+
+
+
+        public async Task<IActionResult> GetAllUser()
+        {
+            var users = await userService.GetAlluser();
+            if (users.Any())
+            {
+                return JsonStatusResponse.Success(message: "موفق" , ReturnData: users);
+            }
+            return JsonStatusResponse.NotFound(message: "کاربری یافت نشد");
+            
+        }
+
     }
+
+
 }
