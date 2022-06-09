@@ -73,6 +73,8 @@ options.TokenValidationParameters = new TokenValidationParameters()
     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sajjadhaniehfaezeherfanmobinsinamehdi"))
 });
 #endregion
+builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
+builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddAuthorization();
 var app = builder.Build();
 
@@ -86,7 +88,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();
