@@ -244,29 +244,7 @@ namespace OurSite.Core.Services.Repositories
         #region User management
 
 
-        #region add
-        //add user by admin
-        [Authorize(Roles = "نقش مدنظر")]
-        public async Task AddUser(ReqSingupUserDto userDto)
-        {
-            //connect user model options to userdto options model
-            User user = new User()
-            {
-                UserName = userDto.UserName,
-                FirstName = userDto.Name,
-                LastName = userDto.Family,
-                Password = userDto.Password,
-                Phone = userDto.phone,
-                Email = userDto.Email,
-                ActivationCode = new Guid().ToString()
-            };
 
-            await userService.AddEntity(user);
-            await userService.SaveEntity();
-            await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
-
-        }
-        #endregion
 
 
         #region delete user
