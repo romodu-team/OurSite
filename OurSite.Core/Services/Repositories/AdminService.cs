@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
@@ -10,13 +9,8 @@ using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
-using OurSite.DataLayer.Entities.BaseEntities;
 using OurSite.DataLayer.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace OurSite.Core.Services.Repositories
 {
