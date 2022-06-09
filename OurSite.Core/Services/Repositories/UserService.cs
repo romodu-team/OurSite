@@ -34,6 +34,67 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
+        #region Dispose
+        public void Dispose()
+        {
+            userService?.Dispose();
+        }
+
+
+        #endregion
+
+        #region User Service
+
+        #region singup
+        public async Task<RessingupDto> SingUp(ReqSingupUserDto userDto)
+        {
+            var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
+            if (check == true)
+                return RessingupDto.Exist;
+
+            try
+            {
+                User user = new User()
+                {
+                    FirstName = userDto.Name,
+                    LastName = userDto.Family,
+                    UserName = userDto.UserName,
+                    Password = userDto.Password,
+                    Email = userDto.Email,
+                    Phone = userDto.phone,
+                    ActivationCode = new Guid().ToString()
+
+
+                };
+                user.CreateDate = DateTime.Now;
+                user.LastUpdate = user.CreateDate;
+                await userService.AddEntity(user);
+                await userService.SaveEntity();
+                await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
+
+                return RessingupDto.success;
+
+            }
+            catch (Exception ex)
+            {
+                return RessingupDto.Failed;
+
+            }
+
+
+
+        }
+        #endregion
+
+        #region SingUp exist error
+        public async Task<bool> GetUserEmailandUserName(string Email, string UserName)
+        {
+            return await userService.GetAllEntity().AnyAsync(x => x.Email == Email || x.UserName == UserName);
+
+        }
+
+        #endregion
+
         #region Login
         public async Task<ResLoginDto> LoginUser(ReqLoginDto login)
         {
@@ -149,65 +210,6 @@ namespace OurSite.Core.Services.Repositories
 
         #endregion
 
-        #region Dispose
-        public void Dispose()
-        {
-            userService?.Dispose();
-        }
-
-
-        #endregion
-
-        #region SingUp exist error
-        public async Task<bool> GetUserEmailandUserName(string Email, string UserName)
-        {
-            return await userService.GetAllEntity().AnyAsync(x => x.Email == Email || x.UserName == UserName);
-
-        }
-
-        #endregion
-
-        #region singup
-        public async Task<RessingupDto> SingUp(ReqSingupUserDto userDto)
-        {
-            var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
-            if (check == true)
-                return RessingupDto.Exist;
-
-            try
-            {
-                User user = new User()
-                {
-                    FirstName = userDto.Name,
-                    LastName = userDto.Family,
-                    UserName = userDto.UserName,
-                    Password = userDto.Password,
-                    Email = userDto.Email,
-                    Phone = userDto.phone,
-                    ActivationCode = new Guid().ToString()
-
-
-                };
-                user.CreateDate = DateTime.Now;
-                user.LastUpdate = user.CreateDate;
-                await userService.AddEntity(user);
-                await userService.SaveEntity();
-                await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
-
-                return RessingupDto.success;
-
-            }
-            catch (Exception ex)
-            {
-                return RessingupDto.Failed;
-
-            }
-
-
-
-        }
-        #endregion
-
         #region Update profile by user
         public async Task<bool> UpDate(ReqUpdateUserDto userdto)
         {
@@ -304,32 +306,27 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region view user by admin
-        //profile view for admin
-        [Authorize(Roles = "نقش مدنظر")]
-        public async Task<User> ViewUser(long id)
+        #endregion
+
+        #region User Management By Admin
+
+
+
+        #region Delete User
+        public async Task<bool> DeleteUser(long id)
         {
-            var user = await userService.GetEntity(id);
-            return user;
+            var user = await userService.DeleteEntity(id); //get id and return true that it means user deleted
+            if (user is true) //if delete
+            {
+                return true;
+                userService.SaveEntity();
+            }
+            return false; //if not
 
         }
         #endregion
 
-
-        #region Get user list
-        public Task<List<User>> GetAlluser() //for return a list of user that singup in our site for admin
-        {
-            var list = userService.GetAllEntity().Where(u => u.IsRemove == false).ToListAsync();    //use the genric interface options and save values in variable
-            return list;
-        }
-
-
-
-
-
-        #endregion
-
-        #region add
+        #region Add User
         ////add user by admin
         //[Authorize(Roles = "نقش مدنظر")]
         //public async Task AddUser(ReqSingupUserDto userDto)
@@ -353,25 +350,27 @@ namespace OurSite.Core.Services.Repositories
         //}
         #endregion
 
-
-
-        #region User Management By Admin
-
-
-
-        #region Delete User by admin
-        public async Task<bool> DeleteUser(long id)
+        #region Get user list 
+        public Task<List<User>> GetAlluser() //for return a list of user that singup in our site for admin
         {
-            var user = await userService.DeleteEntity(id); //get id and return true that it means user deleted
-            if (user is true) //if delete
-            {
-                return true;
-                userService.SaveEntity();
-            }
-            return false; //if not
+            var list = userService.GetAllEntity().Where(u => u.IsRemove == false).ToListAsync();    //use the genric interface options and save values in variable
+            return list;
+        }
+
+        #endregion
+
+        #region View User Profile
+        //profile view for admin
+        [Authorize(Roles = "نقش مدنظر")]
+        public async Task<User> ViewUser(long id)
+        {
+            var user = await userService.GetEntity(id);
+            return user;
 
         }
         #endregion
+
+
 
         #endregion
 
