@@ -241,13 +241,7 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
 
-        #region Get user list
-        public Task GetAlluser() //for return a list of user that singup in our site for admin
-        {
-            var list = userService.GetAllEntity().ToListAsync();    //use the genric interface options and save values in variable
-            return list;
-        }
-        #endregion
+
 
 
         #endregion
