@@ -25,8 +25,7 @@ namespace OurSite.DataLayer.Entities.BaseEntities
 
         [MinLength(10) , MaxLength(10)]
         [DisplayName("کد ملی")]
-        [Required(ErrorMessage = "این فیلد اجباری است")]
-        public string NationalCode { get; set; }
+        public string? NationalCode { get; set; }
 
         [EmailAddress(ErrorMessage = "آدرس ایمیل معتبر نیست")]
         [Required(ErrorMessage = "این فیلد اجباری است")]

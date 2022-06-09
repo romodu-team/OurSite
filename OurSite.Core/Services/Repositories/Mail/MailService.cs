@@ -3,6 +3,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.MailDtos;
 using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.Core.Utilities;
 using System;
@@ -93,7 +94,7 @@ namespace OurSite.Core.Services.Repositories.Mail
                 StreamReader str = new StreamReader(FilePath);
                 string MailText = str.ReadToEnd();
                 str.Close();
-                MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[resetLink]", $"{PathTools.Domain}/ResetPassword?id={request.Parameter}");
+                MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.ToEmail).Replace("[resetLink]", $"{PathTools.Domain}/ResetPasswordFrontPage?id={request.Parameter}");
                 var email = new MimeMessage();
                 email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
                 email.To.Add(MailboxAddress.Parse(request.ToEmail));

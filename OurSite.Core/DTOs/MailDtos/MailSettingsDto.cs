@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.DTOs
+namespace OurSite.Core.DTOs.MailDtos
 {
     public class MailSettingsDto
     {
