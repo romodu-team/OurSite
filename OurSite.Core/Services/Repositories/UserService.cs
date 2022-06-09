@@ -323,20 +323,7 @@ namespace OurSite.Core.Services.Repositories
             return list;
         }
 
-        #region Delete User by admin
-        public async Task<bool> DeleteUser(long id)
-        {
 
-            var user = await userService.DeleteEntity(id);
-            if (user is true)
-            {
-                return true;
-                userService.SaveEntity();
-            }
-            return false;
-
-        }
-        #endregion
 
 
 
@@ -369,6 +356,22 @@ namespace OurSite.Core.Services.Repositories
 
 
         #region User Management By Admin
+
+
+
+        #region Delete User by admin
+        public async Task<bool> DeleteUser(long id)
+        {
+            var user = await userService.DeleteEntity(id); //get id and return true that it means user deleted
+            if (user is true) //if delete
+            {
+                return true;
+                userService.SaveEntity();
+            }
+            return false; //if not
+
+        }
+        #endregion
 
         #endregion
 
