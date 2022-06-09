@@ -1,8 +1,12 @@
 ﻿using System;
 namespace OurSite.Core.DTOs.UserDtos
 {
-	public class ReqViewUserDto
+	public class ResViewuserAdminDto
 	{
+        public long Id { get; set; }
+        public DateTime CreateDate { get; set; }
+        public bool IsRemove { get; set; }
+        public DateTime LastUpdate { get; set; }
         public string UserName { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -18,6 +22,8 @@ namespace OurSite.Core.DTOs.UserDtos
         public accountType? AccountType { get; set; } = accountType.Real;
         public string? BusinessCode { get; set; }
         public string? RegistrationNumber { get; set; }
+
     }
 }
+
 

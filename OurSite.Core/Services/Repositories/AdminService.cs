@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
@@ -239,25 +240,48 @@ namespace OurSite.Core.Services.Repositories
         #endregion
         #endregion
 
-        #region User management
-        public Task AddUser(ReqSingupUserDto userDto)
-        {
-            throw new NotImplementedException();
-        }
 
+        #region User management
+
+
+        #region add
+        //add user by admin
+        [Authorize(Roles = "نقش مدنظر")]
+        public async Task AddUser(ReqSingupUserDto userDto)
+        {
+            //connect user model options to userdto options model
+            User user = new User()
+            {
+                UserName = userDto.UserName,
+                FirstName = userDto.Name,
+                LastName = userDto.Family,
+                Password = userDto.Password,
+                Phone = userDto.phone,
+                Email = userDto.Email,
+                ActivationCode = new Guid().ToString()
+            };
+
+            await userService.AddEntity(user);
+            await userService.SaveEntity();
+            await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
+
+        }
+        #endregion
+
+
+        #region delete user
         public Task<bool> DeleteUser(long id)
         {
             throw new NotImplementedException();
         }
-        public Task<ResViewuserAdminDto> ViewUser(string find)
-        {
-            throw new NotImplementedException();
-        }
-        public Task GetAlluser()
-        {
-            throw new NotImplementedException();
-        }
         #endregion
+
+
+
+
+
+        #endregion
+
 
         #region login
         public async Task<Admin> Login(ReqLoginDto req)
@@ -280,6 +304,7 @@ namespace OurSite.Core.Services.Repositories
    
 
         #endregion
+
 
     }
 }

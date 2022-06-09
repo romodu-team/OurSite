@@ -23,8 +23,11 @@ namespace OurSite.Core.Services.Interfaces
         Task<bool> UpDate(ReqUpdateUserDto userdto);
         Task<RessingupDto> SingUp(ReqSingupUserDto userDto);
 
-        Task<User>ViewProfile(long id);
+        Task<ReqViewUserDto> ViewProfile(long id);
+        Task<User> ViewUser(long id);
         Task<bool> ChangeUserStatus(long userId);
+        Task<List<User>> GetAlluser();
+
 
     }
 }

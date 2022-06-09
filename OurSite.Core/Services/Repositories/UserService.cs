@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.DTOs.MailDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -252,12 +253,32 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region view profile by user
-        public async Task<User> ViewProfile(long id)
+        public async Task<ReqViewUserDto> ViewProfile(long id)
         {
-          var user=  await userService.GetEntity(id);
-            return user;
+           var user = await userService.GetEntity(id);
+            ReqViewUserDto userdto = new ReqViewUserDto();
+            if (user is not null)
+            {
+                userdto.UserName = user.UserName;
+                userdto.FirstName = user.FirstName;
+                userdto.LastName = user.LastName;
+                userdto.NationalCode = user.NationalCode;
+                userdto.Email = user.Email;
+                userdto.Mobile = user.Mobile;
+                userdto.Gender = (gender?)user.Gender;
+                userdto.Address = user.Address;
+                userdto.ImageName = user.ImageName;
+                userdto.Phone = user.Phone;
+                userdto.Birthday = user.Birthday;
+                userdto.ShabaNumbers = user.ShabaNumbers;
+                userdto.AccountType = (DTOs.UserDtos.accountType?)user.AccountType;
+                userdto.BusinessCode = user.BusinessCode;
+                userdto.RegistrationNumber = user.RegistrationNumber;
 
-
+                return userdto;
+            }
+            return null;
+                
         }
 
         #endregion
@@ -280,6 +301,26 @@ namespace OurSite.Core.Services.Repositories
                 return false;
             }
 
+        }
+        #endregion
+
+        #region view user by admin
+        //profile view for admin
+        [Authorize(Roles = "نقش مدنظر")]
+        public async Task<User> ViewUser(long id)
+        {
+            var user = await userService.GetEntity(id);
+            return user;
+
+        }
+        #endregion
+
+
+        #region Get user list
+        public Task<List<User>> GetAlluser() //for return a list of user that singup in our site for admin
+        {
+            var list = userService.GetAllEntity().Where(u => u.IsRemove == false).ToListAsync();    //use the genric interface options and save values in variable
+            return list;
         }
         #endregion
 
