@@ -26,9 +26,12 @@ namespace OurSite.Core.Services.Interfaces
         Task<ReqViewUserDto> ViewProfile(long id);
         Task<User> ViewUser(long id);
         Task<bool> ChangeUserStatus(long userId);
+
+        #region User Mangement by admin
         Task<List<User>> GetAlluser();
         Task<bool> DeleteUser(long id);
         //Task AddUser(ReqSingupUserDto userDto);
+        #endregion
 
 
     }
