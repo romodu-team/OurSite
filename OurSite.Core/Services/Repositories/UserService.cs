@@ -54,7 +54,7 @@ namespace OurSite.Core.Services.Repositories
             }
             else
                 return ResLoginDto.IncorrectData;
-            
+
         }
         #endregion
 
@@ -75,7 +75,7 @@ namespace OurSite.Core.Services.Repositories
 
                 return false;
             }
-            
+
         }
 
         #endregion
@@ -83,10 +83,10 @@ namespace OurSite.Core.Services.Repositories
         #region Send Rest Password Email
         public async Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName)
         {
-            var user =await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
+            var user = await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
             if (user != null)
             {
-              var res= await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter=user.Id.ToString() ,ToEmail=user.Email,UserName=user.UserName});
+                var res = await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter = user.Id.ToString(), ToEmail = user.Email, UserName = user.UserName });
                 if (res)
                     return ResLoginDto.Success;
                 else
@@ -108,7 +108,7 @@ namespace OurSite.Core.Services.Repositories
         #region Check user activation by username
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
-            return await userService.GetAllEntity().AnyAsync(u=>(u.UserName==userName.ToLower().Trim()|| u.Email == userName.ToLower().Trim())&& u.IsActive==true);
+            return await userService.GetAllEntity().AnyAsync(u => (u.UserName == userName.ToLower().Trim() || u.Email == userName.ToLower().Trim()) && u.IsActive == true);
         }
 
         #endregion
@@ -116,7 +116,7 @@ namespace OurSite.Core.Services.Repositories
         #region Get user by Username and password
         public async Task<User> GetUserByUserPass(string username, string password)
         {
-            var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => (u.UserName == username.ToLower().Trim()|| u.Email== username.ToLower().Trim()) && u.Password == password && u.IsRemove==false);
+            var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => (u.UserName == username.ToLower().Trim() || u.Email == username.ToLower().Trim()) && u.Password == password && u.IsRemove == false);
             return user;
         }
 
@@ -172,8 +172,8 @@ namespace OurSite.Core.Services.Repositories
         {
             var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
             if (check == true)
-               return RessingupDto.Exist;
-            
+                return RessingupDto.Exist;
+
             try
             {
                 User user = new User()
@@ -185,26 +185,26 @@ namespace OurSite.Core.Services.Repositories
                     Email = userDto.Email,
                     Phone = userDto.phone,
                     ActivationCode = new Guid().ToString()
-                    
+
 
                 };
                 user.CreateDate = DateTime.Now;
                 user.LastUpdate = user.CreateDate;
                 await userService.AddEntity(user);
                 await userService.SaveEntity();
-                await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode});
+                await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
 
                 return RessingupDto.success;
 
             }
             catch (Exception ex)
             {
-               return RessingupDto.Failed;
+                return RessingupDto.Failed;
 
             }
 
 
-            
+
         }
         #endregion
 
@@ -255,7 +255,7 @@ namespace OurSite.Core.Services.Repositories
         #region view profile by user
         public async Task<ReqViewUserDto> ViewProfile(long id)
         {
-           var user = await userService.GetEntity(id);
+            var user = await userService.GetEntity(id);
             ReqViewUserDto userdto = new ReqViewUserDto();
             if (user is not null)
             {
@@ -278,7 +278,7 @@ namespace OurSite.Core.Services.Repositories
                 return userdto;
             }
             return null;
-                
+
         }
 
         #endregion
@@ -322,6 +322,24 @@ namespace OurSite.Core.Services.Repositories
             var list = userService.GetAllEntity().Where(u => u.IsRemove == false).ToListAsync();    //use the genric interface options and save values in variable
             return list;
         }
+
+        #region Delete User by admin
+        public async Task<bool> DeleteUser(long id)
+        {
+
+            var user = await userService.DeleteEntity(id);
+            if (user is true)
+            {
+                return true;
+                userService.SaveEntity();
+            }
+            return false;
+
+        }
+        #endregion
+
+
+
         #endregion
 
         #region add
@@ -346,6 +364,12 @@ namespace OurSite.Core.Services.Repositories
         //    await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
 
         //}
+        #endregion
+
+
+
+        #region User Management By Admin
+
         #endregion
 
 
