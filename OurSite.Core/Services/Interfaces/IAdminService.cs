@@ -10,7 +10,7 @@ namespace OurSite.Core.Services.Interfaces
     public interface IAdminService : IDisposable
     {
         #region Admin management
-        Task<Role> GetAdminRole(long adminId);
+        //Task<Role> GetAdminRole(long adminId);
         Task<bool> DeleteAdmin(long adminId);
         Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req);
 
@@ -18,6 +18,9 @@ namespace OurSite.Core.Services.Interfaces
         Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req);
 
         Task<bool> IsAdminExist(string UserName, string Email);
+        Task<bool> ResetPassword(ReqResetPassword request);
+        Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName);
+        Task<Admin> GetAdminByEmailOrUserName(string EmailOrUserName);
         #endregion
 
         #region User Management

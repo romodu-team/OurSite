@@ -13,7 +13,7 @@ namespace OurSite.Core.Utilities
 {
     public static class AuthenticationHelper
     {
-        public static string GenrateUserToken(User user,int Expire)
+        public static string GenerateUserToken(User user,int Expire)
         {
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sajjadhaniehfaezeherfanmobinsinamehdi"));
             var signInCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -34,7 +34,7 @@ namespace OurSite.Core.Utilities
             return token;
         }
 
-        public static string GenrateAdminToken(Admin admin,Role role, int Expire)
+        public static string GenerateAdminToken(Admin admin,Role role, int Expire)
         {
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sajjadhaniehfaezeherfanmobinsinamehdi"));
             var signInCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);

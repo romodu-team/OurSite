@@ -35,43 +35,53 @@ namespace OurSite.WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody]ReqLoginDto request)
         {
-            
-            var res = await userservice.LoginUser(request);
-            switch (res)
+            if (ModelState.IsValid)
             {
-                case ResLoginDto.Success:
-                 
-                    var user =await userservice.GetUserByUserPass(request.UserName, request.Password);
-                    var token = AuthenticationHelper.GenrateUserToken(user, 3);
-                    HttpContext.Response.StatusCode = 200;
-                    return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName },"ورود با موفقیت انجام شد");
-                case ResLoginDto.IncorrectData:
+                var res = await userservice.LoginUser(request);
+                switch (res)
+                {
+                    case ResLoginDto.Success:
 
-                    return JsonStatusResponse.NotFound("نام کاربری یا رمز عبور اشتباه است");
-               
-                case ResLoginDto.NotActived:
-                    return JsonStatusResponse.Error("حساب کاربری شما فعال نیست");
-                default:
-                    HttpContext.Response.StatusCode = 400;
-                    return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+                        var user = await userservice.GetUserByUserPass(request.UserName, request.Password);
+                        var token = AuthenticationHelper.GenerateUserToken(user, 3);
+                        HttpContext.Response.StatusCode = 200;
+                        return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName }, "ورود با موفقیت انجام شد");
+                    case ResLoginDto.IncorrectData:
 
+                        return JsonStatusResponse.NotFound("نام کاربری یا رمز عبور اشتباه است");
+
+                    case ResLoginDto.NotActived:
+                        return JsonStatusResponse.Error("حساب کاربری شما فعال نیست");
+
+                    case ResLoginDto.Error:
+                        return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
+                    default:
+                        HttpContext.Response.StatusCode = 400;
+                        return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+
+                }
             }
-        }
-        #endregion
-
-        #region Forget Password
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody]ReqForgotPassword request)
-        {
-            var res =await userservice.ForgotPassword(request);
-            if (res)
-                return JsonStatusResponse.Success("رمز عبور با موفقیت تغییر کرد");
-            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+            return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
         }
         #endregion
 
         #region Reset Password
-        [HttpPost("SendEmail-ResetPass")]
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody]ReqResetPassword request)
+        {
+            if (ModelState.IsValid)
+            {
+                var res = await userservice.ResetPassword(request);
+                if (res)
+                    return JsonStatusResponse.Success("رمز عبور با موفقیت تغییر کرد");
+                return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+            }
+            return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
+        }
+        #endregion
+
+        #region Send Reset Password Email
+        [HttpPost("SendEmail-ResetUserPass")]
         public async Task<IActionResult> SendResetPassLink([FromBody]string EmailOrUserName)
         {
             var res = await userservice.SendResetPassEmail(EmailOrUserName);
@@ -98,7 +108,7 @@ namespace OurSite.WebApi.Controllers
             {
                 case ResActiveUser.Success:
                     return JsonStatusResponse.Success("حساب کاربری شما با موفقیت فعال شد");
-                case ResActiveUser.Failed:
+                case ResActiveUser.NotFoundOrActivated:
                     return JsonStatusResponse.Success("لینک فعالسازی نامعتبر است یا حساب کاربری قبلا فعال شده است");
                 default:
                     return JsonStatusResponse.Success("عملیات با شکست مواجه شد");
