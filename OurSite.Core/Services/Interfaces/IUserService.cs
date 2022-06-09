@@ -27,6 +27,8 @@ namespace OurSite.Core.Services.Interfaces
         Task<User> ViewUser(long id);
         Task<bool> ChangeUserStatus(long userId);
         Task<List<User>> GetAlluser();
+        Task<bool> DeleteUser(long id);
+        Task AddUser(ReqSingupUserDto userDto);
 
 
     }
