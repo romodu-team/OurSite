@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using OurSite.DataLayer.Entities.BaseEntities;
-using OurSite.DataLayer.Entities.CheckBoxItem;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,6 +31,7 @@ namespace OurSite.DataLayer.Entities.ConsultationRequest
         [Required(ErrorMessage = "لطفا توضیحات را وارد کنید")]
         public string Expration { get; set; }
 
+        [DisplayName("نام فایل ارسالی")]
         public string? SubmittedFileName { get; set; }
 
     }
