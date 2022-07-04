@@ -89,11 +89,10 @@ namespace OurSite.Core.Services.Repositories
                 admin.UserName = req.UserName;
 
             //update admin role
-            if (!string.IsNullOrWhiteSpace(req.RoleName))
+            if (!string.IsNullOrWhiteSpace(req.Roleid))
             {
-                var role = await roleService.GetRoleByName(req.RoleName);
                 var accountinrole =await roleService.GetAdminInRole(req.adminId);
-                accountinrole.RoleId = role.Id;
+                accountinrole.RoleId =Convert.ToInt64( req.Roleid);
                 var res=await roleService.UpdateAdminRole(accountinrole);
 
 
