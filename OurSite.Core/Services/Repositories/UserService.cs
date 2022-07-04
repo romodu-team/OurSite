@@ -54,7 +54,7 @@ namespace OurSite.Core.Services.Repositories
                 return RessingupDto.Exist;
 
             try
-            {
+            {//
                 User user = new User()
                 {
                     FirstName = userDto.Name,
