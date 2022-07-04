@@ -11,7 +11,7 @@ namespace OurSite.Core.DTOs.UserDtos
         public string Password { get; set; }
         [Compare("Password" , ErrorMessage = "رمز‌های عبور با یکدیگر مغایرت ندارند")]
         public string ConmfrimPassword { get; set; }
-        public string phone { get; set; }
+        public string Mobile { get; set; }
         public string Email { get; set; }
      //   public singup Singup { get; set; }
         public long? AdminRoleId { get; set; }
