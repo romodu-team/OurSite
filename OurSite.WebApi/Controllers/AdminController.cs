@@ -208,7 +208,7 @@ namespace OurSite.WebApi.Controllers
             return JsonStatusResponse.Success(roles, "موفق");
         }
         #endregion
-
+        [HttpGet("view-user/{userid}")]
         public async Task<IActionResult> ViewUser(long userid)
         {
            var user = await userService.ViewUser(userid);
@@ -241,7 +241,7 @@ namespace OurSite.WebApi.Controllers
         }
 
 
-
+        [HttpGet("view-all-users")]
         public async Task<IActionResult> GetAllUser()
         {
             var users = await userService.GetAlluser();

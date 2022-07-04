@@ -59,6 +59,10 @@ builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
 builder.Services.Configure<MailSettingsDto>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
+builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
+
 
 #endregion
 #region Autentication
