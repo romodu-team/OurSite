@@ -62,7 +62,7 @@ namespace OurSite.Core.Services.Repositories
                     UserName = userDto.UserName,
                     Password = userDto.Password,
                     Email = userDto.Email,
-                    Phone = userDto.phone,
+                    Mobile = userDto.Mobile,
                     ActivationCode = new Guid().ToString()
 
 
