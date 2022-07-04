@@ -54,16 +54,16 @@ namespace OurSite.Core.Services.Repositories
                 return RessingupDto.Exist;
 
             try
-            {//
+            {
                 User user = new User()
                 {
                     FirstName = userDto.Name,
                     LastName = userDto.Family,
                     UserName = userDto.UserName,
-                    Password = userDto.Password,
+                    Password =passwordHelper.EncodePasswordMd5(userDto.Password),
                     Email = userDto.Email,
                     Mobile = userDto.Mobile,
-                    ActivationCode = new Guid().ToString()
+                    ActivationCode = Guid.NewGuid().ToString()
 
 
                 };
@@ -217,21 +217,36 @@ namespace OurSite.Core.Services.Repositories
             var user = await userService.GetEntity(userdto.id);
             if (user != null)
             {
-                user.FirstName = userdto.FirstName;
-                user.LastName = userdto.LastName;
-                user.NationalCode = userdto.NationalCode;
-                user.Email = userdto.Email;
-                user.Mobile = userdto.Mobile;
-                user.Password = userdto.Password;
-                user.Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender;
-                user.Address = userdto.Address;
-                user.ImageName = userdto.ImageName;
-                user.Birthday = userdto.Birthday;
-                user.Phone = userdto.Phone;
-                user.ShabaNumbers = userdto.ShabaNumbers;
-                user.AccountType = (DataLayer.Entities.Accounts.accountType)userdto.AccountType;
-                user.BusinessCode = userdto.BusinessCode;
-                user.RegistrationNumber = userdto.RegistrationNumber;
+                if(!string.IsNullOrWhiteSpace(userdto.FirstName))
+                    user.FirstName = userdto.FirstName;
+                if(!string.IsNullOrWhiteSpace(userdto.LastName))
+                    user.LastName = userdto.LastName;
+                if(!string.IsNullOrWhiteSpace(userdto.NationalCode))
+                    user.NationalCode = userdto.NationalCode;
+                if(!string.IsNullOrWhiteSpace(userdto.Email))
+                    user.Email = userdto.Email;
+                if(!string.IsNullOrWhiteSpace(userdto.Mobile))
+                    user.Mobile = userdto.Mobile;
+                if(!string.IsNullOrWhiteSpace(userdto.Password))
+                    user.Password = userdto.Password;
+                if(userdto.Gender is not null)
+                    user.Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender;
+                if(!string.IsNullOrWhiteSpace(userdto.Address))
+                    user.Address = userdto.Address;
+                if(!string.IsNullOrWhiteSpace(userdto.ImageName))
+                    user.ImageName = userdto.ImageName;
+                if(!string.IsNullOrWhiteSpace(userdto.Birthday))
+                    user.Birthday = userdto.Birthday;
+                if(!string.IsNullOrWhiteSpace(userdto.Phone))
+                    user.Phone = userdto.Phone;
+                if(!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
+                    user.ShabaNumbers = userdto.ShabaNumbers;
+                if(userdto.AccountType is not null)
+                    user.AccountType = (DataLayer.Entities.Accounts.accountType)userdto.AccountType;
+                if(!string.IsNullOrWhiteSpace(userdto.BusinessCode))
+                    user.BusinessCode = userdto.BusinessCode;
+                if(!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
+                    user.RegistrationNumber = userdto.RegistrationNumber;
                 try
                 {
 
