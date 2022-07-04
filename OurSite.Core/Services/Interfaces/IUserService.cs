@@ -1,10 +1,5 @@
 ﻿using OurSite.Core.DTOs;
 using OurSite.DataLayer.Entities.Accounts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OurSite.Core.DTOs.UserDtos;
 
 namespace OurSite.Core.Services.Interfaces
@@ -26,7 +21,12 @@ namespace OurSite.Core.Services.Interfaces
         Task<ReqViewUserDto> ViewProfile(long id);
         Task<User> ViewUser(long id);
         Task<bool> ChangeUserStatus(long userId);
+
+        #region User Mangement by admin
         Task<List<User>> GetAlluser();
+        Task<bool> DeleteUser(long id);
+        //Task AddUser(ReqSingupUserDto userDto);
+        #endregion
 
 
     }

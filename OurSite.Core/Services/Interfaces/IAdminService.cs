@@ -23,11 +23,6 @@ namespace OurSite.Core.Services.Interfaces
         Task<Admin> GetAdminByEmailOrUserName(string EmailOrUserName);
         #endregion
 
-        #region User Management
-        Task<bool> DeleteUser(long id);
-        Task AddUser(ReqSingupUserDto userDto);
-        #endregion
-
         #region Login
         Task<Admin> Login(ReqLoginDto req);
         #endregion
