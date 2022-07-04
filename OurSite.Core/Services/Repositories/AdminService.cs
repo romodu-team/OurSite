@@ -148,7 +148,7 @@ namespace OurSite.Core.Services.Repositories
                 Email = req.Email,
                 FirstName=req.Name,
                 LastName=req.Family,
-                Mobile=req.phone,
+                Mobile=req.Mobile,
                 Password=passwordHelper.EncodePasswordMd5(req.Password),
                 CreateDate=DateTime.Now,
                 LastUpdate=DateTime.Now
