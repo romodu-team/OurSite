@@ -23,6 +23,7 @@ namespace OurSite.Core.Services.Repositories
     public class UserService : IUserService
     {
         #region constructor
+        //
         private readonly IGenericReopsitories<User> userService;
         private IPasswordHelper passwordHelper;
         private IMailService mailService;
@@ -32,6 +33,67 @@ namespace OurSite.Core.Services.Repositories
             this.passwordHelper = passwordHelper;
             this.mailService = mailService;
         }
+        #endregion
+
+        #region Dispose
+        public void Dispose()
+        {
+            userService?.Dispose();
+        }
+
+
+        #endregion
+
+        #region User Service
+
+        #region singup
+        public async Task<RessingupDto> SingUp(ReqSingupUserDto userDto)
+        {
+            var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
+            if (check == true)
+                return RessingupDto.Exist;
+
+            try
+            {
+                User user = new User()
+                {
+                    FirstName = userDto.Name,
+                    LastName = userDto.Family,
+                    UserName = userDto.UserName,
+                    Password = userDto.Password,
+                    Email = userDto.Email,
+                    Phone = userDto.phone,
+                    ActivationCode = new Guid().ToString()
+
+
+                };
+                user.CreateDate = DateTime.Now;
+                user.LastUpdate = user.CreateDate;
+                await userService.AddEntity(user);
+                await userService.SaveEntity();
+                await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
+
+                return RessingupDto.success;
+
+            }
+            catch (Exception ex)
+            {
+                return RessingupDto.Failed;
+
+            }
+
+
+
+        }
+        #endregion
+
+        #region SingUp exist error
+        public async Task<bool> GetUserEmailandUserName(string Email, string UserName)
+        {
+            return await userService.GetAllEntity().AnyAsync(x => x.Email == Email || x.UserName == UserName);
+
+        }
+
         #endregion
 
         #region Login
@@ -54,7 +116,7 @@ namespace OurSite.Core.Services.Repositories
             }
             else
                 return ResLoginDto.IncorrectData;
-            
+
         }
         #endregion
 
@@ -75,7 +137,7 @@ namespace OurSite.Core.Services.Repositories
 
                 return false;
             }
-            
+
         }
 
         #endregion
@@ -83,10 +145,10 @@ namespace OurSite.Core.Services.Repositories
         #region Send Rest Password Email
         public async Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName)
         {
-            var user =await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
+            var user = await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
             if (user != null)
             {
-              var res= await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter=user.Id.ToString() ,ToEmail=user.Email,UserName=user.UserName});
+                var res = await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter = user.Id.ToString(), ToEmail = user.Email, UserName = user.UserName });
                 if (res)
                     return ResLoginDto.Success;
                 else
@@ -108,7 +170,7 @@ namespace OurSite.Core.Services.Repositories
         #region Check user activation by username
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
-            return await userService.GetAllEntity().AnyAsync(u=>(u.UserName==userName.ToLower().Trim()|| u.Email == userName.ToLower().Trim())&& u.IsActive==true);
+            return await userService.GetAllEntity().AnyAsync(u => (u.UserName == userName.ToLower().Trim() || u.Email == userName.ToLower().Trim()) && u.IsActive == true);
         }
 
         #endregion
@@ -116,7 +178,7 @@ namespace OurSite.Core.Services.Repositories
         #region Get user by Username and password
         public async Task<User> GetUserByUserPass(string username, string password)
         {
-            var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => (u.UserName == username.ToLower().Trim()|| u.Email== username.ToLower().Trim()) && u.Password == password && u.IsRemove==false);
+            var user = await userService.GetAllEntity().SingleOrDefaultAsync(u => (u.UserName == username.ToLower().Trim() || u.Email == username.ToLower().Trim()) && u.Password == password && u.IsRemove == false);
             return user;
         }
 
@@ -147,65 +209,6 @@ namespace OurSite.Core.Services.Repositories
             return ResActiveUser.NotFoundOrActivated;
         }
 
-        #endregion
-
-        #region Dispose
-        public void Dispose()
-        {
-            userService?.Dispose();
-        }
-
-
-        #endregion
-
-        #region SingUp exist error
-        public async Task<bool> GetUserEmailandUserName(string Email, string UserName)
-        {
-            return await userService.GetAllEntity().AnyAsync(x => x.Email == Email || x.UserName == UserName);
-
-        }
-
-        #endregion
-
-        #region singup
-        public async Task<RessingupDto> SingUp(ReqSingupUserDto userDto)
-        {
-            var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
-            if (check == true)
-               return RessingupDto.Exist;
-            
-            try
-            {
-                User user = new User()
-                {
-                    FirstName = userDto.Name,
-                    LastName = userDto.Family,
-                    UserName = userDto.UserName,
-                    Password = userDto.Password,
-                    Email = userDto.Email,
-                    Phone = userDto.phone,
-                    ActivationCode = new Guid().ToString()
-                    
-
-                };
-                user.CreateDate = DateTime.Now;
-                user.LastUpdate = user.CreateDate;
-                await userService.AddEntity(user);
-                await userService.SaveEntity();
-                await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode});
-
-                return RessingupDto.success;
-
-            }
-            catch (Exception ex)
-            {
-               return RessingupDto.Failed;
-
-            }
-
-
-            
-        }
         #endregion
 
         #region Update profile by user
@@ -255,7 +258,7 @@ namespace OurSite.Core.Services.Repositories
         #region view profile by user
         public async Task<ReqViewUserDto> ViewProfile(long id)
         {
-           var user = await userService.GetEntity(id);
+            var user = await userService.GetEntity(id);
             ReqViewUserDto userdto = new ReqViewUserDto();
             if (user is not null)
             {
@@ -278,7 +281,7 @@ namespace OurSite.Core.Services.Repositories
                 return userdto;
             }
             return null;
-                
+
         }
 
         #endregion
@@ -304,7 +307,60 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region view user by admin
+        #endregion
+
+        #region User Management By Admin
+
+
+
+        #region Delete User
+        public async Task<bool> DeleteUser(long id)
+        {
+            var user = await userService.DeleteEntity(id); //get id and return true that it means user deleted
+            if (user is true) //if delete
+            {
+                return true;
+                userService.SaveEntity();
+            }
+            return false; //if not
+
+        }
+        #endregion
+
+        #region Add User
+        ////add user by admin
+        //[Authorize(Roles = "نقش مدنظر")]
+        //public async Task AddUser(ReqSingupUserDto userDto)
+        //{
+        //    //connect user model options to userdto options model
+        //    User user = new User()
+        //    {
+        //        UserName = userDto.UserName,
+        //        FirstName = userDto.Name,
+        //        LastName = userDto.Family,
+        //        Password = userDto.Password,
+        //        Phone = userDto.phone,
+        //        Email = userDto.Email,
+        //        ActivationCode = new Guid().ToString()
+        //    };
+
+        //    await userService.AddEntity(user);
+        //    await userService.SaveEntity();
+        //    await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
+
+        //}
+        #endregion
+
+        #region Get user list 
+        public Task<List<User>> GetAlluser() //for return a list of user that singup in our site for admin
+        {
+            var list = userService.GetAllEntity().Where(u => u.IsRemove == false).ToListAsync();    //use the genric interface options and save values in variable
+            return list;
+        }
+
+        #endregion
+
+        #region View User Profile
         //profile view for admin
         [Authorize(Roles = "نقش مدنظر")]
         public async Task<User> ViewUser(long id)
@@ -316,13 +372,9 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
 
-        #region Get user list
-        public Task<List<User>> GetAlluser() //for return a list of user that singup in our site for admin
-        {
-            var list = userService.GetAllEntity().Where(u => u.IsRemove == false).ToListAsync();    //use the genric interface options and save values in variable
-            return list;
-        }
+
         #endregion
+
 
     }
 }
