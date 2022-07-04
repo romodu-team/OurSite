@@ -108,6 +108,26 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
+        #region Send Reset Password Email
+        [HttpPost("SendEmail-ResetUserPass")]
+        public async Task<IActionResult> SendResetPassLink([FromBody] string EmailOrUserName)
+        {
+            var res = await adminService.SendResetPassEmail(EmailOrUserName);
+            switch (res)
+            {
+                case ResLoginDto.Success:
+                    return JsonStatusResponse.Success("ایمیل بازنشانی رمز عبور با موفقیت ارسال شد");
+                case ResLoginDto.IncorrectData:
+                    return JsonStatusResponse.NotFound("حساب کاربری یافت نشد");
+
+                default:
+                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+            }
+
+        }
+        #endregion
+
+
         #endregion
 
         #region Admin Management
@@ -189,25 +209,6 @@ namespace OurSite.WebApi.Controllers
             if (roles is null)
                 return JsonStatusResponse.NotFound("هیچ نقشی پیدا نشد");
             return JsonStatusResponse.Success(roles, "موفق");
-        }
-        #endregion
-
-        #region Send Reset Password Email
-        [HttpPost("SendEmail-ResetUserPass")]
-        public async Task<IActionResult> SendResetPassLink([FromBody] string EmailOrUserName)
-        {
-            var res = await adminService.SendResetPassEmail(EmailOrUserName);
-            switch (res)
-            {
-                case ResLoginDto.Success:
-                    return JsonStatusResponse.Success("ایمیل بازنشانی رمز عبور با موفقیت ارسال شد");
-                case ResLoginDto.IncorrectData:
-                    return JsonStatusResponse.NotFound("حساب کاربری یافت نشد");
-
-                default:
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-            }
-
         }
         #endregion
 
