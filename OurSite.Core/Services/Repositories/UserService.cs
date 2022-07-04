@@ -23,6 +23,7 @@ namespace OurSite.Core.Services.Repositories
     public class UserService : IUserService
     {
         #region constructor
+        //
         private readonly IGenericReopsitories<User> userService;
         private IPasswordHelper passwordHelper;
         private IMailService mailService;
