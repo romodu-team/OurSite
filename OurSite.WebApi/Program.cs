@@ -75,6 +75,7 @@ options.TokenValidationParameters = new TokenValidationParameters()
 #endregion
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddAuthorization();
 var app = builder.Build();
 

@@ -15,6 +15,7 @@ namespace OurSite.DataLayer.Entities.TicketMessageing
         public string? SubmittedTicketFileName { get; set; }
         public bool IsSeen { get; set; }
         public long UserId { get; set; }
+        public long TicketId { get; set; }
         #endregion
 
         #region Realation

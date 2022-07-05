@@ -15,6 +15,7 @@ namespace OurSite.DataLayer.Entities.Ticketing
         public string TicketTitle { get; set; }
         public string subject { get; set; }
         public bool TicketSatate { get; set; }
+        public long DepartmentId { get; set; }
         #endregion
 
         #region Realation

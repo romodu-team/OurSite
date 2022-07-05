@@ -16,7 +16,7 @@ namespace OurSite.DataLayer.Entities.Departments
         #endregion
 
         #region Realation
-        public List<Ticket> Ticket { get; set; }
+        public ICollection<Ticket> Ticket { get; set; }
         #endregion 
     }
 }

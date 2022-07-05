@@ -13,6 +13,7 @@ namespace OurSite.Core.DTOs
         public string? SubmittedTicketFileName { get; set; }
         public bool IsSeen { get; set; }
         public long UserId { get; set; }
+        public long TicketId { get; set; }
         public IFormFile? SubmittedTicketFile { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace OurSite.Core.DTOs
         public string TicketTitle { get; set; }
         public string subject { get; set; }
         public bool TicketSatate { get; set; }
+        public long DepartmentId { get; set; }
     }
 }
