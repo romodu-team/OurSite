@@ -12,5 +12,6 @@ namespace OurSite.Core.Utilities
 
         public const string ConsultationFile = Domain + "/upload/";
 
+        public static string FileUploadPath = Directory.GetCurrentDirectory() + "//Content//File";
     }
 }

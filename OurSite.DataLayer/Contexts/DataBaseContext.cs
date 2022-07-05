@@ -26,7 +26,18 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<Department> departments { get; set; }
         public DbSet<Ticket> tickets { get; set; }
         public DbSet<TicketMessage> ticketMessages { get; set; }
-        
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var cascadeFKs = modelBuilder.Model.GetEntityTypes()
+       .SelectMany(t => t.GetForeignKeys())
+       .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+
+            foreach (var fk in cascadeFKs)
+                fk.DeleteBehavior = DeleteBehavior.Restrict;
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
 

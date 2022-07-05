@@ -9,6 +9,6 @@ namespace OurSite.Core.Services.Interfaces
 {
     public interface ITicketService : IDisposable
     {
-        Task<bool> createTicket(TicketDto ticketDto);
+        Task<ResTicketDto> createTicket(TicketDto ticketDto);
     }
 }

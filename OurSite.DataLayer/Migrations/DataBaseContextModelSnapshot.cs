@@ -86,7 +86,7 @@ namespace OurSite.DataLayer.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("OurSite.DataLayer.Entities.BaseEntities.BaseEntityAccount", b =>
+            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.Admin", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -103,10 +103,6 @@ namespace OurSite.DataLayer.Migrations
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -152,9 +148,95 @@ namespace OurSite.DataLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BaseEntityAccount");
+                    b.ToTable("Admins");
+                });
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseEntityAccount");
+            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.User", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ActivationCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(800)
+                        .HasColumnType("nvarchar(800)");
+
+                    b.Property<string>("Birthday")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BusinessCode")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRemove")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Mobile")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NationalCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegistrationNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShabaNumbers")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.ConsultationRequest.ConsultationRequest", b =>
@@ -287,26 +369,32 @@ namespace OurSite.DataLayer.Migrations
                     b.Property<long>("DepartmentId")
                         .HasColumnType("bigint");
 
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsRemove")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("TicketSatate")
-                        .HasColumnType("bit");
+                    b.Property<string>("TicketSubject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TicketTitle")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("subject")
+                    b.Property<long?>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("tickets");
                 });
@@ -341,53 +429,14 @@ namespace OurSite.DataLayer.Migrations
                     b.Property<long>("TicketId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("UserId")
+                    b.Property<long>("UserOrAdminId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TicketId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("ticketMessages");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.Admin", b =>
-                {
-                    b.HasBaseType("OurSite.DataLayer.Entities.BaseEntities.BaseEntityAccount");
-
-                    b.HasDiscriminator().HasValue("Admin");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.User", b =>
-                {
-                    b.HasBaseType("OurSite.DataLayer.Entities.BaseEntities.BaseEntityAccount");
-
-                    b.Property<int>("AccountType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ActivationCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BusinessCode")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RegistrationNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShabaNumbers")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("User");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Access.AccounInRole", b =>
@@ -395,13 +444,13 @@ namespace OurSite.DataLayer.Migrations
                     b.HasOne("OurSite.DataLayer.Entities.Accounts.Admin", "Admin")
                         .WithMany("AccounInRoles")
                         .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("OurSite.DataLayer.Entities.Access.Role", "Role")
                         .WithMany("AccounInRoles")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Admin");
@@ -414,10 +463,18 @@ namespace OurSite.DataLayer.Migrations
                     b.HasOne("OurSite.DataLayer.Entities.Departments.Department", "Department")
                         .WithMany("Ticket")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OurSite.DataLayer.Entities.Accounts.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Department");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.TicketMessageing.TicketMessage", b =>
@@ -425,21 +482,18 @@ namespace OurSite.DataLayer.Migrations
                     b.HasOne("OurSite.DataLayer.Entities.Ticketing.Ticket", "Ticket")
                         .WithMany("TicketMessages")
                         .HasForeignKey("TicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OurSite.DataLayer.Entities.BaseEntities.BaseEntityAccount", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Ticket");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Role", b =>
+                {
+                    b.Navigation("AccounInRoles");
+                });
+
+            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.Admin", b =>
                 {
                     b.Navigation("AccounInRoles");
                 });
@@ -452,11 +506,6 @@ namespace OurSite.DataLayer.Migrations
             modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>
                 {
                     b.Navigation("TicketMessages");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.Admin", b =>
-                {
-                    b.Navigation("AccounInRoles");
                 });
 #pragma warning restore 612, 618
         }

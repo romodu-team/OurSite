@@ -11,9 +11,9 @@ namespace OurSite.Core.DTOs
     {
         public string MessageText { get; set; }
         public string? SubmittedTicketFileName { get; set; }
-        public bool IsSeen { get; set; }
-        public long UserId { get; set; }
-        public long TicketId { get; set; }
+        public long UserOrAdminId { get; set; }
+        public long? TicketId { get; set; }
         public IFormFile? SubmittedTicketFile { get; set; }
+
     }
 }
