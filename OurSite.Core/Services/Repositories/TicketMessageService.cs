@@ -47,9 +47,5 @@ namespace OurSite.Core.Services.Repositories
             throw new NotImplementedException();
         }
         #endregion
-        //public Task<bool> SendTicketMessage(SendTicketMessageDto sendTicketMessageDto)
-        //{
-
-        //}
     }
 }

@@ -13,7 +13,7 @@ namespace OurSite.DataLayer.Entities.Ticketing
     {
         #region Properties
         public string TicketTitle { get; set; }
-        public string subject { get; set; }
+        public string TicketSubject { get; set; }
         public bool TicketSatate { get; set; }
         public long DepartmentId { get; set; }
         #endregion
