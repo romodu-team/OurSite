@@ -11,7 +11,7 @@ namespace OurSite.Core.Services.Interfaces
 {
     public interface IRoleService:IDisposable
     {
-        Task<bool> AddRole(RoleDto role);
+        Task<ResAddRole> AddRole(RoleDto role);
         Task<bool> RemoveRole(long RoleId);
         Task<ResUpdateRole> UpdateRole(ReqUpdateRoleDto reqUpdate);
         Task<RoleDto> GetRoleById(long RoleId);

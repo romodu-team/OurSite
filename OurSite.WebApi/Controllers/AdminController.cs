@@ -158,9 +158,24 @@ namespace OurSite.WebApi.Controllers
         public async Task<IActionResult> AddRole([FromBody] RoleDto role)
         {
             var res = await roleService.AddRole(role);
-            if (res)
-                return JsonStatusResponse.Success("نقش با موفقیت اضافه شد");
-            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+            switch (res)
+            {
+                case ResAddRole.Success:
+                    return JsonStatusResponse.Success("نقش با موفقیت اضافه شد");
+                    break;
+                case ResAddRole.Faild:
+                    return JsonStatusResponse.Error("اضافه کردن نقش جدید با خطا مواجه شد. مجددا تلاش نمایید.");
+                    break;
+
+                 case ResAddRole.InvalidInput:
+                    return JsonStatusResponse.Error("فیلد‌های عنوان و تایتل نمی‌تواند خالی باشد.");
+                    break;
+                case ResAddRole.Exist:
+                    return JsonStatusResponse.Error("این نقش قبلا اضافه شده است.");
+                default:
+                    return JsonStatusResponse.Error("عملیات با خطا مواجه شد.");
+                    break;
+            }
         }
 
         [Authorize(Roles = "General Manager")] //remove role
