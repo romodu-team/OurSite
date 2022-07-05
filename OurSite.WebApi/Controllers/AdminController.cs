@@ -28,6 +28,7 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Admin activities
+
         #region login
         [HttpPost("login-Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] ReqLoginDto reqLogin)
@@ -131,6 +132,8 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Admin Management
+
+        #region Delete Admin Monharf
         [Authorize(Roles = "General Manager")]
         [HttpDelete("delete-admin")]
         public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
@@ -140,6 +143,9 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.Success("با موفقیت حذف شد");
             return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
         }
+        #endregion
+
+        #region found admin by id
         [Authorize(Roles = "General Manager")]
         [HttpGet("view-admin/{adminId}")]
         public async Task<IActionResult> GetAdmin([FromRoute] long adminId)
@@ -152,7 +158,11 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
+        #endregion
+
         #region Role Management
+
+        #region Add new role
         [Authorize(Roles = "General Manager")] //add new role
         [HttpPost("add-role")]
         public async Task<IActionResult> AddRole([FromBody] RoleDto role)
@@ -167,7 +177,7 @@ namespace OurSite.WebApi.Controllers
                     return JsonStatusResponse.Error("اضافه کردن نقش جدید با خطا مواجه شد. مجددا تلاش نمایید.");
                     break;
 
-                 case ResAddRole.InvalidInput:
+                case ResAddRole.InvalidInput:
                     return JsonStatusResponse.Error("فیلد‌های عنوان و تایتل نمی‌تواند خالی باشد.");
                     break;
                 case ResAddRole.Exist:
@@ -177,7 +187,9 @@ namespace OurSite.WebApi.Controllers
                     break;
             }
         }
+        #endregion
 
+        #region Delete a role
         [Authorize(Roles = "General Manager")] //remove role
         [HttpDelete("delete-role")]
         public async Task<IActionResult> RemoveRole([FromBody] long RoleId)
@@ -205,7 +217,9 @@ namespace OurSite.WebApi.Controllers
                     return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
             }
         }
+        #endregion
 
+        #region Found role by role id
         [Authorize(Roles = "General Manager")] //Find role by id
         [HttpGet("view-Role/{RoleId}")]
         public async Task<IActionResult> GetRoleById([FromRoute] long RoleId)
@@ -215,7 +229,9 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.NotFound("نقش مورد نظر پیدا نشد");
             return JsonStatusResponse.Success(role, "موفق");
         }
+        #endregion
 
+        #region role list
         [Authorize(Roles = "General Manager")] //find all role list
         [HttpGet("view-Roles")]
         public async Task<IActionResult> GetAllRoles()
@@ -227,7 +243,11 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
+        #endregion
+
         #region User management
+
+        #region View user profile by admin
         [HttpGet("view-user/{userid}")] //view user by admin
         public async Task<IActionResult> ViewUser(long userid)
         {
@@ -238,8 +258,9 @@ namespace OurSite.WebApi.Controllers
 
             return JsonStatusResponse.Error(message: "کاربر پیدا نشد");
         }
+        #endregion
 
-
+        #region User list
         [HttpGet("view-all-users")] //Get user list
         public async Task<IActionResult> GetAllUser()
         {
@@ -251,9 +272,9 @@ namespace OurSite.WebApi.Controllers
             return JsonStatusResponse.NotFound(message: "کاربری یافت نشد");
 
         }
+        #endregion
 
-
-        
+        #region Change user status
         [Authorize(Roles = "General Manager,Admin")]
         [HttpGet("change-user-status/{userId}")]
         public async Task<IActionResult> ChangeUserStatus([FromRoute] long userId)
@@ -263,6 +284,8 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.Success("وضعیت کاربر تغییر کرد");
             return JsonStatusResponse.Error("عملیات نا موفق بود");
         }
+        #endregion
+
         #endregion
 
 
