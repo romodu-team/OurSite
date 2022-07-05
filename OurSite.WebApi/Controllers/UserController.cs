@@ -117,7 +117,8 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Singup 
-        public async Task<IActionResult> SingupUser(ReqSingupUserDto userDto)
+        [HttpPost("signUp-user")]
+        public async Task<IActionResult> SingupUser([FromBody]ReqSingupUserDto userDto)
         {
             var add = await userservice.SingUp(userDto);
             switch (add)

@@ -54,7 +54,7 @@ namespace OurSite.Core.Services.Repositories
                 return RessingupDto.Exist;
 
             try
-            {
+            {//
                 User user = new User()
                 {
                     FirstName = userDto.Name,
@@ -62,7 +62,7 @@ namespace OurSite.Core.Services.Repositories
                     UserName = userDto.UserName,
                     Password = userDto.Password,
                     Email = userDto.Email,
-                    Phone = userDto.phone,
+                    Mobile = userDto.Mobile,
                     ActivationCode = new Guid().ToString()
 
 
