@@ -36,15 +36,16 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Admin management
-        public async Task<bool> DeleteAdmin(long adminId)
+        #region Delete Admin
+        public async Task<bool> DeleteAdmin(long adminId)             //its return true/false -We do not have a real deletion
         {
-            
+
             try
             {
                 await adminRepository.DeleteEntity(adminId);
                 await adminRepository.SaveEntity();
                 var res = await roleService.DeleteAdminRole(adminId);
-                
+
                 return res;
             }
             catch (Exception)
@@ -53,14 +54,16 @@ namespace OurSite.Core.Services.Repositories
                 return false;
             }
         }
+        #endregion
+
 
         //public async Task<Role> GetAdminRole(long adminId)
         //{
         //    var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove==false);
         //    return role.Role;
         //}
-        
 
+        #region Update admin profile
         public async Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req)
         {
             var admin = await adminRepository.GetEntity(req.adminId);
@@ -91,9 +94,9 @@ namespace OurSite.Core.Services.Repositories
             //update admin role
             if (!string.IsNullOrWhiteSpace(req.Roleid))
             {
-                var accountinrole =await roleService.GetAdminInRole(req.adminId);
-                accountinrole.RoleId =Convert.ToInt64( req.Roleid);
-                var res=await roleService.UpdateAdminRole(accountinrole);
+                var accountinrole = await roleService.GetAdminInRole(req.adminId);
+                accountinrole.RoleId = Convert.ToInt64(req.Roleid);
+                var res = await roleService.UpdateAdminRole(accountinrole);
 
 
             }
@@ -110,7 +113,9 @@ namespace OurSite.Core.Services.Repositories
                 return resUpdateAdmin.Error;
             }
         }
-   
+
+        #endregion
+
         public async Task<ResViewAdminDto> GetAdminById(long adminId)
         {
             var admin =await adminRepository.GetEntity(adminId);
