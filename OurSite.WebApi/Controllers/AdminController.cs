@@ -49,7 +49,7 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region singup
-        [Authorize(Roles = "General Manager")]
+        //[Authorize(Roles = "General Manager")]
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] ReqSingupUserDto req)
         {
@@ -284,6 +284,30 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.Success("وضعیت کاربر تغییر کرد");
             return JsonStatusResponse.Error("عملیات نا موفق بود");
         }
+        #endregion
+
+        #region Add user by admin
+        //[Authorize(Roles = "General Manager,Admin")]
+        [HttpPost("add-user")]
+        public async Task<IActionResult> AddUser([FromBody]ReqAddUserAdminDto userDto)
+        {
+            var add = await userService.AddUser(userDto);
+            switch (add)
+            {
+                case ResadduserDto.success:
+                    return JsonStatusResponse.Success("کاربر با موفقیت ادد شد");
+                    break;
+                case ResadduserDto.Failed:
+                    return JsonStatusResponse.Error("فیلد مربوطه نمیتواند خالی باشد");
+                    break;
+                case ResadduserDto.Exist:
+                    return JsonStatusResponse.Error("نام کاربری وارد شده؛ وجود دارد.");
+                default:
+                    return JsonStatusResponse.Error("اضافه کردن کاربر با خطا مواجه شد. دوباره تلاش نمایید.");
+                    break;
+            }
+        }
+
         #endregion
 
         #endregion

@@ -1,6 +1,7 @@
 ﻿using OurSite.Core.DTOs;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.Core.DTOs.UserDtos;
+using OurSite.Core.DTOs.AdminDtos;
 
 namespace OurSite.Core.Services.Interfaces
 {
@@ -25,8 +26,11 @@ namespace OurSite.Core.Services.Interfaces
         #region User Mangement by admin
         Task<List<User>> GetAlluser();
         Task<bool> DeleteUser(long id);
-        //Task AddUser(ReqSingupUserDto userDto);
+        Task<ResadduserDto> AddUser(ReqAddUserAdminDto userDto);
         #endregion
+
+
+
 
 
     }

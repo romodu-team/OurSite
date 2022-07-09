@@ -17,13 +17,13 @@ using System.Threading.Tasks;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.DTOs.MailDtos;
 using Microsoft.AspNetCore.Authorization;
+using OurSite.Core.DTOs.AdminDtos;
 
 namespace OurSite.Core.Services.Repositories
 {
     public class UserService : IUserService
     {
         #region constructor
-        //
         private readonly IGenericReopsitories<User> userService;
         private IPasswordHelper passwordHelper;
         private IMailService mailService;
@@ -60,7 +60,7 @@ namespace OurSite.Core.Services.Repositories
                     FirstName = userDto.Name,
                     LastName = userDto.Family,
                     UserName = userDto.UserName,
-                    Password =passwordHelper.EncodePasswordMd5(userDto.Password),
+                    Password = passwordHelper.EncodePasswordMd5(userDto.Password),
                     Email = userDto.Email,
                     Mobile = userDto.Mobile,
                     ActivationCode = Guid.NewGuid().ToString()
@@ -88,8 +88,9 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region SingUp exist error
-        public async Task<bool> GetUserEmailandUserName(string Email, string UserName)
+        public async Task<bool> GetUserEmailandUserName(string? Email, string UserName)
         {
+            
             return await userService.GetAllEntity().AnyAsync(x => x.Email == Email || x.UserName == UserName);
 
         }
@@ -217,35 +218,35 @@ namespace OurSite.Core.Services.Repositories
             var user = await userService.GetEntity(userdto.id);
             if (user != null)
             {
-                if(!string.IsNullOrWhiteSpace(userdto.FirstName))
+                if (!string.IsNullOrWhiteSpace(userdto.FirstName))
                     user.FirstName = userdto.FirstName;
-                if(!string.IsNullOrWhiteSpace(userdto.LastName))
+                if (!string.IsNullOrWhiteSpace(userdto.LastName))
                     user.LastName = userdto.LastName;
-                if(!string.IsNullOrWhiteSpace(userdto.NationalCode))
+                if (!string.IsNullOrWhiteSpace(userdto.NationalCode))
                     user.NationalCode = userdto.NationalCode;
-                if(!string.IsNullOrWhiteSpace(userdto.Email))
+                if (!string.IsNullOrWhiteSpace(userdto.Email))
                     user.Email = userdto.Email;
-                if(!string.IsNullOrWhiteSpace(userdto.Mobile))
+                if (!string.IsNullOrWhiteSpace(userdto.Mobile))
                     user.Mobile = userdto.Mobile;
-                if(!string.IsNullOrWhiteSpace(userdto.Password))
+                if (!string.IsNullOrWhiteSpace(userdto.Password))
                     user.Password = userdto.Password;
-                if(userdto.Gender is not null)
+                if (userdto.Gender is not null)
                     user.Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender;
-                if(!string.IsNullOrWhiteSpace(userdto.Address))
+                if (!string.IsNullOrWhiteSpace(userdto.Address))
                     user.Address = userdto.Address;
-                if(!string.IsNullOrWhiteSpace(userdto.ImageName))
+                if (!string.IsNullOrWhiteSpace(userdto.ImageName))
                     user.ImageName = userdto.ImageName;
-                if(!string.IsNullOrWhiteSpace(userdto.Birthday))
+                if (!string.IsNullOrWhiteSpace(userdto.Birthday))
                     user.Birthday = userdto.Birthday;
-                if(!string.IsNullOrWhiteSpace(userdto.Phone))
+                if (!string.IsNullOrWhiteSpace(userdto.Phone))
                     user.Phone = userdto.Phone;
-                if(!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
+                if (!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
                     user.ShabaNumbers = userdto.ShabaNumbers;
-                if(userdto.AccountType is not null)
+                if (userdto.AccountType is not null)
                     user.AccountType = (DataLayer.Entities.Accounts.accountType)userdto.AccountType;
-                if(!string.IsNullOrWhiteSpace(userdto.BusinessCode))
+                if (!string.IsNullOrWhiteSpace(userdto.BusinessCode))
                     user.BusinessCode = userdto.BusinessCode;
-                if(!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
+                if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
                     user.RegistrationNumber = userdto.RegistrationNumber;
                 try
                 {
@@ -343,27 +344,30 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Add User
-        ////add user by admin
+        //add user by admin
         //[Authorize(Roles = "نقش مدنظر")]
-        //public async Task AddUser(ReqSingupUserDto userDto)
-        //{
-        //    //connect user model options to userdto options model
-        //    User user = new User()
-        //    {
-        //        UserName = userDto.UserName,
-        //        FirstName = userDto.Name,
-        //        LastName = userDto.Family,
-        //        Password = userDto.Password,
-        //        Phone = userDto.phone,
-        //        Email = userDto.Email,
-        //        ActivationCode = new Guid().ToString()
-        //    };
+        public async Task<ResadduserDto> AddUser(ReqAddUserAdminDto userDto)
+        {
+            if(!string.IsNullOrWhiteSpace(userDto.UserName) && !string.IsNullOrWhiteSpace(userDto.Password))
+            {
+                if (!await GetUserEmailandUserName(null,userDto.UserName))
+                {
+                    User user = new User()
+                    {
+                        UserName = userDto.UserName,
+                        Password = userDto.Password
 
-        //    await userService.AddEntity(user);
-        //    await userService.SaveEntity();
-        //    await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
+                    };
+                    await userService.AddEntity(user);
+                    await userService.SaveEntity();
+                    return ResadduserDto.success;
 
-        //}
+                }
+                return ResadduserDto.Exist;
+            }
+
+            return ResadduserDto.Failed;
+        }
         #endregion
 
         #region Get user list 

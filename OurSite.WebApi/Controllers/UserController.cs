@@ -120,21 +120,26 @@ namespace OurSite.WebApi.Controllers
         [HttpPost("signUp-user")]
         public async Task<IActionResult> SingupUser([FromBody]ReqSingupUserDto userDto)
         {
-            var add = await userservice.SingUp(userDto);
-            switch (add)
+            if (ModelState.IsValid)
             {
-                case RessingupDto.success:
-                    return JsonStatusResponse.Success("ثبت نام با موفقیت انجام شد");
-                case RessingupDto.Failed:
-                    return JsonStatusResponse.Error("ثبت نام با خطا مواجه شد. مجدد ثبت نام کنید.");
-                case RessingupDto.Exist:
-                    return JsonStatusResponse.Error("نام کاربری یا ایمیل قبلا ثبت نام شده است");
-                default:
-                    HttpContext.Response.StatusCode = 400;
-                    return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+                var add = await userservice.SingUp(userDto);
+                switch (add)
+                {
+                    case RessingupDto.success:
+                        return JsonStatusResponse.Success("ثبت نام با موفقیت انجام شد");
+                    case RessingupDto.Failed:
+                        return JsonStatusResponse.Error("ثبت نام با خطا مواجه شد. مجدد ثبت نام کنید.");
+                    case RessingupDto.Exist:
+                        return JsonStatusResponse.Error("نام کاربری یا ایمیل قبلا ثبت نام شده است");
+                    default:
+                        HttpContext.Response.StatusCode = 400;
+                        return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
 
 
+                }
             }
+
+            return JsonStatusResponse.Error("فیلد‌های اجباری باید پر شوند");
         }
         #endregion
 
