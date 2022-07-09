@@ -49,6 +49,9 @@ namespace OurSite.Core.Services.Repositories
         #region singup
         public async Task<RessingupDto> SingUp(ReqSingupUserDto userDto)
         {
+            userDto.UserName = userDto.UserName.ToLower().Trim();
+            userDto.Email = userDto.Email.ToLower().Trim();
+            userDto.Mobile = userDto.Mobile.Trim();
             var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
             if (check == true)
                 return RessingupDto.Exist;
@@ -90,8 +93,7 @@ namespace OurSite.Core.Services.Repositories
         #region SingUp exist error
         public async Task<bool> GetUserEmailandUserName(string? Email, string UserName)
         {
-            
-            return await userService.GetAllEntity().AnyAsync(x => x.Email == Email || x.UserName == UserName);
+            return await userService.GetAllEntity().AnyAsync(x =>!x.IsRemove &&(x.Email == Email.Trim().ToLower() || x.UserName == UserName.Trim().ToLower()));
 
         }
 
@@ -100,6 +102,7 @@ namespace OurSite.Core.Services.Repositories
         #region Login
         public async Task<ResLoginDto> LoginUser(ReqLoginDto login)
         {
+            login.UserName = login.UserName.Trim().ToLower();
             if (String.IsNullOrWhiteSpace(login.UserName))
                 return ResLoginDto.Error;
             if (String.IsNullOrWhiteSpace(login.Password))
@@ -109,7 +112,7 @@ namespace OurSite.Core.Services.Repositories
             var user = await GetUserByUserPass(login.UserName, login.Password);
             if (user != null)
             {
-                if (await IsUserActiveByUserName(login.UserName.ToLower().Trim()))
+                if (await IsUserActiveByUserName(login.UserName))
                 {
                     return ResLoginDto.Success;
                 }
@@ -149,7 +152,7 @@ namespace OurSite.Core.Services.Repositories
             var user = await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
             if (user != null)
             {
-                var res = await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter = user.Id.ToString(), ToEmail = user.Email, UserName = user.UserName });
+                var res = await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter = user.Id.ToString(), ToEmail = user.Email.Trim().ToLower(), UserName = user.UserName.Trim().ToLower() });
                 if (res)
                     return ResLoginDto.Success;
                 else
@@ -171,7 +174,7 @@ namespace OurSite.Core.Services.Repositories
         #region Check user activation by username
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
-            return await userService.GetAllEntity().AnyAsync(u => (u.UserName == userName.ToLower().Trim() || u.Email == userName.ToLower().Trim()) && u.IsActive == true);
+            return await userService.GetAllEntity().AnyAsync(u => (u.UserName == userName.ToLower().Trim() || u.Email == userName.ToLower().Trim()) && u.IsActive == true && u.IsRemove==false);
         }
 
         #endregion
@@ -192,7 +195,7 @@ namespace OurSite.Core.Services.Repositories
             if (user != null)
             {
                 user.IsActive = true;
-                user.ActivationCode = new Guid().ToString();
+                user.ActivationCode = Guid.NewGuid().ToString();
                 try
                 {
                     user.LastUpdate = DateTime.Now;
@@ -335,8 +338,9 @@ namespace OurSite.Core.Services.Repositories
             var user = await userService.DeleteEntity(id); //get id and return true that it means user deleted
             if (user is true) //if delete
             {
-                return true;
                 userService.SaveEntity();
+                return true;
+               
             }
             return false; //if not
 
@@ -371,9 +375,9 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Get user list 
-        public Task<List<User>> GetAlluser() //for return a list of user that singup in our site for admin
+        public async Task<List<GetAllUserDto>> GetAlluser() //for return a list of user that singup in our site for admin
         {
-            var list = userService.GetAllEntity().Where(u => u.IsRemove == false).ToListAsync();    //use the genric interface options and save values in variable
+            var list =await userService.GetAllEntity().Where(u => u.IsRemove == false).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
             return list;
         }
 
