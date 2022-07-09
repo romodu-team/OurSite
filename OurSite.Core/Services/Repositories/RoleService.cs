@@ -22,51 +22,65 @@ namespace OurSite.Core.Services.Repositories
             this.RoleRepository = RoleRepository;
             this.accounInRoleRepository = accounInRoleRepository;
         }
+        #endregion
 
-        public async Task<bool> AddRole(RoleDto role)
+        #region Add new role for admin
+        public async Task<ResAddRole> AddRole(RoleDto role)
         {
-            if(!string.IsNullOrWhiteSpace(role.Name) && !string.IsNullOrWhiteSpace(role.Title))
+
+            if (!string.IsNullOrWhiteSpace(role.Name) && !string.IsNullOrWhiteSpace(role.Title))
             {
-                Role newRole = new Role()
+                if (!RoleRepository.GetAllEntity().Any(r => (r.Name == role.Name || r.Title == role.Title) && r.IsRemove == false))
                 {
-                    CreateDate = DateTime.Now,
-                    LastUpdate = DateTime.Now,
-                    IsRemove = false,
-                    Name = role.Name,
-                    Title = role.Title
-                };
-                try
-                {
-                    await RoleRepository.AddEntity(newRole);
-                    await RoleRepository.SaveEntity();
-                    return true;
-                }
-                catch (Exception)
-                {
+                    Role newRole = new Role()
+                    {
+                        CreateDate = DateTime.Now,
+                        LastUpdate = DateTime.Now,
+                        IsRemove = false,
+                        Name = role.Name,
+                        Title = role.Title
+                    };
+                    try
+                    {
 
-                    return false;
+                        await RoleRepository.AddEntity(newRole);
+                        await RoleRepository.SaveEntity();
+                        return ResAddRole.Success;
+                    }
+                    catch (Exception)
+                    {
+
+                        return ResAddRole.Faild;
+                    }
                 }
-               
+                return ResAddRole.Exist;   
+                
+
             }
-            return false;
+            return ResAddRole.InvalidInput;
 
+        }
+
+        #endregion
+
+        #region Get roles
+        public async Task<List<RoleDto>> GetActiveRoles()        //
+        {
+            return await RoleRepository.GetAllEntity().Select(r => new RoleDto { Name = r.Name, Title = r.Title }).ToListAsync();
         }
         #endregion
 
-
-        public async Task<List<RoleDto>> GetActiveRoles()
-        {
-            return await RoleRepository.GetAllEntity().Select(r=> new RoleDto { Name=r.Name,Title=r.Title}).ToListAsync();
-        }
-
+        #region founder role by id
         public async Task<RoleDto> GetRoleById(long RoleId)
         {
             var role = await RoleRepository.GetEntity(RoleId);
             if (role is null)
                 return null;
-            return new RoleDto { Name=role.Name,Title=role.Title};
+            return new RoleDto { Name = role.Name, Title = role.Title };
         }
+        #endregion
 
+        #region Delete role
         public async Task<bool> RemoveRole(long RoleId)
         {
             var role = await RoleRepository.GetEntity(RoleId);
@@ -76,7 +90,7 @@ namespace OurSite.Core.Services.Repositories
             role.LastUpdate = DateTime.Now;
             try
             {
-               RoleRepository.UpDateEntity(role);
+                RoleRepository.UpDateEntity(role);
                 await RoleRepository.SaveEntity();
                 return true;
             }
@@ -86,6 +100,7 @@ namespace OurSite.Core.Services.Repositories
                 return false;
             }
         }
+        #endregion
 
         public async Task<ResUpdateRole> UpdateRole(ReqUpdateRoleDto reqUpdate)
         {
@@ -123,6 +138,7 @@ namespace OurSite.Core.Services.Repositories
         {
             try
             {
+
                 await accounInRoleRepository.AddEntity(accounInRole);
                 await accounInRoleRepository.SaveEntity();
                 return true;

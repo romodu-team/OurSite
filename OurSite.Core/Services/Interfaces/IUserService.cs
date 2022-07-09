@@ -1,6 +1,7 @@
 ﻿using OurSite.Core.DTOs;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.Core.DTOs.UserDtos;
+using OurSite.Core.DTOs.AdminDtos;
 
 namespace OurSite.Core.Services.Interfaces
 {
@@ -19,14 +20,17 @@ namespace OurSite.Core.Services.Interfaces
         Task<RessingupDto> SingUp(ReqSingupUserDto userDto);
 
         Task<ReqViewUserDto> ViewProfile(long id);
-        Task<User> ViewUser(long id);
+        Task<ResViewuserAdminDto> ViewUser(long id);
         Task<bool> ChangeUserStatus(long userId);
 
         #region User Mangement by admin
         Task<List<User>> GetAlluser();
         Task<bool> DeleteUser(long id);
-        //Task AddUser(ReqSingupUserDto userDto);
+        Task<ResadduserDto> AddUser(ReqAddUserAdminDto userDto);
         #endregion
+
+
+
 
 
     }

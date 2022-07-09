@@ -57,7 +57,7 @@ namespace OurSite.Core.DTOs.AdminDtos
         [DisplayName("تاریخ تولد")]
         public string? Birthday { get; set; }
 
-        public string? RoleName { get; set; }
+        public string? Roleid { get; set; }
     }
     public enum resUpdateAdmin
     {

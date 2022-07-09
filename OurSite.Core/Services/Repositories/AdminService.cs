@@ -36,15 +36,16 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Admin management
-        public async Task<bool> DeleteAdmin(long adminId)
+        #region Delete Admin
+        public async Task<bool> DeleteAdmin(long adminId)             //its return true/false -We do not have a real deletion
         {
-            
+
             try
             {
                 await adminRepository.DeleteEntity(adminId);
                 await adminRepository.SaveEntity();
                 var res = await roleService.DeleteAdminRole(adminId);
-                
+
                 return res;
             }
             catch (Exception)
@@ -53,14 +54,16 @@ namespace OurSite.Core.Services.Repositories
                 return false;
             }
         }
+        #endregion
+
 
         //public async Task<Role> GetAdminRole(long adminId)
         //{
         //    var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove==false);
         //    return role.Role;
         //}
-        
 
+        #region Update admin profile
         public async Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req)
         {
             var admin = await adminRepository.GetEntity(req.adminId);
@@ -89,12 +92,11 @@ namespace OurSite.Core.Services.Repositories
                 admin.UserName = req.UserName;
 
             //update admin role
-            if (!string.IsNullOrWhiteSpace(req.RoleName))
+            if (!string.IsNullOrWhiteSpace(req.Roleid))
             {
-                var role = await roleService.GetRoleByName(req.RoleName);
-                var accountinrole =await roleService.GetAdminInRole(req.adminId);
-                accountinrole.RoleId = role.Id;
-                var res=await roleService.UpdateAdminRole(accountinrole);
+                var accountinrole = await roleService.GetAdminInRole(req.adminId);
+                accountinrole.RoleId = Convert.ToInt64(req.Roleid);
+                var res = await roleService.UpdateAdminRole(accountinrole);
 
 
             }
@@ -111,11 +113,14 @@ namespace OurSite.Core.Services.Repositories
                 return resUpdateAdmin.Error;
             }
         }
-   
+
+        #endregion
+
+        #region Admin founder with id 
         public async Task<ResViewAdminDto> GetAdminById(long adminId)
         {
-            var admin =await adminRepository.GetEntity(adminId);
-            var adminRole=await roleService.GetAdminRole(adminId);
+            var admin = await adminRepository.GetEntity(adminId);
+            var adminRole = await roleService.GetAdminRole(adminId);
             ResViewAdminDto res = new ResViewAdminDto
             {
                 Address = admin.Address,
@@ -130,35 +135,38 @@ namespace OurSite.Core.Services.Repositories
                 ImageName = admin.ImageName,
                 IsRemove = admin.IsRemove,
                 Mobile = admin.Mobile,
-                NationalCode = admin.NationalCode,      
+                NationalCode = admin.NationalCode,
                 UserName = admin.UserName,
                 RoleName = adminRole.Title
             };
-            
+
             return res;
         }
 
+        #endregion
+
+        #region Add new admin
         public async Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req)
         {
-            var check =await IsAdminExist(req.UserName.Trim().ToLower(), req.Email.ToLower().Trim());
+            var check = await IsAdminExist(req.UserName.Trim().ToLower(), req.Email.ToLower().Trim());
             if (check)
                 return RessingupDto.Exist;
-            Admin newAdmin= new Admin()
+            Admin newAdmin = new Admin()
             {
                 UserName = req.UserName,
                 Email = req.Email,
-                FirstName=req.Name,
-                LastName=req.Family,
-                Mobile=req.Mobile,
-                Password=passwordHelper.EncodePasswordMd5(req.Password),
-                CreateDate=DateTime.Now,
-                LastUpdate=DateTime.Now
+                FirstName = req.Name,
+                LastName = req.Family,
+                Mobile = req.Mobile,
+                Password = passwordHelper.EncodePasswordMd5(req.Password),
+                CreateDate = DateTime.Now,
+                LastUpdate = DateTime.Now
             };
 
-            
+
             try
             {
-               
+
                 await adminRepository.AddEntity(newAdmin);
                 await adminRepository.SaveEntity();
                 var accountInRole = new AccounInRole
@@ -168,8 +176,8 @@ namespace OurSite.Core.Services.Repositories
                     CreateDate = DateTime.Now,
                     LastUpdate = DateTime.Now
                 };
-                var res= await roleService.AddRoleToAdmin(accountInRole);
-                if(res)
+                var res = await roleService.AddRoleToAdmin(accountInRole);
+                if (res)
                     return RessingupDto.success;
                 return RessingupDto.Failed;
 
@@ -179,12 +187,13 @@ namespace OurSite.Core.Services.Repositories
 
                 return RessingupDto.Failed;
             }
-           
+
         }
-        public async Task<bool> IsAdminExist(string UserName,string Email)
+        public async Task<bool> IsAdminExist(string UserName, string Email)
         {
-            return await adminRepository.GetAllEntity().AnyAsync(a=>(a.UserName==UserName||a.Email==Email)&& a.IsRemove==false);
+            return await adminRepository.GetAllEntity().AnyAsync(a => (a.UserName == UserName || a.Email == Email) && a.IsRemove == false);
         }
+        #endregion
 
         #region Reset password
         public async Task<bool> ResetPassword(ReqResetPassword request)
@@ -234,7 +243,6 @@ namespace OurSite.Core.Services.Repositories
         #endregion
         #endregion
 
-
         #region User management
 
 
@@ -253,7 +261,6 @@ namespace OurSite.Core.Services.Repositories
 
 
         #endregion
-
 
         #region login
         public async Task<Admin> Login(ReqLoginDto req)
