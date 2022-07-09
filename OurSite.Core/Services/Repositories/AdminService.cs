@@ -74,11 +74,11 @@ namespace OurSite.Core.Services.Repositories
             if (!string.IsNullOrWhiteSpace(req.LastName))
                 admin.LastName = req.LastName;
             if (!string.IsNullOrWhiteSpace(req.Email))
-                admin.Email = req.Email;
+                admin.Email = req.Email.ToLower().Trim();
             if (!string.IsNullOrWhiteSpace(req.Mobile))
-                admin.Mobile = req.Mobile;
+                admin.Mobile = req.Mobile.Trim();
             if (!string.IsNullOrWhiteSpace(req.NationalCode))
-                admin.NationalCode = req.NationalCode;
+                admin.NationalCode = req.NationalCode.Trim();
             if (!string.IsNullOrWhiteSpace(req.ImageName))
                 admin.ImageName = req.ImageName;
             if (!string.IsNullOrWhiteSpace(req.Birthday))
@@ -86,7 +86,7 @@ namespace OurSite.Core.Services.Repositories
             if (req.Gender != null)
                 admin.Gender = (DataLayer.Entities.BaseEntities.gender?)req.Gender;
             if (!string.IsNullOrWhiteSpace(req.UserName))
-                admin.UserName = req.UserName;
+                admin.UserName = req.UserName.ToLower().Trim();
 
             //update admin role
             if (!string.IsNullOrWhiteSpace(req.RoleName))
@@ -145,11 +145,11 @@ namespace OurSite.Core.Services.Repositories
                 return RessingupDto.Exist;
             Admin newAdmin= new Admin()
             {
-                UserName = req.UserName,
-                Email = req.Email,
+                UserName = req.UserName.Trim().ToLower(),
+                Email = req.Email.Trim().ToLower(),
                 FirstName=req.Name,
                 LastName=req.Family,
-                Mobile=req.Mobile,
+                Mobile=req.Mobile.Trim(),
                 Password=passwordHelper.EncodePasswordMd5(req.Password),
                 CreateDate=DateTime.Now,
                 LastUpdate=DateTime.Now
@@ -183,7 +183,7 @@ namespace OurSite.Core.Services.Repositories
         }
         public async Task<bool> IsAdminExist(string UserName,string Email)
         {
-            return await adminRepository.GetAllEntity().AnyAsync(a=>(a.UserName==UserName||a.Email==Email)&& a.IsRemove==false);
+            return await adminRepository.GetAllEntity().AnyAsync(a=>(a.UserName==UserName.Trim().ToLower()||a.Email==Email.Trim().ToLower())&& a.IsRemove==false);
         }
 
         #region Reset password
@@ -214,7 +214,7 @@ namespace OurSite.Core.Services.Repositories
             var admin = await GetAdminByEmailOrUserName(EmailOrUserName.ToLower().Trim());
             if (admin is not null)
             {
-                var res = await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter = admin.Id.ToString(), ToEmail = admin.Email, UserName = admin.UserName });
+                var res = await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter = admin.Id.ToString(), ToEmail = admin.Email.Trim(), UserName = admin.UserName });
                 if (res)
                     return ResLoginDto.Success;
                 else
@@ -259,6 +259,7 @@ namespace OurSite.Core.Services.Repositories
         public async Task<Admin> Login(ReqLoginDto req)
         {
             req.Password = passwordHelper.EncodePasswordMd5(req.Password);
+            req.UserName = req.UserName.Trim().ToLower();
             var admin = await adminRepository.GetAllEntity().SingleOrDefaultAsync(a => (a.UserName == req.UserName || a.Email == req.UserName) && a.Password == req.Password && a.IsRemove == false);
             return admin;
 
