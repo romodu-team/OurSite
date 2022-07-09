@@ -9,14 +9,12 @@ namespace OurSite.DataLayer.Entities.BaseEntities
   
 
 
-        [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("نام")]
         [MaxLength(50,ErrorMessage ="تعداد کاراکتر بیش از حد مجاز است")]
         public string? FirstName { get; set; }
 
 
 
-        [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("نام خانوادگی")]
         [MaxLength(50, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
         public string? LastName { get; set; }
@@ -28,12 +26,10 @@ namespace OurSite.DataLayer.Entities.BaseEntities
         public string? NationalCode { get; set; }
 
         [EmailAddress(ErrorMessage = "آدرس ایمیل معتبر نیست")]
-        [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("ایمیل")]
         public string? Email { get; set; }
 
         [RegularExpression("09(1[0-9]|3[1-9]|2[1-9])-?[0-9]{3}-?[0-9]{4}",ErrorMessage = "شماره تماس وارد شده صحیح نیست")]
-        [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("شماره همراه")]
         public string? Mobile { get; set; }
 

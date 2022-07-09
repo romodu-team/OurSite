@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -147,21 +146,25 @@ namespace OurSite.WebApi.Controllers
         [HttpPut("Update-Profile")]
         public async Task<IActionResult> UpDate([FromBody]ReqUpdateUserDto userdto)
         {
-            if(ModelState.IsValid)
+            if (User.Identity.IsAuthenticated)
             {
-                var res = await userservice.UpDate(userdto);
-                if (res)
+                if (ModelState.IsValid)
                 {
-                    return JsonStatusResponse.Success("پروفایل کاربری با موفقیت بروزرسانی شد");
+                    var res = await userservice.UpDate(userdto);
+                    if (res)
+                    {
+                        return JsonStatusResponse.Success("پروفایل کاربری با موفقیت بروزرسانی شد");
 
+                    }
+                    else
+                    {
+                        return JsonStatusResponse.Error("بروزرسانی پروفایل کاربری با خطا موجه شد. مجددا تلاش نمایید.");
+                    }
                 }
-                else
-                {
-                    return JsonStatusResponse.Error("بروزرسانی پروفایل کاربری با خطا موجه شد. مجددا تلاش نمایید.");
-                }
+                return JsonStatusResponse.Error("اطلاعات ارسالی اشتباه است");
             }
-            return JsonStatusResponse.Error("اطلاعات ارسالی اشتباه است");
 
+            return JsonStatusResponse.Error("ابتدا وارد وبسایت شوید.");
         }
         #endregion
 
