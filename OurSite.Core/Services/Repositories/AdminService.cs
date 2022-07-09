@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.RoleDtos;
 using OurSite.Core.DTOs.MailDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
@@ -39,20 +40,35 @@ namespace OurSite.Core.Services.Repositories
         #region Delete Admin
         public async Task<bool> DeleteAdmin(long adminId)             //its return true/false -We do not have a real deletion
         {
+            var isdelete = await adminRepository.DeleteEntity(adminId);
 
-            try
+            if (isdelete)
             {
-                await adminRepository.DeleteEntity(adminId);
-                await adminRepository.SaveEntity();
-                var res = await roleService.DeleteAdminRole(adminId);
+                try
+                {
 
-                return res;
-            }
-            catch (Exception)
-            {
+                    await adminRepository.SaveEntity();
+                    ResDeleAdminRole myres = await roleService.DeleteAdminRole(adminId);
+                    switch (myres)
+                    {
+                        
+                        default:
+                            break;
+                    }
+                    if (myres)
+                    {
+                        await adminRepository.SaveEntity();
+                        return myres;
+                    }
+                    return true;
+                }
+                catch (Exception)
+                {
 
-                return false;
+                    return false;
+                }
             }
+            return false;
         }
         #endregion
 
@@ -241,25 +257,6 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
-        #endregion
-
-        #region User management
-
-
-
-
-
-        #region delete user
-        public Task<bool> DeleteUser(long id)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
-
-
-
-
-
         #endregion
 
         #region login

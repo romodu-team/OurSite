@@ -20,7 +20,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<Role> GetAdminRole(long adminId);
 
         Task<bool> AddRoleToAdmin(AccounInRole accounInRole);
-        Task<bool> DeleteAdminRole(long adminId);
+        Task<ResDeleAdminRole> DeleteAdminRole(long adminId);
         Task<bool> UpdateAdminRole(AccounInRole accounInRole);
         Task<AccounInRole> GetAdminInRole(long adminId);
     }

@@ -134,7 +134,7 @@ namespace OurSite.WebApi.Controllers
         #region Admin Management
 
         #region Delete Admin Monharf
-        [Authorize(Roles = "General Manager")]
+        //[Authorize(Roles = "General Manager")]
         [HttpDelete("delete-admin")]
         public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
         {
@@ -308,6 +308,20 @@ namespace OurSite.WebApi.Controllers
             }
         }
 
+        #endregion
+
+
+
+        #region Delete user
+        [HttpPost("delete-user")]
+        public async Task<IActionResult> DeleteUser([FromBody]long id)
+        {
+            var check = await userService.DeleteUser(id);
+            if (check)
+                return JsonStatusResponse.Success("کاربر با موفقیت حذف شد");
+            return JsonStatusResponse.Error("عملیات ناموفق بود. ");
+
+        }
         #endregion
 
         #endregion

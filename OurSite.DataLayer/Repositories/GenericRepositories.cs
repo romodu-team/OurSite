@@ -32,10 +32,11 @@ namespace OurSite.DataLayer.Repositories
                     var entity = await dbset.FindAsync(Id);
                     entity.IsRemove = true;
                     UpDateEntity(entity);
-
+                    return true;
 
                 }
-                return true;
+                else
+                    return false;
 
             }
             catch (Exception ex)

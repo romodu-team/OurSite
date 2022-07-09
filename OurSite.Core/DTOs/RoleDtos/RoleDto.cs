@@ -20,5 +20,11 @@ namespace OurSite.Core.DTOs.RoleDtos
         Exist,
         InvalidInput
     }
+    public enum ResDeleAdminRole
+    {
+        Success,
+        Faild,
+        NotExist
+    }
 }
 

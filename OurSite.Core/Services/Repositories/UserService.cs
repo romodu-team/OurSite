@@ -338,14 +338,21 @@ namespace OurSite.Core.Services.Repositories
         #region Delete User
         public async Task<bool> DeleteUser(long id)
         {
-            var user = await userService.DeleteEntity(id); //get id and return true that it means user deleted
-            if (user is true) //if delete
+            var isdelete = await userService.DeleteEntity(id); //get id and return true that it means user deleted
+            if (isdelete)
             {
-                userService.SaveEntity();
-                return true;
-               
+                try
+                {
+                    await userService.SaveEntity();
+
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
             }
-            return false; //if not
+
+            return isdelete;
 
         }
         #endregion
