@@ -104,22 +104,26 @@ namespace OurSite.Core.Services.Repositories
 
         public async Task<ResUpdateRole> UpdateRole(ReqUpdateRoleDto reqUpdate)
         {
-            var role=await RoleRepository.GetEntity(reqUpdate.RoleID);
-            if (role is null)
-                return ResUpdateRole.NotFound;
-            role.Title = reqUpdate.RoleTitle;
-            role.LastUpdate = DateTime.Now;
+            if (!RoleRepository.GetAllEntity().Any(r => r.Title == reqUpdate.RoleTitle))
+            {
+                var role = await RoleRepository.GetEntity(reqUpdate.RoleID);
+                if (role is null)
+                    return ResUpdateRole.NotFound;
+                role.Title = reqUpdate.RoleTitle;
+                role.LastUpdate = DateTime.Now;
 
-            try
-            {
-                RoleRepository.UpDateEntity(role);
-                await RoleRepository.SaveEntity();
-                return ResUpdateRole.Success;
+                try
+                {
+                    RoleRepository.UpDateEntity(role);
+                    await RoleRepository.SaveEntity();
+                    return ResUpdateRole.Success;
+                }
+                catch (Exception)
+                {
+                    return ResUpdateRole.Error;
+                }
             }
-            catch (Exception)
-            {
-                return ResUpdateRole.Error;
-            }
+            return ResUpdateRole.Exist;
         }
 
         public async Task<Role> GetAdminRole(long adminId)

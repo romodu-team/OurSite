@@ -15,7 +15,8 @@ namespace OurSite.Core.DTOs.RoleDtos
         {
             Success,
             Error,
-            NotFound
+            NotFound,
+            Exist
         }
     }
 }

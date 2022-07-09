@@ -18,6 +18,8 @@ namespace OurSite.DataLayer.Repositories
         }
         public async Task AddEntity(Tentity entity)
         {
+            entity.CreateDate= DateTime.Now;
+            entity.LastUpdate= DateTime.Now;
             await dbset.AddAsync(entity);
 
         }
@@ -70,7 +72,9 @@ namespace OurSite.DataLayer.Repositories
 
         public void UpDateEntity(Tentity entity)
         {
+            entity.LastUpdate= DateTime.Now;
             dbset.Update(entity);
+
             
         }
     }

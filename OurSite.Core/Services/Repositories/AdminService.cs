@@ -56,7 +56,26 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
+        #region change admin status
+        public async Task<bool> ChangeAdminStatus(long adminId)
+        {
+            try
+            {
+                var admin = await adminRepository.GetEntity(adminId);
+                admin.IsActive = !admin.IsActive;
+                admin.LastUpdate = DateTime.Now;
+                adminRepository.UpDateEntity(admin);
+                await adminRepository.SaveEntity();
+                return true;
 
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
+        #endregion
         //public async Task<Role> GetAdminRole(long adminId)
         //{
         //    var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove==false);
@@ -162,7 +181,6 @@ namespace OurSite.Core.Services.Repositories
                 CreateDate=DateTime.Now,
                 LastUpdate=DateTime.Now
             };
-
 
             try
             {

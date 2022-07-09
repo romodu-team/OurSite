@@ -132,7 +132,17 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Admin Management
-
+        #region Change admin status
+        [Authorize(Roles = "General Manager,Admin")]
+        [HttpGet("change-admin-status/{adminId}")]
+        public async Task<IActionResult> ChangeAdminStatus([FromRoute] long adminId)
+        {
+            var res = await adminService.ChangeAdminStatus(adminId);
+            if (res)
+                return JsonStatusResponse.Success("وضعیت ادمین تغییر کرد");
+            return JsonStatusResponse.Error("عملیات نا موفق بود");
+        }
+        #endregion
         #region Delete Admin Monharf
         [Authorize(Roles = "General Manager")]
         [HttpDelete("delete-admin")]
@@ -204,18 +214,24 @@ namespace OurSite.WebApi.Controllers
         [HttpPut("update-role")]
         public async Task<IActionResult> UpdateRole(ReqUpdateRoleDto reqUpdate)
         {
-            var res = await roleService.UpdateRole(reqUpdate);
-            switch (res)
+            if (ModelState.IsValid)
             {
-                case ReqUpdateRoleDto.ResUpdateRole.Success:
-                    return JsonStatusResponse.Success("نقش با موفقیت بروزرسانی شد");
-                case ReqUpdateRoleDto.ResUpdateRole.Error:
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-                case ReqUpdateRoleDto.ResUpdateRole.NotFound:
-                    return JsonStatusResponse.NotFound("نقش مورد نظر پیدا نشد");
-                default:
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                var res = await roleService.UpdateRole(reqUpdate);
+                switch (res)
+                {
+                    case ReqUpdateRoleDto.ResUpdateRole.Success:
+                        return JsonStatusResponse.Success("نقش با موفقیت بروزرسانی شد");
+                    case ReqUpdateRoleDto.ResUpdateRole.Error:
+                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                    case ReqUpdateRoleDto.ResUpdateRole.NotFound:
+                        return JsonStatusResponse.NotFound("نقش مورد نظر پیدا نشد");
+                    case ReqUpdateRoleDto.ResUpdateRole.Exist:
+                        return JsonStatusResponse.NotFound("نام نقش تکراری است");
+                    default:
+                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                }
             }
+            return JsonStatusResponse.Error("فیلد های اجباری باید پر شوند");
         }
         #endregion
 
