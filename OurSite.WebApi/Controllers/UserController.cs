@@ -138,7 +138,8 @@ namespace OurSite.WebApi.Controllers
 
                 }
             }
-            return JsonStatusResponse.Error("لطفا تمام داده های ورودی را به درستی وارد کنید");
+
+            return JsonStatusResponse.Error("فیلد‌های اجباری باید پر شوند");
         }
         #endregion
 
