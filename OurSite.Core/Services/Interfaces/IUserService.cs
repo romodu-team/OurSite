@@ -24,7 +24,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<bool> ChangeUserStatus(long userId);
 
         #region User Mangement by admin
-        Task<List<User>> GetAlluser();
+        Task<List<GetAllUserDto>> GetAlluser();
         Task<bool> DeleteUser(long id);
         Task<ResadduserDto> AddUser(ReqAddUserAdminDto userDto);
         #endregion

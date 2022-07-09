@@ -96,7 +96,11 @@ namespace OurSite.Core.Services.Repositories
             return await userService.GetAllEntity().AnyAsync(x =>!x.IsRemove &&(x.Email == Email.Trim().ToLower() || x.UserName == UserName.Trim().ToLower()));
 
         }
+        public async Task<bool> GetUserEmailandUserName( string UserName)
+        {
+            return await userService.GetAllEntity().AnyAsync(x => !x.IsRemove && (x.UserName == UserName.Trim().ToLower()));
 
+        }
         #endregion
 
         #region Login
@@ -228,11 +232,9 @@ namespace OurSite.Core.Services.Repositories
                 if (!string.IsNullOrWhiteSpace(userdto.NationalCode))
                     user.NationalCode = userdto.NationalCode;
                 if (!string.IsNullOrWhiteSpace(userdto.Email))
-                    user.Email = userdto.Email;
+                    user.Email = userdto.Email.Trim().ToLower();
                 if (!string.IsNullOrWhiteSpace(userdto.Mobile))
                     user.Mobile = userdto.Mobile;
-                if (!string.IsNullOrWhiteSpace(userdto.Password))
-                    user.Password = userdto.Password;
                 if (userdto.Gender is not null)
                     user.Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender;
                 if (!string.IsNullOrWhiteSpace(userdto.Address))
@@ -251,9 +253,10 @@ namespace OurSite.Core.Services.Repositories
                     user.BusinessCode = userdto.BusinessCode;
                 if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
                     user.RegistrationNumber = userdto.RegistrationNumber;
+
                 try
                 {
-
+                    user.LastUpdate = DateTime.Now;
                     userService.UpDateEntity(user);
                     await userService.SaveEntity();
                     return true;
@@ -354,13 +357,16 @@ namespace OurSite.Core.Services.Repositories
         {
             if(!string.IsNullOrWhiteSpace(userDto.UserName) && !string.IsNullOrWhiteSpace(userDto.Password))
             {
-                if (!await GetUserEmailandUserName(null,userDto.UserName))
+                if (!await GetUserEmailandUserName(userDto.UserName))
                 {
                     User user = new User()
                     {
-                        UserName = userDto.UserName,
-                        Password = userDto.Password
-
+                        UserName = userDto.UserName.Trim().ToLower(),
+                        Password =passwordHelper.EncodePasswordMd5(userDto.Password),
+                        IsActive = true,
+                        CreateDate=DateTime.Now,
+                        LastUpdate=DateTime.Now
+                        
                     };
                     await userService.AddEntity(user);
                     await userService.SaveEntity();
