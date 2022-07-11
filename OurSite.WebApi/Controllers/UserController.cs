@@ -145,7 +145,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Update profile
         [HttpPut("Update-Profile")]
-        public async Task<IActionResult> UpDate([FromBody]ReqUpdateUserDto userdto)
+        public async Task<IActionResult> UpDate([FromForm]ReqUpdateUserDto userdto)
         {
             if(ModelState.IsValid)
             {

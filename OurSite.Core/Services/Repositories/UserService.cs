@@ -18,6 +18,8 @@ using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.DTOs.MailDtos;
 using Microsoft.AspNetCore.Authorization;
 using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.Uploader;
+using Microsoft.AspNetCore.Http;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -251,6 +253,8 @@ namespace OurSite.Core.Services.Repositories
                     user.BusinessCode = userdto.BusinessCode;
                 if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
                     user.RegistrationNumber = userdto.RegistrationNumber;
+                if (userdto.ProfilePhoto != null)
+                    await ProfilePhotoUpload(userdto.ProfilePhoto, userdto.id);
                 try
                 {
 
@@ -271,6 +275,19 @@ namespace OurSite.Core.Services.Repositories
 
 
 
+        }
+
+        public async Task<ResUploadDto> ProfilePhotoUpload(IFormFile photo,long UserId)
+        {
+            var result =await FileUploader.UploadFile(PathTools.ProfilePhotos, photo);
+            if (result.Status == 200)
+            {
+               User user= await userService.GetEntity(UserId);
+               user.ImageName = result.FileName;
+               userService.UpDateEntity(user);
+               await userService.SaveEntity();
+            }
+            return result;
         }
         #endregion
 
