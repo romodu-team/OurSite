@@ -151,7 +151,7 @@ namespace OurSite.Core.Services.Repositories
            
         }
 
-        public async Task<ResDeleAdminRole> DeleteAdminRole(long adminId)
+        public async Task<ResDeleteAdminRole> DeleteAdminRole(long adminId)
         {
             var AdminInRole= await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove == false);
             if (AdminInRole != null)
@@ -162,16 +162,16 @@ namespace OurSite.Core.Services.Repositories
                 {
                     await accounInRoleRepository.DeleteEntity(AdminInRole.Id);
                     await accounInRoleRepository.SaveEntity();
-                    return ResDeleAdminRole.Success;
+                    return ResDeleteAdminRole.Success;
                 }
                 catch (Exception)
                 {
 
-                    return ResDeleAdminRole.Faild;
+                    return ResDeleteAdminRole.Faild;
                 }
                 
             }
-            return ResDeleAdminRole.NotExist;
+            return ResDeleteAdminRole.NotExist;
         }
 
         public async Task<Role> GetRoleByName(string RoleName)

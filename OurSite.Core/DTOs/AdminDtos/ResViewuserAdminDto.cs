@@ -1,4 +1,6 @@
 ﻿using System;
+using OurSite.DataLayer.Entities.Accounts;
+
 namespace OurSite.Core.DTOs.UserDtos
 {
 	public class ResViewuserAdminDto

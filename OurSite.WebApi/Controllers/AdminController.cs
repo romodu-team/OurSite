@@ -8,6 +8,7 @@ using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 using System.Linq;
+using System.Security.Claims;
 
 namespace OurSite.WebApi.Controllers
 {
@@ -74,21 +75,25 @@ namespace OurSite.WebApi.Controllers
 
         #region Update admin profile
         [Authorize(Roles = "General Manager")]
-        [HttpPost("Update-Admin")]
-        public async Task<IActionResult> UpdateAdmin([FromBody] ReqUpdateAdminDto req)
+        [HttpPost("Update-another-Admin-profile")]
+        public async Task<IActionResult> UpdateAnotherAdmin([FromBody] ReqUpdateAdminDto req,long id)
         {
-
-            var res = await adminService.UpdateAdmin(req);
-            switch (res)
+            if (ModelState.IsValid)
             {
-                case resUpdateAdmin.Success:
-                    return JsonStatusResponse.Success("با موفقیت ویرایش شد");
-                case resUpdateAdmin.Error:
-                    return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
-                default:
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-            }
+                var res = await adminService.UpdateAdmin(req, id);
 
+                switch (res)
+                {
+                    case ResUpdate.Success:
+                        return JsonStatusResponse.Success("با موفقیت ویرایش شد");
+                    case ResUpdate.Error:
+                        return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
+                    default:
+                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                }
+            }
+            return JsonStatusResponse.Error("اطلاعات وارد شده اشتباه است");
+            
         }
         #endregion
 
@@ -132,15 +137,15 @@ namespace OurSite.WebApi.Controllers
         #region Admin Management
 
         #region Delete Admin Monharf
-        //[Authorize(Roles = "General Manager")]
-        //[HttpDelete("delete-admin")]
-        //public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
-        //{
-        //    var res = await adminService.DeleteAdmin(adminId);
-        //    if (res)
-        //        return JsonStatusResponse.Success("با موفقیت حذف شد");
-        //    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-        //}
+        [Authorize(Roles = "General Manager")]
+        [HttpDelete("delete-admin")]
+        public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
+        {
+            var res = await adminService.DeleteAdmin(adminId);
+            if (res)
+                return JsonStatusResponse.Success("با موفقیت حذف شد");
+            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+        }
         #endregion
 
         #region found admin by id
@@ -174,22 +179,33 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Update admin by self
-        [HttpPost("update-profile")]
+        [HttpPost("update-admin-profile")]
         public async Task<IActionResult> UpdateAdminBySelf([FromBody] ReqUpdateAdminDto req)
         {
-            var res = await adminService.UpdateAdmin(req);
-            switch (res)
+            if (User.Identity.IsAuthenticated)
             {
-                case resUpdateAdmin.Success:
-                    return JsonStatusResponse.Success("پنل کاربری شما با موفقیت ویرایش شد.");
-                    break;
-                case resUpdateAdmin.Error:
-                    return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
-                    break;
-                default:
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-                    break;
+                if (ModelState.IsValid)
+                {
+                    var Adminid = User.FindFirst(ClaimTypes.NameIdentifier);
+                    var res = await adminService.UpdateAdmin(req,Convert.ToInt64(Adminid.Value));
+                    switch (res)
+                    {
+                        case ResUpdate.Success:
+                            return JsonStatusResponse.Success("پنل کاربری شما با موفقیت ویرایش شد.");
+                        case ResUpdate.Error:
+                            return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
+                        case ResUpdate.NotFound:
+                            return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
+                        default:
+                            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                    }
+                }
+
+                return JsonStatusResponse.Error("فیلدهای وارد شده؛ اشتباه است");
             }
+
+            return JsonStatusResponse.NotFound("توکن شما نامعتبر است . مجدد وارد شوید");
+
         }
         #endregion
         #region Role Management
@@ -342,7 +358,35 @@ namespace OurSite.WebApi.Controllers
 
         #endregion
 
+        #region update user's profile by admin
+        [HttpPost("update-user-profile")]
+        public async Task<IActionResult> UpdateUserByAdmin(ReqUpdateUserDto userDto , long id)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (ModelState.IsValid)
+                {
+                    var res = await userService.UpDate(userDto , id);
+                    switch (res)
+                    {
 
+                        case ResUpdate.Success:
+                            return JsonStatusResponse.Success("پنل کاربری شما با موفقیت بروزرسانی شد");
+                        case ResUpdate.Error:
+                            return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+                        case ResUpdate.NotFound:
+                            return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
+                        default:
+                            break;
+                    }
+                }
+                return JsonStatusResponse.Error("اطلاعات ارسالی شما اشتباه است");
+            }
+            return JsonStatusResponse.Error("مجدد وارد پنل کاربری خود شوید.");
+
+        }
+
+        #endregion
 
         #region Delete user
         [HttpPost("delete-user")]

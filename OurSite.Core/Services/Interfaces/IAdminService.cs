@@ -10,8 +10,8 @@ namespace OurSite.Core.Services.Interfaces
     public interface IAdminService : IDisposable
     {
         #region Admin management
-        //Task<bool> DeleteAdmin(long adminId);
-        Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req,long id);
+        Task<bool> DeleteAdmin(long adminId);
+        Task<ResUpdate> UpdateAdmin(ReqUpdateAdminDto req,long id);
 
         Task<ResViewAdminDto> GetAdminById(long adminId);
         Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req);

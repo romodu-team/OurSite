@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.AdminDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
@@ -150,21 +151,25 @@ namespace OurSite.WebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var res = await userservice.UpDate(userdto);
-                    if (res)
+                    var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var res = await userservice.UpDate(userdto,Convert.ToInt64(userId));
+                    switch (res)
                     {
-                        return JsonStatusResponse.Success("پروفایل کاربری با موفقیت بروزرسانی شد");
-
+                        case ResUpdate.Success:
+                            return JsonStatusResponse.Success("پروفایل کاربری با موفقیت بروزرسانی شد");
+                        case ResUpdate.Error:
+                            return JsonStatusResponse.Error("بروزرسانی پروفایل کاربری با خطا موجه شد. مجددا تلاش نمایید.");
+                        case ResUpdate.NotFound:
+                            return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
+                        default:
+                            return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
                     }
-                    else
-                    {
-                        return JsonStatusResponse.Error("بروزرسانی پروفایل کاربری با خطا موجه شد. مجددا تلاش نمایید.");
-                    }
+ 
                 }
                 return JsonStatusResponse.Error("اطلاعات ارسالی اشتباه است");
             }
 
-            return JsonStatusResponse.Error("ابتدا وارد وبسایت شوید.");
+            return JsonStatusResponse.Error("مجدد وارد پنل کاربری خود شوید.");
         }
         #endregion
 

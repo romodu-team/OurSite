@@ -1,12 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using OurSite.DataLayer.Entities.Accounts;
 
 namespace OurSite.Core.DTOs.UserDtos
 {
 	public class ReqUpdateUserDto
 	{
 
-        public long id { get; set; }
         public string? FirstName { get; set; }
         public string?LastName { get; set; }
         public string? NationalCode { get; set; }
@@ -26,17 +26,25 @@ namespace OurSite.Core.DTOs.UserDtos
     }
 
 
-    public enum accountType
-    {
-        Real,
-        Legal
-    }
+    //public enum accountType
+    //{
+    //    Real,
+    //    Legal
+    //}
 
     public enum gender
     {
         male,
         female,
         other
+    }
+
+
+    public enum ResUpdateProfile
+    {
+        Success,
+        Failed,
+        
     }
 }
 

@@ -38,47 +38,46 @@ namespace OurSite.Core.Services.Repositories
 
         #region Admin management
         #region Delete Admin
-        //public async Task<bool> DeleteAdmin(long adminId)             //its return true/false -We do not have a real deletion
-        //{
-        //    var isdelete = await adminRepository.DeleteEntity(adminId);
+        public async Task<bool> DeleteAdmin(long adminId)             //its return true/false -We do not have a real deletion
+        {
+            var isdelete = await adminRepository.DeleteEntity(adminId);
 
-        //    if (isdelete)
-        //    {
-        //        try
-        //        {
+            if (isdelete)
+            {
+                try
+                {
 
-        //            await adminRepository.SaveEntity();
-        //            ResDeleAdminRole myres = await roleService.DeleteAdminRole(adminId);
-        //            switch (myres)
-        //            {
+                    await adminRepository.SaveEntity();
+                    var myres = await roleService.DeleteAdminRole(adminId);
+                    switch (myres)
+                    {
+                        case ResDeleteAdminRole.Success:
+                            return true;
+                        case ResDeleteAdminRole.NotExist:
+                            return true;
+                        case ResDeleteAdminRole.Faild:
+                            return false;
+                        default:
+                            return false;
+                    }
+                }
+                catch (Exception)
+                {
 
-        //                default:
-        //                    break;
-        //            }
-        //            if (myres)
-        //            {
-        //                await adminRepository.SaveEntity();
-        //                return myres;
-        //            }
-        //            return true;
-        //        }
-        //        catch (Exception)
-        //        {
-
-        //            return false;
-        //        }
-        //    }
-        //    return false;
-        //}
+                    return false;
+                }
+            }
+            return false;
+        }
         #endregion
 
 
-        #region Update admin profile
-        public async Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req)
+        #region Update admin profile by self/admin
+        public async Task<ResUpdate> UpdateAdmin(ReqUpdateAdminDto req, long id)
         {
-            var admin = await adminRepository.GetEntity(req.adminId);
+            var admin = await adminRepository.GetEntity(id);
             if (admin == null)
-                return resUpdateAdmin.NotFound;
+                return ResUpdate.NotFound;
 
             if (!string.IsNullOrWhiteSpace(req.Address))
                 admin.Address = req.Address;
@@ -104,7 +103,7 @@ namespace OurSite.Core.Services.Repositories
             //update admin role
             if (!string.IsNullOrWhiteSpace(req.Roleid))
             {
-                var accountinrole = await roleService.GetAdminInRole(req.adminId);
+                var accountinrole = await roleService.GetAdminInRole(id);
                 accountinrole.RoleId = Convert.ToInt64(req.Roleid);
                 var res = await roleService.UpdateAdminRole(accountinrole);
 
@@ -115,13 +114,15 @@ namespace OurSite.Core.Services.Repositories
                 admin.LastUpdate = DateTime.Now;
                 adminRepository.UpDateEntity(admin);
                 await adminRepository.SaveEntity();
-                return resUpdateAdmin.Success;
+                return ResUpdate.Success;
             }
             catch (Exception)
             {
 
-                return resUpdateAdmin.Error;
+                return ResUpdate.Error;
             }
+
+
         }
 
         #endregion
@@ -251,8 +252,6 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
-
-
 
         #region Admin list
         public async Task<List<GetAllAdminDto>> GetAllAdmin()

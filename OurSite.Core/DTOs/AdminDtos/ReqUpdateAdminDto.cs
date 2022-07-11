@@ -58,7 +58,7 @@ namespace OurSite.Core.DTOs.AdminDtos
 
         public string? Roleid { get; set; }
     }
-    public enum resUpdateAdmin
+    public enum ResUpdate
     {
         Success,
         NotFound,
