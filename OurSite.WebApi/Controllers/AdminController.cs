@@ -297,10 +297,10 @@ namespace OurSite.WebApi.Controllers
 
         #region User list
         [HttpGet("view-all-users")] //Get user list
-        public async Task<IActionResult> GetAllUser()
+        public async Task<IActionResult> GetAllUser([FromQuery] ReqFilterUserDto filter)
         {
-            var users = await userService.GetAlluser();
-            if (users.Any())
+            var users = await userService.GetAlluser(filter);
+            if (users.Users.Any())
             {
                 return JsonStatusResponse.Success(message: "موفق", ReturnData: users);
             }

@@ -393,13 +393,14 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Get user list 
-        public async Task<List<GetAllUserDto>> GetAlluser(FilterUserDto filter) //for return a list of user that singup in our site for admin
+        public async Task<ResFilterUserDto> GetAlluser(ReqFilterUserDto filter) //for return a list of user that singup in our site for admin
         {
             var usersQuery = userService.GetAllEntity();
             var count = (int)Math.Ceiling(usersQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
             var list =await userService.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
-            return list;
+            var result = new ResFilterUserDto();
+            return result.SetUsers(list);
         }
 
         #endregion

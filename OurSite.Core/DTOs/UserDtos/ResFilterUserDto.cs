@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace OurSite.Core.DTOs.UserDtos
 {
-    public class FilterUserDto:BasePaging
+    public class ResFilterUserDto:BasePaging
     {
-        public FilterUserDto SetPaging(BasePaging paging)
+        public List<GetAllUserDto>? Users { get; set; }
+        
+        public ResFilterUserDto SetPaging(BasePaging paging)
         {
             this.PageId = paging.PageId;
             this.PageCount = paging.PageCount;
@@ -18,6 +20,11 @@ namespace OurSite.Core.DTOs.UserDtos
             this.TakeEntity = paging.TakeEntity;
             this.SkipEntity = paging.SkipEntity;
             this.ActivePage = paging.ActivePage;
+            return this;
+        }
+        public ResFilterUserDto SetUsers(List<GetAllUserDto> users)
+        {
+            this.Users = users;
             return this;
         }
     }
