@@ -83,8 +83,6 @@ namespace OurSite.WebApi.Controllers
             {
                 case resUpdateAdmin.Success:
                     return JsonStatusResponse.Success("با موفقیت ویرایش شد");
-                case resUpdateAdmin.NotFound:
-                    return JsonStatusResponse.NotFound("حساب کاربری پیدا نشد");
                 case resUpdateAdmin.Error:
                     return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
                 default:
@@ -176,7 +174,23 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Update admin by self
-        public async task<IActionResult> UpdateAdminBySelf
+        [HttpPost("update-profile")]
+        public async Task<IActionResult> UpdateAdminBySelf([FromBody] ReqUpdateAdminDto req)
+        {
+            var res = await adminService.UpdateAdmin(req);
+            switch (res)
+            {
+                case resUpdateAdmin.Success:
+                    return JsonStatusResponse.Success("پنل کاربری شما با موفقیت ویرایش شد.");
+                    break;
+                case resUpdateAdmin.Error:
+                    return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
+                    break;
+                default:
+                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                    break;
+            }
+        }
         #endregion
         #region Role Management
 
