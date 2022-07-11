@@ -11,7 +11,7 @@ namespace OurSite.Core.Services.Interfaces
 {
     public interface IRoleService:IDisposable
     {
-        Task<bool> AddRole(RoleDto role);
+        Task<ResAddRole> AddRole(RoleDto role);
         Task<bool> RemoveRole(long RoleId);
         Task<ResUpdateRole> UpdateRole(ReqUpdateRoleDto reqUpdate);
         Task<RoleDto> GetRoleById(long RoleId);
@@ -20,7 +20,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<Role> GetAdminRole(long adminId);
 
         Task<bool> AddRoleToAdmin(AccounInRole accounInRole);
-        Task<bool> DeleteAdminRole(long adminId);
+        Task<ResDeleteAdminRole> DeleteAdminRole(long adminId);
         Task<bool> UpdateAdminRole(AccounInRole accounInRole);
         Task<AccounInRole> GetAdminInRole(long adminId);
     }

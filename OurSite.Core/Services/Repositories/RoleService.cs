@@ -22,51 +22,65 @@ namespace OurSite.Core.Services.Repositories
             this.RoleRepository = RoleRepository;
             this.accounInRoleRepository = accounInRoleRepository;
         }
+        #endregion
 
-        public async Task<bool> AddRole(RoleDto role)
+        #region Add new role for admin
+        public async Task<ResAddRole> AddRole(RoleDto role)
         {
-            if(!string.IsNullOrWhiteSpace(role.Name) && !string.IsNullOrWhiteSpace(role.Title))
+
+            if (!string.IsNullOrWhiteSpace(role.Name) && !string.IsNullOrWhiteSpace(role.Title))
             {
-                Role newRole = new Role()
+                if (!RoleRepository.GetAllEntity().Any(r => (r.Name == role.Name || r.Title == role.Title) && r.IsRemove == false))
                 {
-                    CreateDate = DateTime.Now,
-                    LastUpdate = DateTime.Now,
-                    IsRemove = false,
-                    Name = role.Name,
-                    Title = role.Title
-                };
-                try
-                {
-                    await RoleRepository.AddEntity(newRole);
-                    await RoleRepository.SaveEntity();
-                    return true;
-                }
-                catch (Exception)
-                {
+                    Role newRole = new Role()
+                    {
+                        CreateDate = DateTime.Now,
+                        LastUpdate = DateTime.Now,
+                        IsRemove = false,
+                        Name = role.Name,
+                        Title = role.Title
+                    };
+                    try
+                    {
 
-                    return false;
+                        await RoleRepository.AddEntity(newRole);
+                        await RoleRepository.SaveEntity();
+                        return ResAddRole.Success;
+                    }
+                    catch (Exception)
+                    {
+
+                        return ResAddRole.Faild;
+                    }
                 }
-               
+                return ResAddRole.Exist;   
+                
+
             }
-            return false;
+            return ResAddRole.InvalidInput;
 
+        }
+
+        #endregion
+
+        #region Get roles
+        public async Task<List<RoleDto>> GetActiveRoles()        //
+        {
+            return await RoleRepository.GetAllEntity().Select(r => new RoleDto { Name = r.Name, Title = r.Title }).ToListAsync();
         }
         #endregion
 
-
-        public async Task<List<RoleDto>> GetActiveRoles()
-        {
-            return await RoleRepository.GetAllEntity().Select(r=> new RoleDto { Name=r.Name,Title=r.Title}).ToListAsync();
-        }
-
+        #region founder role by id
         public async Task<RoleDto> GetRoleById(long RoleId)
         {
             var role = await RoleRepository.GetEntity(RoleId);
             if (role is null)
                 return null;
-            return new RoleDto { Name=role.Name,Title=role.Title};
+            return new RoleDto { Name = role.Name, Title = role.Title };
         }
+        #endregion
 
+        #region Delete role
         public async Task<bool> RemoveRole(long RoleId)
         {
             var role = await RoleRepository.GetEntity(RoleId);
@@ -76,7 +90,7 @@ namespace OurSite.Core.Services.Repositories
             role.LastUpdate = DateTime.Now;
             try
             {
-               RoleRepository.UpDateEntity(role);
+                RoleRepository.UpDateEntity(role);
                 await RoleRepository.SaveEntity();
                 return true;
             }
@@ -86,25 +100,30 @@ namespace OurSite.Core.Services.Repositories
                 return false;
             }
         }
+        #endregion
 
         public async Task<ResUpdateRole> UpdateRole(ReqUpdateRoleDto reqUpdate)
         {
-            var role=await RoleRepository.GetEntity(reqUpdate.RoleID);
-            if (role is null)
-                return ResUpdateRole.NotFound;
-            role.Title = reqUpdate.RoleTitle;
-            role.LastUpdate = DateTime.Now;
+            if (!RoleRepository.GetAllEntity().Any(r => r.Title == reqUpdate.RoleTitle))
+            {
+                var role = await RoleRepository.GetEntity(reqUpdate.RoleID);
+                if (role is null)
+                    return ResUpdateRole.NotFound;
+                role.Title = reqUpdate.RoleTitle;
+                role.LastUpdate = DateTime.Now;
 
-            try
-            {
-                RoleRepository.UpDateEntity(role);
-                await RoleRepository.SaveEntity();
-                return ResUpdateRole.Success;
+                try
+                {
+                    RoleRepository.UpDateEntity(role);
+                    await RoleRepository.SaveEntity();
+                    return ResUpdateRole.Success;
+                }
+                catch (Exception)
+                {
+                    return ResUpdateRole.Error;
+                }
             }
-            catch (Exception)
-            {
-                return ResUpdateRole.Error;
-            }
+            return ResUpdateRole.Exist;
         }
 
         public async Task<Role> GetAdminRole(long adminId)
@@ -123,6 +142,7 @@ namespace OurSite.Core.Services.Repositories
         {
             try
             {
+
                 await accounInRoleRepository.AddEntity(accounInRole);
                 await accounInRoleRepository.SaveEntity();
                 return true;
@@ -135,7 +155,7 @@ namespace OurSite.Core.Services.Repositories
            
         }
 
-        public async Task<bool> DeleteAdminRole(long adminId)
+        public async Task<ResDeleteAdminRole> DeleteAdminRole(long adminId)
         {
             var AdminInRole= await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove == false);
             if (AdminInRole != null)
@@ -146,16 +166,16 @@ namespace OurSite.Core.Services.Repositories
                 {
                     await accounInRoleRepository.DeleteEntity(AdminInRole.Id);
                     await accounInRoleRepository.SaveEntity();
-                    return true;
+                    return ResDeleteAdminRole.Success;
                 }
                 catch (Exception)
                 {
 
-                    return false;
+                    return ResDeleteAdminRole.Faild;
                 }
                 
             }
-            return false;
+            return ResDeleteAdminRole.NotExist;
         }
 
         public async Task<Role> GetRoleByName(string RoleName)

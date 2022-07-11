@@ -1,4 +1,5 @@
-﻿using OurSite.Core.DTOs.UserDtos;
+﻿using Microsoft.AspNetCore.Http;
+using OurSite.Core.DTOs.UserDtos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,6 @@ namespace OurSite.Core.DTOs.AdminDtos
 {
     public class ReqUpdateAdminDto
     {
-        public long  adminId { get; set; }
        // [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("نام")]
         [MaxLength(50, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
@@ -57,9 +57,10 @@ namespace OurSite.Core.DTOs.AdminDtos
         [DisplayName("تاریخ تولد")]
         public string? Birthday { get; set; }
 
-        public string? RoleName { get; set; }
+        public string? Roleid { get; set; }
+        public IFormFile? ProfilePhoto { get; set; }
     }
-    public enum resUpdateAdmin
+    public enum ResUpdate
     {
         Success,
         NotFound,

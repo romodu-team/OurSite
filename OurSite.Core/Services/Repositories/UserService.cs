@@ -2,7 +2,7 @@
 using OurSite.Core.DTOs;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
@@ -17,13 +17,17 @@ using System.Threading.Tasks;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.DTOs.MailDtos;
 using Microsoft.AspNetCore.Authorization;
+using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.Uploader;
+using Microsoft.AspNetCore.Http;
+using OurSite.Core.Utilities.Extentions.Paging;
+using OurSite.Core.DTOs.Paging;
 
 namespace OurSite.Core.Services.Repositories
 {
     public class UserService : IUserService
     {
         #region constructor
-        //
         private readonly IGenericReopsitories<User> userService;
         private IPasswordHelper passwordHelper;
         private IMailService mailService;
@@ -43,28 +47,43 @@ namespace OurSite.Core.Services.Repositories
 
 
         #endregion
-
+        public async Task<bool> IsMobileExist(string mobile, accountType type)
+        {
+            return userService.GetAllEntity().Any(x => x.Mobile == mobile && x.AccountType == type);
+        }
         #region User Service
 
         #region singup
         public async Task<RessingupDto> SingUp(ReqSingupUserDto userDto)
         {
+            userDto.UserName = userDto.UserName.ToLower().Trim();
+            userDto.Email = userDto.Email.ToLower().Trim();
+            userDto.Mobile = userDto.Mobile.Trim();
             var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
             if (check == true)
                 return RessingupDto.Exist;
+          
+            if (userDto.AccountType == accountType.Legal)
+            {
+                if (await IsMobileExist(userDto.Mobile, userDto.AccountType)) return RessingupDto.MobileExist;
 
+            }
+            if(userDto.AccountType == accountType.Real)
+            {
+                if (await IsMobileExist(userDto.Mobile, userDto.AccountType)) return RessingupDto.MobileExist;
+            }
             try
-            {//
+            {
                 User user = new User()
                 {
                     FirstName = userDto.Name,
                     LastName = userDto.Family,
                     UserName = userDto.UserName,
-                    Password = userDto.Password,
+                    Password = passwordHelper.EncodePasswordMd5(userDto.Password),
                     Email = userDto.Email,
                     Mobile = userDto.Mobile,
-                    ActivationCode = new Guid().ToString()
-
+                    ActivationCode = Guid.NewGuid().ToString(),
+                    AccountType = userDto.AccountType
 
                 };
                 user.CreateDate = DateTime.Now;
@@ -88,17 +107,22 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region SingUp exist error
-        public async Task<bool> GetUserEmailandUserName(string Email, string UserName)
+        public async Task<bool> GetUserEmailandUserName(string? Email, string UserName)
         {
-            return await userService.GetAllEntity().AnyAsync(x => x.Email == Email || x.UserName == UserName);
+            return await userService.GetAllEntity().AnyAsync(x =>!x.IsRemove &&(x.Email == Email.Trim().ToLower() || x.UserName == UserName.Trim().ToLower()));
 
         }
+        public async Task<bool> GetUserEmailandUserName( string UserName)
+        {
+            return await userService.GetAllEntity().AnyAsync(x => !x.IsRemove && (x.UserName == UserName.Trim().ToLower()));
 
+        }
         #endregion
 
         #region Login
         public async Task<ResLoginDto> LoginUser(ReqLoginDto login)
         {
+            login.UserName = login.UserName.Trim().ToLower();
             if (String.IsNullOrWhiteSpace(login.UserName))
                 return ResLoginDto.Error;
             if (String.IsNullOrWhiteSpace(login.Password))
@@ -108,7 +132,7 @@ namespace OurSite.Core.Services.Repositories
             var user = await GetUserByUserPass(login.UserName, login.Password);
             if (user != null)
             {
-                if (await IsUserActiveByUserName(login.UserName.ToLower().Trim()))
+                if (await IsUserActiveByUserName(login.UserName))
                 {
                     return ResLoginDto.Success;
                 }
@@ -148,7 +172,7 @@ namespace OurSite.Core.Services.Repositories
             var user = await GetUserByEmailOrUserName(EmailOrUserName.ToLower().Trim());
             if (user != null)
             {
-                var res = await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter = user.Id.ToString(), ToEmail = user.Email, UserName = user.UserName });
+                var res = await mailService.SendResetPasswordEmailAsync(new SendEmailDto { Parameter = user.Id.ToString(), ToEmail = user.Email.Trim().ToLower(), UserName = user.UserName.Trim().ToLower() });
                 if (res)
                     return ResLoginDto.Success;
                 else
@@ -170,7 +194,7 @@ namespace OurSite.Core.Services.Repositories
         #region Check user activation by username
         public async Task<bool> IsUserActiveByUserName(string userName)
         {
-            return await userService.GetAllEntity().AnyAsync(u => (u.UserName == userName.ToLower().Trim() || u.Email == userName.ToLower().Trim()) && u.IsActive == true);
+            return await userService.GetAllEntity().AnyAsync(u => (u.UserName == userName.ToLower().Trim() || u.Email == userName.ToLower().Trim()) && u.IsActive == true && u.IsRemove==false);
         }
 
         #endregion
@@ -191,7 +215,7 @@ namespace OurSite.Core.Services.Repositories
             if (user != null)
             {
                 user.IsActive = true;
-                user.ActivationCode = new Guid().ToString();
+                user.ActivationCode = Guid.NewGuid().ToString();
                 try
                 {
                     user.LastUpdate = DateTime.Now;
@@ -212,46 +236,72 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Update profile by user
-        public async Task<bool> UpDate(ReqUpdateUserDto userdto)
+        public async Task<ResUpdate> UpDate(ReqUpdateUserDto userdto,long id)
         {
-            var user = await userService.GetEntity(userdto.id);
+            var user = await userService.GetEntity(id);
             if (user != null)
             {
-                user.FirstName = userdto.FirstName;
-                user.LastName = userdto.LastName;
-                user.NationalCode = userdto.NationalCode;
-                user.Email = userdto.Email;
-                user.Mobile = userdto.Mobile;
-                user.Password = userdto.Password;
-                user.Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender;
-                user.Address = userdto.Address;
-                user.ImageName = userdto.ImageName;
-                user.Birthday = userdto.Birthday;
-                user.Phone = userdto.Phone;
-                user.ShabaNumbers = userdto.ShabaNumbers;
-                user.AccountType = (DataLayer.Entities.Accounts.accountType)userdto.AccountType;
-                user.BusinessCode = userdto.BusinessCode;
-                user.RegistrationNumber = userdto.RegistrationNumber;
+                if (!string.IsNullOrWhiteSpace(userdto.FirstName))
+                    user.FirstName = userdto.FirstName;
+                if (!string.IsNullOrWhiteSpace(userdto.LastName))
+                    user.LastName = userdto.LastName;
+                if (!string.IsNullOrWhiteSpace(userdto.NationalCode))
+                    user.NationalCode = userdto.NationalCode;
+                if (!string.IsNullOrWhiteSpace(userdto.Email))
+                    user.Email = userdto.Email.Trim().ToLower();
+                if (!string.IsNullOrWhiteSpace(userdto.Mobile))
+                    user.Mobile = userdto.Mobile;
+                if (userdto.Gender is not null)
+                    user.Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender;
+                if (!string.IsNullOrWhiteSpace(userdto.Address))
+                    user.Address = userdto.Address;
+                if (!string.IsNullOrWhiteSpace(userdto.ImageName))
+                    user.ImageName = userdto.ImageName;
+                if (!string.IsNullOrWhiteSpace(userdto.Birthday))
+                    user.Birthday = userdto.Birthday;
+                if (!string.IsNullOrWhiteSpace(userdto.Phone))
+                    user.Phone = userdto.Phone;
+                if (!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
+                    user.ShabaNumbers = userdto.ShabaNumbers;
+                if (userdto.AccountType is not null)
+                    user.AccountType = (DataLayer.Entities.Accounts.accountType)userdto.AccountType;
+                if (!string.IsNullOrWhiteSpace(userdto.BusinessCode))
+                    user.BusinessCode = userdto.BusinessCode;
+                if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
+                    user.RegistrationNumber = userdto.RegistrationNumber;
                 try
                 {
-
+                    user.LastUpdate = DateTime.Now;
                     userService.UpDateEntity(user);
                     await userService.SaveEntity();
-                    return true;
+                    return ResUpdate.Success;
 
                 }
                 catch (Exception ex)
                 {
-                    return false;
+                    return ResUpdate.Error;
 
 
                 }
 
             }
-            return false;
+            return ResUpdate.NotFound;
 
 
 
+        }
+
+        public async Task<resFileUploader> ProfilePhotoUpload(IFormFile photo,long UserId)
+        {
+            var result =await FileUploader.UploadFile(PathTools.ProfilePhotos, photo,3);
+            if (result.Status==resFileUploader.Success)
+            {
+               User user= await userService.GetEntity(UserId);
+               user.ImageName = result.FileName;
+               userService.UpDateEntity(user);
+               await userService.SaveEntity();
+            }
+            return result.Status;
         }
         #endregion
 
@@ -274,7 +324,7 @@ namespace OurSite.Core.Services.Repositories
                 userdto.Phone = user.Phone;
                 userdto.Birthday = user.Birthday;
                 userdto.ShabaNumbers = user.ShabaNumbers;
-                userdto.AccountType = (DTOs.UserDtos.accountType?)user.AccountType;
+                userdto.AccountType = (accountType?)user.AccountType;
                 userdto.BusinessCode = user.BusinessCode;
                 userdto.RegistrationNumber = user.RegistrationNumber;
 
@@ -316,46 +366,65 @@ namespace OurSite.Core.Services.Repositories
         #region Delete User
         public async Task<bool> DeleteUser(long id)
         {
-            var user = await userService.DeleteEntity(id); //get id and return true that it means user deleted
-            if (user is true) //if delete
+            var isdelete = await userService.DeleteEntity(id); //get id and return true that it means user deleted
+            if (isdelete)
             {
-                return true;
-                userService.SaveEntity();
+                try
+                {
+                    await userService.SaveEntity();
+
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
             }
-            return false; //if not
+
+            return isdelete;
 
         }
         #endregion
 
         #region Add User
-        ////add user by admin
+        //add user by admin
         //[Authorize(Roles = "نقش مدنظر")]
-        //public async Task AddUser(ReqSingupUserDto userDto)
-        //{
-        //    //connect user model options to userdto options model
-        //    User user = new User()
-        //    {
-        //        UserName = userDto.UserName,
-        //        FirstName = userDto.Name,
-        //        LastName = userDto.Family,
-        //        Password = userDto.Password,
-        //        Phone = userDto.phone,
-        //        Email = userDto.Email,
-        //        ActivationCode = new Guid().ToString()
-        //    };
+        public async Task<ResadduserDto> AddUser(ReqAddUserAdminDto userDto)
+        {
+            if(!string.IsNullOrWhiteSpace(userDto.UserName) && !string.IsNullOrWhiteSpace(userDto.Password))
+            {
+                if (!await GetUserEmailandUserName(userDto.UserName))
+                {
+                    User user = new User()
+                    {
+                        UserName = userDto.UserName.Trim().ToLower(),
+                        Password =passwordHelper.EncodePasswordMd5(userDto.Password),
+                        IsActive = true,
+                        CreateDate=DateTime.Now,
+                        LastUpdate=DateTime.Now
+                        
+                    };
+                    await userService.AddEntity(user);
+                    await userService.SaveEntity();
+                    return ResadduserDto.success;
 
-        //    await userService.AddEntity(user);
-        //    await userService.SaveEntity();
-        //    await mailService.SendActivationCodeEmail(new SendEmailDto { ToEmail = userDto.Email, UserName = userDto.UserName, Parameter = user.ActivationCode });
+                }
+                return ResadduserDto.Exist;
+            }
 
-        //}
+            return ResadduserDto.Failed;
+        }
         #endregion
 
         #region Get user list 
-        public Task<List<User>> GetAlluser() //for return a list of user that singup in our site for admin
+        public async Task<ResFilterUserDto> GetAlluser(ReqFilterUserDto filter) //for return a list of user that singup in our site for admin
         {
-            var list = userService.GetAllEntity().Where(u => u.IsRemove == false).ToListAsync();    //use the genric interface options and save values in variable
-            return list;
+            var usersQuery = userService.GetAllEntity();
+            var count = (int)Math.Ceiling(usersQuery.Count() / (double)filter.TakeEntity);
+            var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
+            var list =await userService.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
+            var result = new ResFilterUserDto();
+            result.SetPaging(pager);
+            return result.SetUsers(list);
         }
 
         #endregion
@@ -363,15 +432,35 @@ namespace OurSite.Core.Services.Repositories
         #region View User Profile
         //profile view for admin
         [Authorize(Roles = "نقش مدنظر")]
-        public async Task<User> ViewUser(long id)
+        public async Task<ResViewuserAdminDto> ViewUser(long id)
         {
             var user = await userService.GetEntity(id);
-            return user;
-
+            ResViewuserAdminDto adminview = new ResViewuserAdminDto();
+            if (user is not null)
+            {
+                adminview.Id = user.Id;
+                adminview.CreateDate = user.CreateDate;
+                adminview.IsRemove = user.IsRemove;
+                adminview.LastUpdate = user.LastUpdate;
+                adminview.UserName = user.UserName;
+                adminview.FirstName = user.FirstName;
+                adminview.LastName = user.LastName;
+                adminview.NationalCode = user.NationalCode;
+                adminview.Email = user.Email;
+                adminview.Mobile = user.Mobile;
+                adminview.Gender = (gender?)user.Gender;
+                adminview.Address = user.Address;
+                adminview.ImageName = user.ImageName;
+                adminview.Phone = user.Phone;
+                adminview.Birthday = user.Birthday;
+                adminview.ShabaNumbers = user.ShabaNumbers;
+                adminview.AccountType = (accountType?)user.AccountType;
+                adminview.BusinessCode = user.BusinessCode;
+                adminview.RegistrationNumber = user.RegistrationNumber;
+            }
+            return adminview;
         }
         #endregion
-
-
 
         #endregion
 
