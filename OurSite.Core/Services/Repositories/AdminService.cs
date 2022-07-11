@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.RoleDtos;
 using OurSite.Core.DTOs.MailDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
@@ -41,20 +42,34 @@ namespace OurSite.Core.Services.Repositories
         #region Delete Admin
         public async Task<bool> DeleteAdmin(long adminId)             //its return true/false -We do not have a real deletion
         {
+            var isdelete = await adminRepository.DeleteEntity(adminId);
 
-            try
+            if (isdelete)
             {
-                await adminRepository.DeleteEntity(adminId);
-                await adminRepository.SaveEntity();
-                var res = await roleService.DeleteAdminRole(adminId);
+                try
+                {
 
-                return res;
-            }
-            catch (Exception)
-            {
+                    await adminRepository.SaveEntity();
+                    var myres = await roleService.DeleteAdminRole(adminId);
+                    switch (myres)
+                    {
+                        case ResDeleteAdminRole.Success:
+                            return true;
+                        case ResDeleteAdminRole.NotExist:
+                            return true;
+                        case ResDeleteAdminRole.Faild:
+                            return false;
+                        default:
+                            return false;
+                    }
+                }
+                catch (Exception)
+                {
 
-                return false;
+                    return false;
+                }
             }
+            return false;
         }
         #endregion
 
@@ -78,18 +93,13 @@ namespace OurSite.Core.Services.Repositories
 
         }
         #endregion
-        //public async Task<Role> GetAdminRole(long adminId)
-        //{
-        //    var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove==false);
-        //    return role.Role;
-        //}
 
-        #region Update admin profile
-        public async Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req)
+        #region Update admin profile by self/admin
+        public async Task<ResUpdate> UpdateAdmin(ReqUpdateAdminDto req, long id)
         {
-            var admin = await adminRepository.GetEntity(req.adminId);
+            var admin = await adminRepository.GetEntity(id);
             if (admin == null)
-                return resUpdateAdmin.NotFound;
+                return ResUpdate.NotFound;
 
             if (!string.IsNullOrWhiteSpace(req.Address))
                 admin.Address = req.Address;
@@ -115,7 +125,7 @@ namespace OurSite.Core.Services.Repositories
             //update admin role
             if (!string.IsNullOrWhiteSpace(req.Roleid))
             {
-                var accountinrole = await roleService.GetAdminInRole(req.adminId);
+                var accountinrole = await roleService.GetAdminInRole(id);
                 accountinrole.RoleId = Convert.ToInt64(req.Roleid);
                 var res = await roleService.UpdateAdminRole(accountinrole);
 
@@ -126,13 +136,15 @@ namespace OurSite.Core.Services.Repositories
                 admin.LastUpdate = DateTime.Now;
                 adminRepository.UpDateEntity(admin);
                 await adminRepository.SaveEntity();
-                return resUpdateAdmin.Success;
+                return ResUpdate.Success;
             }
             catch (Exception)
             {
 
-                return resUpdateAdmin.Error;
+                return ResUpdate.Error;
             }
+
+
         }
         public async Task<resFileUploader> ProfilePhotoUpload(IFormFile photo, long UserId)
         {
@@ -272,26 +284,17 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
-        #endregion
 
-        #region User management
-
-
-
-
-
-        #region delete user
-        public Task<bool> DeleteUser(long id)
+        #region Admin list
+        public async Task<List<GetAllAdminDto>> GetAllAdmin()
         {
-            throw new NotImplementedException();
+            var list = await adminRepository.GetAllEntity().Where(x => x.IsRemove == false).Select(x => new GetAllAdminDto { Email = x.Email, FirstName = x.FirstName, LastName = x.LastName, AdminId = x.Id, UserName = x.UserName, IsDelete = x.IsRemove }).ToListAsync();
+            return list;
         }
-        #endregion
-
-
-
-
 
         #endregion
+        #endregion
+
 
         #region login
         public async Task<Admin> Login(ReqLoginDto req)
@@ -304,6 +307,8 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
+
+
 
         #region Dispose
         public void Dispose()

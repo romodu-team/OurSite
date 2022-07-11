@@ -12,7 +12,6 @@ namespace OurSite.Core.DTOs.AdminDtos
 {
     public class ReqUpdateAdminDto
     {
-        public long  adminId { get; set; }
        // [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("نام")]
         [MaxLength(50, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
@@ -61,7 +60,7 @@ namespace OurSite.Core.DTOs.AdminDtos
         public string? Roleid { get; set; }
         public IFormFile ProfilePhoto { get; set; }
     }
-    public enum resUpdateAdmin
+    public enum ResUpdate
     {
         Success,
         NotFound,

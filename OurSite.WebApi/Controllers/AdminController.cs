@@ -8,6 +8,7 @@ using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 using System.Linq;
+using System.Security.Claims;
 
 namespace OurSite.WebApi.Controllers
 {
@@ -74,42 +75,25 @@ namespace OurSite.WebApi.Controllers
 
         #region Update admin profile
         [Authorize(Roles = "General Manager")]
-        [HttpPost("Update-Admin")]
-        public async Task<IActionResult> UpdateAdmin([FromForm] ReqUpdateAdminDto req)
+        [HttpPost("Update-another-Admin-profile")]
+        public async Task<IActionResult> UpdateAnotherAdmin([FromBody] ReqUpdateAdminDto req,long id)
         {
-
-            var res = await adminService.UpdateAdmin(req);
-            if (req.ProfilePhoto != null)
+            if (ModelState.IsValid)
             {
-                var resProfilePhoto = await adminService.ProfilePhotoUpload(req.ProfilePhoto, req.adminId);
-                switch (resProfilePhoto)
+                var res = await adminService.UpdateAdmin(req, id);
+
+                switch (res)
                 {
-                    case resFileUploader.Failure:
-                        return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
-
-                    case resFileUploader.ToBig:
-                        return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
-
-                    case resFileUploader.NoContent:
-                        return JsonStatusResponse.Error("تصویر پروفایل خالی است");
-                    case resFileUploader.InvalidExtention:
-                        return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                    case ResUpdate.Success:
+                        return JsonStatusResponse.Success("با موفقیت ویرایش شد");
+                    case ResUpdate.Error:
+                        return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
                     default:
-                        break;
+                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
                 }
             }
-            switch (res)
-            {
-                case resUpdateAdmin.Success:
-                    return JsonStatusResponse.Success("با موفقیت ویرایش شد");
-                case resUpdateAdmin.NotFound:
-                    return JsonStatusResponse.NotFound("حساب کاربری پیدا نشد");
-                case resUpdateAdmin.Error:
-                    return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
-                default:
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-            }
-
+            return JsonStatusResponse.Error("اطلاعات وارد شده اشتباه است");
+            
         }
         #endregion
 
@@ -189,6 +173,51 @@ namespace OurSite.WebApi.Controllers
 
         #endregion
 
+        #region List Admins
+        [HttpGet("Admin-list")]
+        public async Task<IActionResult> GetAllAdmin()
+        {
+            var list = await adminService.GetAllAdmin();
+            if (list.Any())
+            {
+                return JsonStatusResponse.Success(message: ("موفق"), ReturnData: list);
+
+            }
+
+            return JsonStatusResponse.NotFound(message: "آدمینی پیدا نشد");
+        }
+        #endregion
+
+        #region Update admin by self
+        [HttpPost("update-admin-profile")]
+        public async Task<IActionResult> UpdateAdminBySelf([FromBody] ReqUpdateAdminDto req)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (ModelState.IsValid)
+                {
+                    var Adminid = User.FindFirst(ClaimTypes.NameIdentifier);
+                    var res = await adminService.UpdateAdmin(req,Convert.ToInt64(Adminid.Value));
+                    switch (res)
+                    {
+                        case ResUpdate.Success:
+                            return JsonStatusResponse.Success("پنل کاربری شما با موفقیت ویرایش شد.");
+                        case ResUpdate.Error:
+                            return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
+                        case ResUpdate.NotFound:
+                            return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
+                        default:
+                            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                    }
+                }
+
+                return JsonStatusResponse.Error("فیلدهای وارد شده؛ اشتباه است");
+            }
+
+            return JsonStatusResponse.NotFound("توکن شما نامعتبر است . مجدد وارد شوید");
+
+        }
+        #endregion
         #region Role Management
 
         #region Add new role
@@ -343,6 +372,48 @@ namespace OurSite.WebApi.Controllers
             }
         }
 
+        #endregion
+
+        #region update user's profile by admin
+        [HttpPost("update-user-profile")]
+        public async Task<IActionResult> UpdateUserByAdmin(ReqUpdateUserDto userDto , long id)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (ModelState.IsValid)
+                {
+                    var res = await userService.UpDate(userDto , id);
+                    switch (res)
+                    {
+
+                        case ResUpdate.Success:
+                            return JsonStatusResponse.Success("پنل کاربری شما با موفقیت بروزرسانی شد");
+                        case ResUpdate.Error:
+                            return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+                        case ResUpdate.NotFound:
+                            return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
+                        default:
+                            break;
+                    }
+                }
+                return JsonStatusResponse.Error("اطلاعات ارسالی شما اشتباه است");
+            }
+            return JsonStatusResponse.Error("مجدد وارد پنل کاربری خود شوید.");
+
+        }
+
+        #endregion
+
+        #region Delete user
+        [HttpPost("delete-user")]
+        public async Task<IActionResult> DeleteUser([FromBody]long id)
+        {
+            var check = await userService.DeleteUser(id);
+            if (check)
+                return JsonStatusResponse.Success("کاربر با موفقیت حذف شد");
+            return JsonStatusResponse.Error("عملیات ناموفق بود. ");
+
+        }
         #endregion
 
         #endregion

@@ -19,8 +19,9 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResActiveUser> ActiveUser(string activationCode);
         Task<bool> GetUserEmailandUserName(string Email , string UserName);
 
-        Task<bool> UpDate(ReqUpdateUserDto userdto);
         Task<resFileUploader> ProfilePhotoUpload(IFormFile photo, long UserId);
+        Task<ResUpdate> UpDate(ReqUpdateUserDto userdto,long id);
+        Task<bool> IsMobileExist(string mobile , accountType type);
         Task<RessingupDto> SingUp(ReqSingupUserDto userDto);
 
         Task<ReqViewUserDto> ViewProfile(long id);

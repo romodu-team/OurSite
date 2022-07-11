@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using OurSite.DataLayer.Entities.Accounts;
 
 namespace OurSite.Core.DTOs.UserDtos
 {
@@ -15,13 +16,21 @@ namespace OurSite.Core.DTOs.UserDtos
         public string Email { get; set; }
      //   public singup Singup { get; set; }
         public long? AdminRoleId { get; set; }
+        public accountType AccountType { get; set; }
     }
 
-	public enum RessingupDto
+    //public enum accountType
+    //{
+    //    Real,
+    //    Legal
+    //}
+
+    public enum RessingupDto
     {
 		success,
 		Failed,
 		Exist,
+        MobileExist
     };
 
     public enum ResActiveUser

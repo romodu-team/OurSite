@@ -16,7 +16,7 @@ namespace OurSite.DataLayer.Entities.Accounts
         public string? BusinessCode { get; set; }
         public string? RegistrationNumber { get; set; }
 
-        public string ActivationCode { get; set; }
+        public string? ActivationCode { get; set; }
         public bool IsActive { get; set; }
     }
 

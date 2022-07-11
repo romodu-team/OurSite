@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.AdminDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
@@ -131,6 +131,8 @@ namespace OurSite.WebApi.Controllers
                         return JsonStatusResponse.Error("ثبت نام با خطا مواجه شد. مجدد ثبت نام کنید.");
                     case RessingupDto.Exist:
                         return JsonStatusResponse.Error("نام کاربری یا ایمیل قبلا ثبت نام شده است");
+                    case RessingupDto.MobileExist:
+                        return JsonStatusResponse.Error("شماره همراه قبلا ثبت نام شده است");
                     default:
                         HttpContext.Response.StatusCode = 400;
                         return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
@@ -147,11 +149,13 @@ namespace OurSite.WebApi.Controllers
         [HttpPut("Update-Profile")]
         public async Task<IActionResult> UpDate([FromForm]ReqUpdateUserDto userdto)
         {
-            if(ModelState.IsValid)
+            if (User.Identity.IsAuthenticated)
             {
-                var res = await userservice.UpDate(userdto);
-
-                if (userdto.ProfilePhoto != null)
+                if (ModelState.IsValid)
+                {
+                    var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var res = await userservice.UpDate(userdto,Convert.ToInt64(userId));
+                    if (userdto.ProfilePhoto != null)
                 {
                     var resProfilePhoto = await userservice.ProfilePhotoUpload(userdto.ProfilePhoto, userdto.id);
                     switch (resProfilePhoto)
@@ -170,20 +174,23 @@ namespace OurSite.WebApi.Controllers
                             break;
                     }
                 }
-              
-
-                if (res)
-                {
-                    return JsonStatusResponse.Success("پروفایل کاربری با موفقیت بروزرسانی شد");
-
+                    switch (res)
+                    {
+                        case ResUpdate.Success:
+                            return JsonStatusResponse.Success("پروفایل کاربری با موفقیت بروزرسانی شد");
+                        case ResUpdate.Error:
+                            return JsonStatusResponse.Error("بروزرسانی پروفایل کاربری با خطا موجه شد. مجددا تلاش نمایید.");
+                        case ResUpdate.NotFound:
+                            return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
+                        default:
+                            return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+                    }
+ 
                 }
-                else
-                {
-                    return JsonStatusResponse.Error("بروزرسانی پروفایل کاربری با خطا موجه شد. مجددا تلاش نمایید.");
-                }
+                return JsonStatusResponse.Error("اطلاعات ارسالی اشتباه است");
             }
-            return JsonStatusResponse.Error("اطلاعات ارسالی اشتباه است");
 
+            return JsonStatusResponse.Error("مجدد وارد پنل کاربری خود شوید.");
         }
         #endregion
 

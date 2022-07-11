@@ -14,9 +14,9 @@ namespace OurSite.Core.Services.Interfaces
         #region Admin management
         //Task<Role> GetAdminRole(long adminId);
         Task<bool> ChangeAdminStatus(long adminId);
-        Task<bool> DeleteAdmin(long adminId);
-        Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req);
         Task<resFileUploader> ProfilePhotoUpload(IFormFile photo, long UserId);
+        Task<bool> DeleteAdmin(long adminId);
+        Task<ResUpdate> UpdateAdmin(ReqUpdateAdminDto req,long id);
 
         Task<ResViewAdminDto> GetAdminById(long adminId);
         Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req);
@@ -25,6 +25,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<bool> ResetPassword(ReqResetPassword request);
         Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName);
         Task<Admin> GetAdminByEmailOrUserName(string EmailOrUserName);
+        Task <List<GetAllAdminDto>> GetAllAdmin();
         #endregion
 
         #region Login

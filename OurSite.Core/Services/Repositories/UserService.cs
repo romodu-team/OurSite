@@ -47,7 +47,10 @@ namespace OurSite.Core.Services.Repositories
 
 
         #endregion
-
+        public async Task<bool> IsMobileExist(string mobile, accountType type)
+        {
+            return userService.GetAllEntity().Any(x => x.Mobile == mobile && x.AccountType == type);
+        }
         #region User Service
 
         #region singup
@@ -59,7 +62,16 @@ namespace OurSite.Core.Services.Repositories
             var check = await GetUserEmailandUserName(userDto.Email, userDto.UserName);
             if (check == true)
                 return RessingupDto.Exist;
+          
+            if (userDto.AccountType == accountType.Legal)
+            {
+                if (await IsMobileExist(userDto.Mobile, userDto.AccountType)) return RessingupDto.MobileExist;
 
+            }
+            if(userDto.AccountType == accountType.Real)
+            {
+                if (await IsMobileExist(userDto.Mobile, userDto.AccountType)) return RessingupDto.MobileExist;
+            }
             try
             {
                 User user = new User()
@@ -70,8 +82,8 @@ namespace OurSite.Core.Services.Repositories
                     Password = passwordHelper.EncodePasswordMd5(userDto.Password),
                     Email = userDto.Email,
                     Mobile = userDto.Mobile,
-                    ActivationCode = Guid.NewGuid().ToString()
-
+                    ActivationCode = Guid.NewGuid().ToString(),
+                    AccountType = userDto.AccountType
 
                 };
                 user.CreateDate = DateTime.Now;
@@ -100,7 +112,11 @@ namespace OurSite.Core.Services.Repositories
             return await userService.GetAllEntity().AnyAsync(x =>!x.IsRemove &&(x.Email == Email.Trim().ToLower() || x.UserName == UserName.Trim().ToLower()));
 
         }
+        public async Task<bool> GetUserEmailandUserName( string UserName)
+        {
+            return await userService.GetAllEntity().AnyAsync(x => !x.IsRemove && (x.UserName == UserName.Trim().ToLower()));
 
+        }
         #endregion
 
         #region Login
@@ -220,9 +236,9 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Update profile by user
-        public async Task<bool> UpDate(ReqUpdateUserDto userdto)
+        public async Task<ResUpdate> UpDate(ReqUpdateUserDto userdto,long id)
         {
-            var user = await userService.GetEntity(userdto.id);
+            var user = await userService.GetEntity(id);
             if (user != null)
             {
                 if (!string.IsNullOrWhiteSpace(userdto.FirstName))
@@ -232,11 +248,9 @@ namespace OurSite.Core.Services.Repositories
                 if (!string.IsNullOrWhiteSpace(userdto.NationalCode))
                     user.NationalCode = userdto.NationalCode;
                 if (!string.IsNullOrWhiteSpace(userdto.Email))
-                    user.Email = userdto.Email;
+                    user.Email = userdto.Email.Trim().ToLower();
                 if (!string.IsNullOrWhiteSpace(userdto.Mobile))
                     user.Mobile = userdto.Mobile;
-                if (!string.IsNullOrWhiteSpace(userdto.Password))
-                    user.Password = userdto.Password;
                 if (userdto.Gender is not null)
                     user.Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender;
                 if (!string.IsNullOrWhiteSpace(userdto.Address))
@@ -255,24 +269,23 @@ namespace OurSite.Core.Services.Repositories
                     user.BusinessCode = userdto.BusinessCode;
                 if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
                     user.RegistrationNumber = userdto.RegistrationNumber;
-                
                 try
                 {
-
+                    user.LastUpdate = DateTime.Now;
                     userService.UpDateEntity(user);
                     await userService.SaveEntity();
-                    return true;
+                    return ResUpdate.Success;
 
                 }
                 catch (Exception ex)
                 {
-                    return false;
+                    return ResUpdate.Error;
 
 
                 }
 
             }
-            return false;
+            return ResUpdate.NotFound;
 
 
 
@@ -311,7 +324,7 @@ namespace OurSite.Core.Services.Repositories
                 userdto.Phone = user.Phone;
                 userdto.Birthday = user.Birthday;
                 userdto.ShabaNumbers = user.ShabaNumbers;
-                userdto.AccountType = (DTOs.UserDtos.accountType?)user.AccountType;
+                userdto.AccountType = (accountType?)user.AccountType;
                 userdto.BusinessCode = user.BusinessCode;
                 userdto.RegistrationNumber = user.RegistrationNumber;
 
@@ -353,14 +366,21 @@ namespace OurSite.Core.Services.Repositories
         #region Delete User
         public async Task<bool> DeleteUser(long id)
         {
-            var user = await userService.DeleteEntity(id); //get id and return true that it means user deleted
-            if (user is true) //if delete
+            var isdelete = await userService.DeleteEntity(id); //get id and return true that it means user deleted
+            if (isdelete)
             {
-                userService.SaveEntity();
-                return true;
-               
+                try
+                {
+                    await userService.SaveEntity();
+
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
             }
-            return false; //if not
+
+            return isdelete;
 
         }
         #endregion
@@ -372,13 +392,16 @@ namespace OurSite.Core.Services.Repositories
         {
             if(!string.IsNullOrWhiteSpace(userDto.UserName) && !string.IsNullOrWhiteSpace(userDto.Password))
             {
-                if (!await GetUserEmailandUserName(null,userDto.UserName))
+                if (!await GetUserEmailandUserName(userDto.UserName))
                 {
                     User user = new User()
                     {
-                        UserName = userDto.UserName,
-                        Password = userDto.Password
-
+                        UserName = userDto.UserName.Trim().ToLower(),
+                        Password =passwordHelper.EncodePasswordMd5(userDto.Password),
+                        IsActive = true,
+                        CreateDate=DateTime.Now,
+                        LastUpdate=DateTime.Now
+                        
                     };
                     await userService.AddEntity(user);
                     await userService.SaveEntity();
@@ -430,7 +453,7 @@ namespace OurSite.Core.Services.Repositories
                 adminview.Phone = user.Phone;
                 adminview.Birthday = user.Birthday;
                 adminview.ShabaNumbers = user.ShabaNumbers;
-                adminview.AccountType = (Core.DTOs.UserDtos.accountType?)user.AccountType;
+                adminview.AccountType = (accountType?)user.AccountType;
                 adminview.BusinessCode = user.BusinessCode;
                 adminview.RegistrationNumber = user.RegistrationNumber;
             }
