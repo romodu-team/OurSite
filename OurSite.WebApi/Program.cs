@@ -90,11 +90,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("EnableCors", mybuilder =>
     {
-        mybuilder
+        mybuilder.WithOrigins("*")
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials()
-            .Build();
+            .AllowAnyMethod();
     }
 
     );
