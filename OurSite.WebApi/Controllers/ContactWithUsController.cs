@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Repositories;
+using OurSite.Core.Utilities;
 
 namespace OurSite.WebApi.Controllers
 {
@@ -18,10 +19,17 @@ namespace OurSite.WebApi.Controllers
         }
 
         [HttpPost("send-form")]
-        public async Task<IActionResult> SendContactWithUsForm([FromBody]ContactWithUsDto sendContactForm)
+        public async Task<IActionResult> SendContactWithUsForm([FromForm] ContactWithUsDto sendContactForm)
         {
-            await contactWithUsService.SendContactForm(sendContactForm);
-            return new JsonResult("درخواست شما با موفقیت ارسال شد");
+            if (ModelState.IsValid)
+            {
+                await contactWithUsService.SendContactForm(sendContactForm);
+                return JsonStatusResponse.Success("درخواست شما با موفقیت ارسال شد");
+            }
+            else
+            {
+                return JsonStatusResponse.Error("اطلاعات ارسال شده معتبر نمی‌باشد");
+            }
         }
     }
 }

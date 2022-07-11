@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OurSite.Core.DTOs;
@@ -79,6 +80,9 @@ options.TokenValidationParameters = new TokenValidationParameters()
 #endregion
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketMessageService, TicketMessageService>();
 builder.Services.AddAuthorization();
 var app = builder.Build();
 

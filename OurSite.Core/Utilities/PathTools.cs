@@ -13,5 +13,6 @@ namespace OurSite.Core.Utilities
         public const string ConsultationFile = Domain + "/upload/";
         public const string ProfilePhotos = Domain + "/upload/Profiles";
 
+        public static string FileUploadPath = Directory.GetCurrentDirectory() + "//Content//File";
     }
 }
