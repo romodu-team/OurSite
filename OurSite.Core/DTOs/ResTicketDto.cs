@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.DTOs.Uploader
+namespace OurSite.Core.DTOs
 {
-    public class ResUploadDto
+    public class ResTicketDto
     {
-        public resFileUploader Status { get; set; }
-        public string? FileName { get; set; }
+        public ResTicket resTicket { get; set; }
     }
 }

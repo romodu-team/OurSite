@@ -81,7 +81,25 @@ namespace OurSite.WebApi.Controllers
             if (ModelState.IsValid)
             {
                 var res = await adminService.UpdateAdmin(req, id);
+                if (req.ProfilePhoto != null)
+                {
+                    var resProfilePhoto = await adminService.ProfilePhotoUpload(req.ProfilePhoto, id);
+                    switch (resProfilePhoto)
+                    {
+                        case resFileUploader.Failure:
+                            return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
 
+                        case resFileUploader.ToBig:
+                            return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+
+                        case resFileUploader.NoContent:
+                            return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                        case resFileUploader.InvalidExtention:
+                            return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                        default:
+                            break;
+                    }
+                }
                 switch (res)
                 {
                     case ResUpdate.Success:
@@ -112,7 +130,7 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
-        #region Send Reset Password Email
+        #region Send Reset Password Emailupda
         [HttpPost("SendEmail-ResetUserPass")]
         public async Task<IActionResult> SendResetPassLink([FromBody] string EmailOrUserName)
         {
@@ -135,7 +153,17 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Admin Management
-
+        #region Change admin status
+        [Authorize(Roles = "General Manager,Admin")]
+        [HttpGet("change-admin-status/{adminId}")]
+        public async Task<IActionResult> ChangeAdminStatus([FromRoute] long adminId)
+        {
+            var res = await adminService.ChangeAdminStatus(adminId);
+            if (res)
+                return JsonStatusResponse.Success("وضعیت ادمین تغییر کرد");
+            return JsonStatusResponse.Error("عملیات نا موفق بود");
+        }
+        #endregion
         #region Delete Admin Monharf
         [Authorize(Roles = "General Manager")]
         [HttpDelete("delete-admin")]
@@ -188,6 +216,25 @@ namespace OurSite.WebApi.Controllers
                 {
                     var Adminid = User.FindFirst(ClaimTypes.NameIdentifier);
                     var res = await adminService.UpdateAdmin(req,Convert.ToInt64(Adminid.Value));
+                    if (req.ProfilePhoto != null)
+                    {
+                        var resProfilePhoto = await adminService.ProfilePhotoUpload(req.ProfilePhoto, Convert.ToInt64(Adminid.Value));
+                        switch (resProfilePhoto)
+                        {
+                            case resFileUploader.Failure:
+                                return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+
+                            case resFileUploader.ToBig:
+                                return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+
+                            case resFileUploader.NoContent:
+                                return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                            case resFileUploader.InvalidExtention:
+                                return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                            default:
+                                break;
+                        }
+                    }
                     switch (res)
                     {
                         case ResUpdate.Success:
@@ -252,18 +299,24 @@ namespace OurSite.WebApi.Controllers
         [HttpPut("update-role")]
         public async Task<IActionResult> UpdateRole(ReqUpdateRoleDto reqUpdate)
         {
-            var res = await roleService.UpdateRole(reqUpdate);
-            switch (res)
+            if (ModelState.IsValid)
             {
-                case ReqUpdateRoleDto.ResUpdateRole.Success:
-                    return JsonStatusResponse.Success("نقش با موفقیت بروزرسانی شد");
-                case ReqUpdateRoleDto.ResUpdateRole.Error:
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-                case ReqUpdateRoleDto.ResUpdateRole.NotFound:
-                    return JsonStatusResponse.NotFound("نقش مورد نظر پیدا نشد");
-                default:
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                var res = await roleService.UpdateRole(reqUpdate);
+                switch (res)
+                {
+                    case ReqUpdateRoleDto.ResUpdateRole.Success:
+                        return JsonStatusResponse.Success("نقش با موفقیت بروزرسانی شد");
+                    case ReqUpdateRoleDto.ResUpdateRole.Error:
+                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                    case ReqUpdateRoleDto.ResUpdateRole.NotFound:
+                        return JsonStatusResponse.NotFound("نقش مورد نظر پیدا نشد");
+                    case ReqUpdateRoleDto.ResUpdateRole.Exist:
+                        return JsonStatusResponse.NotFound("نام نقش تکراری است");
+                    default:
+                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                }
             }
+            return JsonStatusResponse.Error("فیلد های اجباری باید پر شوند");
         }
         #endregion
 
@@ -310,10 +363,10 @@ namespace OurSite.WebApi.Controllers
 
         #region User list
         [HttpGet("view-all-users")] //Get user list
-        public async Task<IActionResult> GetAllUser()
+        public async Task<IActionResult> GetAllUser([FromQuery] ReqFilterUserDto filter)
         {
-            var users = await userService.GetAlluser();
-            if (users.Any())
+            var users = await userService.GetAlluser(filter);
+            if (users.Users.Any())
             {
                 return JsonStatusResponse.Success(message: "موفق", ReturnData: users);
             }
@@ -367,6 +420,25 @@ namespace OurSite.WebApi.Controllers
                 if (ModelState.IsValid)
                 {
                     var res = await userService.UpDate(userDto , id);
+                    if (userDto.ProfilePhoto != null)
+                    {
+                        var resProfilePhoto = await userService.ProfilePhotoUpload(userDto.ProfilePhoto, id);
+                        switch (resProfilePhoto)
+                        {
+                            case resFileUploader.Failure:
+                                return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+
+                            case resFileUploader.ToBig:
+                                return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+
+                            case resFileUploader.NoContent:
+                                return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                            case resFileUploader.InvalidExtention:
+                                return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                            default:
+                                break;
+                        }
+                    }
                     switch (res)
                     {
 

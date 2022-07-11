@@ -2,7 +2,7 @@
 using OurSite.Core.DTOs;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
@@ -18,6 +18,10 @@ using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.DTOs.MailDtos;
 using Microsoft.AspNetCore.Authorization;
 using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.Uploader;
+using Microsoft.AspNetCore.Http;
+using OurSite.Core.Utilities.Extentions.Paging;
+using OurSite.Core.DTOs.Paging;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -265,7 +269,6 @@ namespace OurSite.Core.Services.Repositories
                     user.BusinessCode = userdto.BusinessCode;
                 if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
                     user.RegistrationNumber = userdto.RegistrationNumber;
-
                 try
                 {
                     user.LastUpdate = DateTime.Now;
@@ -286,6 +289,19 @@ namespace OurSite.Core.Services.Repositories
 
 
 
+        }
+
+        public async Task<resFileUploader> ProfilePhotoUpload(IFormFile photo,long UserId)
+        {
+            var result =await FileUploader.UploadFile(PathTools.ProfilePhotos, photo,3);
+            if (result.Status==resFileUploader.Success)
+            {
+               User user= await userService.GetEntity(UserId);
+               user.ImageName = result.FileName;
+               userService.UpDateEntity(user);
+               await userService.SaveEntity();
+            }
+            return result.Status;
         }
         #endregion
 
@@ -400,10 +416,15 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Get user list 
-        public async Task<List<GetAllUserDto>> GetAlluser() //for return a list of user that singup in our site for admin
+        public async Task<ResFilterUserDto> GetAlluser(ReqFilterUserDto filter) //for return a list of user that singup in our site for admin
         {
-            var list =await userService.GetAllEntity().Where(u => u.IsRemove == false).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
-            return list;
+            var usersQuery = userService.GetAllEntity();
+            var count = (int)Math.Ceiling(usersQuery.Count() / (double)filter.TakeEntity);
+            var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
+            var list =await userService.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
+            var result = new ResFilterUserDto();
+            result.SetPaging(pager);
+            return result.SetUsers(list);
         }
 
         #endregion

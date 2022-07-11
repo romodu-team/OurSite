@@ -4,7 +4,7 @@
 
 namespace OurSite.DataLayer.Migrations
 {
-    public partial class nullablenationalCode : Migration
+    public partial class adduserbyadmin : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

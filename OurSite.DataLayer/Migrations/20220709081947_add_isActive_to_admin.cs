@@ -4,23 +4,23 @@
 
 namespace OurSite.DataLayer.Migrations
 {
-    public partial class AddFileNameToConsultation : Migration
+    public partial class add_isActive_to_admin : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "SubmittedFileName",
-                table: "consultationRequest",
-                type: "nvarchar(max)",
+            migrationBuilder.AddColumn<bool>(
+                name: "IsActive",
+                table: "Admins",
+                type: "bit",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: false);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "SubmittedFileName",
-                table: "consultationRequest");
+                name: "IsActive",
+                table: "Admins");
         }
     }
 }

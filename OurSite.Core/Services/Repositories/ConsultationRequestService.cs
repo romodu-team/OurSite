@@ -29,7 +29,7 @@ namespace OurSite.Core.Services.Repositories
                 UserEmail = consultationRequestDto.UserEmail,
                 UserPhoneNumber = consultationRequestDto.UserPhoneNumber,
                 Expration = consultationRequestDto.Expration,
-                SubmittedFileName = consultationRequestDto.FileName,
+                SubmittedFileName = consultationRequestDto.SubmittedFileName,
             };
             try
             {

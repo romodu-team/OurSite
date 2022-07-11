@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.ComponentModel.DataAnnotations;
 using OurSite.DataLayer.Entities.Accounts;
 
@@ -21,7 +22,7 @@ namespace OurSite.Core.DTOs.UserDtos
         public accountType? AccountType { get; set; } = accountType.Real;
         public string? BusinessCode { get; set; }
         public string? RegistrationNumber { get; set; }
-
+        public IFormFile? ProfilePhoto { get; set; }
 
     }
 

@@ -4,7 +4,7 @@
 
 namespace OurSite.DataLayer.Migrations
 {
-    public partial class AddFileToConsultation : Migration
+    public partial class nullableFields : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
