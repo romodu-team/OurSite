@@ -11,7 +11,7 @@ namespace OurSite.Core.Services.Interfaces
     {
         #region Admin management
         //Task<bool> DeleteAdmin(long adminId);
-        Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req);
+        Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req,long id);
 
         Task<ResViewAdminDto> GetAdminById(long adminId);
         Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req);

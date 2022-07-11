@@ -11,7 +11,6 @@ namespace OurSite.Core.DTOs.AdminDtos
 {
     public class ReqUpdateAdminDto
     {
-        public long  adminId { get; set; }
        // [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("نام")]
         [MaxLength(50, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
