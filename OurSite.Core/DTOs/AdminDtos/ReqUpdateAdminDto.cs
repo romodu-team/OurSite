@@ -1,4 +1,5 @@
-﻿using OurSite.Core.DTOs.UserDtos;
+﻿using Microsoft.AspNetCore.Http;
+using OurSite.Core.DTOs.UserDtos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -58,6 +59,7 @@ namespace OurSite.Core.DTOs.AdminDtos
         public string? Birthday { get; set; }
 
         public string? Roleid { get; set; }
+        public IFormFile ProfilePhoto { get; set; }
     }
     public enum resUpdateAdmin
     {

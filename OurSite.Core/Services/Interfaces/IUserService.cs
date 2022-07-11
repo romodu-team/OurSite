@@ -4,6 +4,7 @@ using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.DTOs.AdminDtos;
 using OurSite.Core.DTOs.Uploader;
 using Microsoft.AspNetCore.Http;
+using OurSite.Core.Utilities;
 
 namespace OurSite.Core.Services.Interfaces
 {
@@ -19,7 +20,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<bool> GetUserEmailandUserName(string Email , string UserName);
 
         Task<bool> UpDate(ReqUpdateUserDto userdto);
-        Task<ResUploadDto> ProfilePhotoUpload(IFormFile photo, long UserId);
+        Task<resFileUploader> ProfilePhotoUpload(IFormFile photo, long UserId);
         Task<RessingupDto> SingUp(ReqSingupUserDto userDto);
 
         Task<ReqViewUserDto> ViewProfile(long id);

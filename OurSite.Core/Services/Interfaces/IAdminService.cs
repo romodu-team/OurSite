@@ -1,7 +1,9 @@
 ﻿using System;
+using Microsoft.AspNetCore.Http;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
 using OurSite.Core.DTOs.UserDtos;
+using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
 
@@ -14,6 +16,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<bool> ChangeAdminStatus(long adminId);
         Task<bool> DeleteAdmin(long adminId);
         Task<resUpdateAdmin> UpdateAdmin(ReqUpdateAdminDto req);
+        Task<resFileUploader> ProfilePhotoUpload(IFormFile photo, long UserId);
 
         Task<ResViewAdminDto> GetAdminById(long adminId);
         Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req);

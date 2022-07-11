@@ -253,8 +253,7 @@ namespace OurSite.Core.Services.Repositories
                     user.BusinessCode = userdto.BusinessCode;
                 if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
                     user.RegistrationNumber = userdto.RegistrationNumber;
-                if (userdto.ProfilePhoto != null)
-                    await ProfilePhotoUpload(userdto.ProfilePhoto, userdto.id);
+                
                 try
                 {
 
@@ -277,17 +276,17 @@ namespace OurSite.Core.Services.Repositories
 
         }
 
-        public async Task<ResUploadDto> ProfilePhotoUpload(IFormFile photo,long UserId)
+        public async Task<resFileUploader> ProfilePhotoUpload(IFormFile photo,long UserId)
         {
-            var result =await FileUploader.UploadFile(PathTools.ProfilePhotos, photo);
-            if (result.Status == 200)
+            var result =await FileUploader.UploadFile(PathTools.ProfilePhotos, photo,1);
+            if (result.Status==resFileUploader.Success)
             {
                User user= await userService.GetEntity(UserId);
                user.ImageName = result.FileName;
                userService.UpDateEntity(user);
                await userService.SaveEntity();
             }
-            return result;
+            return result.Status;
         }
         #endregion
 

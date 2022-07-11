@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
@@ -7,6 +8,7 @@ using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Interfaces.Mail;
+using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
@@ -132,7 +134,18 @@ namespace OurSite.Core.Services.Repositories
                 return resUpdateAdmin.Error;
             }
         }
-
+        public async Task<resFileUploader> ProfilePhotoUpload(IFormFile photo, long UserId)
+        {
+            var result = await FileUploader.UploadFile(PathTools.ProfilePhotos, photo, 1);
+            if (result.Status == resFileUploader.Success)
+            {
+                Admin user = await adminRepository.GetEntity(UserId);
+                user.ImageName = result.FileName;
+                adminRepository.UpDateEntity(user);
+                await adminRepository.SaveEntity();
+            }
+            return result.Status;
+        }
         #endregion
 
         #region Admin founder with id 

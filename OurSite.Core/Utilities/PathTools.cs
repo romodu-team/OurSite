@@ -11,7 +11,7 @@ namespace OurSite.Core.Utilities
         public const string Domain = "https://localhost:7181";
 
         public const string ConsultationFile = Domain + "/upload/";
-        public const string ProfilePhotos = Domain + "/upload/Profiles";
+        public static string ProfilePhotos = Directory.GetCurrentDirectory() + "//upload//Profiles";
 
         public static string FileUploadPath = Directory.GetCurrentDirectory() + "//Content//File";
     }

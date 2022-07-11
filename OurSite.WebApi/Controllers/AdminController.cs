@@ -75,10 +75,29 @@ namespace OurSite.WebApi.Controllers
         #region Update admin profile
         [Authorize(Roles = "General Manager")]
         [HttpPost("Update-Admin")]
-        public async Task<IActionResult> UpdateAdmin([FromBody] ReqUpdateAdminDto req)
+        public async Task<IActionResult> UpdateAdmin([FromForm] ReqUpdateAdminDto req)
         {
 
             var res = await adminService.UpdateAdmin(req);
+            if (req.ProfilePhoto != null)
+            {
+                var resProfilePhoto = await adminService.ProfilePhotoUpload(req.ProfilePhoto, req.adminId);
+                switch (resProfilePhoto)
+                {
+                    case resFileUploader.Failure:
+                        return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+
+                    case resFileUploader.ToBig:
+                        return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+
+                    case resFileUploader.NoContent:
+                        return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                    case resFileUploader.InvalidExtention:
+                        return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                    default:
+                        break;
+                }
+            }
             switch (res)
             {
                 case resUpdateAdmin.Success:
@@ -109,7 +128,7 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
-        #region Send Reset Password Email
+        #region Send Reset Password Emailupda
         [HttpPost("SendEmail-ResetUserPass")]
         public async Task<IActionResult> SendResetPassLink([FromBody] string EmailOrUserName)
         {

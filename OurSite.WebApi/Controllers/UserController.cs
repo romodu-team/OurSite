@@ -150,6 +150,28 @@ namespace OurSite.WebApi.Controllers
             if(ModelState.IsValid)
             {
                 var res = await userservice.UpDate(userdto);
+
+                if (userdto.ProfilePhoto != null)
+                {
+                    var resProfilePhoto = await userservice.ProfilePhotoUpload(userdto.ProfilePhoto, userdto.id);
+                    switch (resProfilePhoto)
+                    {
+                        case resFileUploader.Failure:
+                            return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+                           
+                        case resFileUploader.ToBig:
+                            return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+                         
+                        case resFileUploader.NoContent:
+                            return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                        case resFileUploader.InvalidExtention:
+                            return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                        default:
+                            break;
+                    }
+                }
+              
+
                 if (res)
                 {
                     return JsonStatusResponse.Success("پروفایل کاربری با موفقیت بروزرسانی شد");
