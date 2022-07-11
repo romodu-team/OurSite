@@ -1,8 +1,9 @@
-﻿using System;
-namespace OurSite.Core.DTOs.UserDtos
+﻿using OurSite.Core.DTOs.UserDtos;
+using System;
+namespace OurSite.Core.DTOs.AdminDtos
 {
-	public class ResViewuserAdminDto
-	{
+    public class ResViewuserAdminDto
+    {
         public long Id { get; set; }
         public DateTime CreateDate { get; set; }
         public bool IsRemove { get; set; }

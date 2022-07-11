@@ -136,7 +136,7 @@ namespace OurSite.Core.Services.Repositories
         }
         public async Task<resFileUploader> ProfilePhotoUpload(IFormFile photo, long UserId)
         {
-            var result = await FileUploader.UploadFile(PathTools.ProfilePhotos, photo, 1);
+            var result = await FileUploader.UploadFile(PathTools.ProfilePhotos, photo, 3);
             if (result.Status == resFileUploader.Success)
             {
                 Admin user = await adminRepository.GetEntity(UserId);
