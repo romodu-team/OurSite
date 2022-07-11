@@ -61,12 +61,12 @@ namespace OurSite.Core.Services.Repositories
           
             if (userDto.AccountType == accountType.Legal)
             {
-                if (await IsMobileExist(userDto.Mobile, userDto.AccountType)) return RessingupDto.Exist;
+                if (await IsMobileExist(userDto.Mobile, userDto.AccountType)) return RessingupDto.MobileExist;
 
             }
             if(userDto.AccountType == accountType.Real)
             {
-                if (await IsMobileExist(userDto.Mobile, userDto.AccountType)) return RessingupDto.Exist;
+                if (await IsMobileExist(userDto.Mobile, userDto.AccountType)) return RessingupDto.MobileExist;
             }
             try
             {

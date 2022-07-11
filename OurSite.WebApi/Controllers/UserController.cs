@@ -131,6 +131,8 @@ namespace OurSite.WebApi.Controllers
                         return JsonStatusResponse.Error("ثبت نام با خطا مواجه شد. مجدد ثبت نام کنید.");
                     case RessingupDto.Exist:
                         return JsonStatusResponse.Error("نام کاربری یا ایمیل قبلا ثبت نام شده است");
+                    case RessingupDto.MobileExist:
+                        return JsonStatusResponse.Error("شماره همراه قبلا ثبت نام شده است");
                     default:
                         HttpContext.Response.StatusCode = 400;
                         return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
