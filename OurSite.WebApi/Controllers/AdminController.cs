@@ -135,14 +135,14 @@ namespace OurSite.WebApi.Controllers
 
         #region Delete Admin Monharf
         //[Authorize(Roles = "General Manager")]
-        [HttpDelete("delete-admin")]
-        public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
-        {
-            var res = await adminService.DeleteAdmin(adminId);
-            if (res)
-                return JsonStatusResponse.Success("با موفقیت حذف شد");
-            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-        }
+        //[HttpDelete("delete-admin")]
+        //public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
+        //{
+        //    var res = await adminService.DeleteAdmin(adminId);
+        //    if (res)
+        //        return JsonStatusResponse.Success("با موفقیت حذف شد");
+        //    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+        //}
         #endregion
 
         #region found admin by id
@@ -160,6 +160,24 @@ namespace OurSite.WebApi.Controllers
 
         #endregion
 
+        #region List Admins
+        [HttpGet("Admin-list")]
+        public async Task<IActionResult> GetAllAdmin()
+        {
+            var list = await adminService.GetAllAdmin();
+            if (list.Any())
+            {
+                return JsonStatusResponse.Success(message: ("موفق"), ReturnData: list);
+
+            }
+
+            return JsonStatusResponse.NotFound(message: "آدمینی پیدا نشد");
+        }
+        #endregion
+
+        #region Update admin by self
+        public async task<IActionResult> UpdateAdminBySelf
+        #endregion
         #region Role Management
 
         #region Add new role
