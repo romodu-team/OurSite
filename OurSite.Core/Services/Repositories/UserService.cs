@@ -423,6 +423,7 @@ namespace OurSite.Core.Services.Repositories
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
             var list =await userService.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
             var result = new ResFilterUserDto();
+            result.SetPaging(pager);
             return result.SetUsers(list);
         }
 

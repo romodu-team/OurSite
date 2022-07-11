@@ -81,7 +81,25 @@ namespace OurSite.WebApi.Controllers
             if (ModelState.IsValid)
             {
                 var res = await adminService.UpdateAdmin(req, id);
+                if (req.ProfilePhoto != null)
+                {
+                    var resProfilePhoto = await adminService.ProfilePhotoUpload(req.ProfilePhoto, id);
+                    switch (resProfilePhoto)
+                    {
+                        case resFileUploader.Failure:
+                            return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
 
+                        case resFileUploader.ToBig:
+                            return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+
+                        case resFileUploader.NoContent:
+                            return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                        case resFileUploader.InvalidExtention:
+                            return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                        default:
+                            break;
+                    }
+                }
                 switch (res)
                 {
                     case ResUpdate.Success:
@@ -198,6 +216,25 @@ namespace OurSite.WebApi.Controllers
                 {
                     var Adminid = User.FindFirst(ClaimTypes.NameIdentifier);
                     var res = await adminService.UpdateAdmin(req,Convert.ToInt64(Adminid.Value));
+                    if (req.ProfilePhoto != null)
+                    {
+                        var resProfilePhoto = await adminService.ProfilePhotoUpload(req.ProfilePhoto, Convert.ToInt64(Adminid.Value));
+                        switch (resProfilePhoto)
+                        {
+                            case resFileUploader.Failure:
+                                return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+
+                            case resFileUploader.ToBig:
+                                return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+
+                            case resFileUploader.NoContent:
+                                return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                            case resFileUploader.InvalidExtention:
+                                return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                            default:
+                                break;
+                        }
+                    }
                     switch (res)
                     {
                         case ResUpdate.Success:
@@ -383,6 +420,25 @@ namespace OurSite.WebApi.Controllers
                 if (ModelState.IsValid)
                 {
                     var res = await userService.UpDate(userDto , id);
+                    if (userDto.ProfilePhoto != null)
+                    {
+                        var resProfilePhoto = await userService.ProfilePhotoUpload(userDto.ProfilePhoto, id);
+                        switch (resProfilePhoto)
+                        {
+                            case resFileUploader.Failure:
+                                return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+
+                            case resFileUploader.ToBig:
+                                return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+
+                            case resFileUploader.NoContent:
+                                return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                            case resFileUploader.InvalidExtention:
+                                return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                            default:
+                                break;
+                        }
+                    }
                     switch (res)
                     {
 

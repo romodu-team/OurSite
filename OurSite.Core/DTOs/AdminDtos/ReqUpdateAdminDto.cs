@@ -58,7 +58,7 @@ namespace OurSite.Core.DTOs.AdminDtos
         public string? Birthday { get; set; }
 
         public string? Roleid { get; set; }
-        public IFormFile ProfilePhoto { get; set; }
+        public IFormFile? ProfilePhoto { get; set; }
     }
     public enum ResUpdate
     {

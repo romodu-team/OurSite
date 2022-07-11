@@ -33,7 +33,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Login
         [HttpPost("login")]
-        public async Task<IActionResult> LoginUser([FromBody]ReqLoginDto request)
+        public async Task<IActionResult> LoginUser([FromBody] ReqLoginDto request)
         {
             if (ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Reset Password
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody]ReqResetPassword request)
+        public async Task<IActionResult> ResetPassword([FromBody] ReqResetPassword request)
         {
             if (ModelState.IsValid)
             {
@@ -82,7 +82,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Send Reset Password Email
         [HttpPost("SendEmail-ResetUserPass")]
-        public async Task<IActionResult> SendResetPassLink([FromBody]string EmailOrUserName)
+        public async Task<IActionResult> SendResetPassLink([FromBody] string EmailOrUserName)
         {
             var res = await userservice.SendResetPassEmail(EmailOrUserName);
             switch (res)
@@ -91,7 +91,7 @@ namespace OurSite.WebApi.Controllers
                     return JsonStatusResponse.Success("ایمیل بازنشانی رمز عبور با موفقیت ارسال شد");
                 case ResLoginDto.IncorrectData:
                     return JsonStatusResponse.NotFound("حساب کاربری یافت نشد");
- 
+
                 default:
                     return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
             }
@@ -118,7 +118,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Singup 
         [HttpPost("signUp-user")]
-        public async Task<IActionResult> SingupUser([FromBody]ReqSingupUserDto userDto)
+        public async Task<IActionResult> SingupUser([FromBody] ReqSingupUserDto userDto)
         {
             if (ModelState.IsValid)
             {
@@ -147,33 +147,33 @@ namespace OurSite.WebApi.Controllers
 
         #region Update profile
         [HttpPut("Update-Profile")]
-        public async Task<IActionResult> UpDate([FromForm]ReqUpdateUserDto userdto)
+        public async Task<IActionResult> UpDate([FromForm] ReqUpdateUserDto userdto)
         {
             if (User.Identity.IsAuthenticated)
             {
                 if (ModelState.IsValid)
                 {
                     var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    var res = await userservice.UpDate(userdto,Convert.ToInt64(userId));
+                    var res = await userservice.UpDate(userdto, Convert.ToInt64(userId));
                     if (userdto.ProfilePhoto != null)
-                {
-                    var resProfilePhoto = await userservice.ProfilePhotoUpload(userdto.ProfilePhoto, userdto.id);
-                    switch (resProfilePhoto)
                     {
-                        case resFileUploader.Failure:
-                            return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
-                           
-                        case resFileUploader.ToBig:
-                            return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
-                         
-                        case resFileUploader.NoContent:
-                            return JsonStatusResponse.Error("تصویر پروفایل خالی است");
-                        case resFileUploader.InvalidExtention:
-                            return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
-                        default:
-                            break;
+                        var resProfilePhoto = await userservice.ProfilePhotoUpload(userdto.ProfilePhoto, Convert.ToInt64(userId));
+                        switch (resProfilePhoto)
+                        {
+                            case resFileUploader.Failure:
+                                return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+
+                            case resFileUploader.ToBig:
+                                return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+
+                            case resFileUploader.NoContent:
+                                return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                            case resFileUploader.InvalidExtention:
+                                return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                            default:
+                                break;
+                        }
                     }
-                }
                     switch (res)
                     {
                         case ResUpdate.Success:
@@ -185,7 +185,7 @@ namespace OurSite.WebApi.Controllers
                         default:
                             return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
                     }
- 
+
                 }
                 return JsonStatusResponse.Error("اطلاعات ارسالی اشتباه است");
             }
@@ -201,8 +201,8 @@ namespace OurSite.WebApi.Controllers
         {
             var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var userdto = await userservice.ViewProfile(Convert.ToInt64(userid));
-            return JsonStatusResponse.Success(userdto , "موفق");
-           
+            return JsonStatusResponse.Success(userdto, "موفق");
+
 
         }
         #endregion
