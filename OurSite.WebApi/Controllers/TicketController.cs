@@ -19,8 +19,7 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
-
-        #region ListTickets
+        #region List Tickets
         [HttpGet("Ticket-list")]
         public async Task<IActionResult> GetAllTicket()
         {
@@ -36,9 +35,8 @@ namespace OurSite.WebApi.Controllers
 
         #endregion
 
+        #region Found Ticket By Id
 
-        #region found ticket by id
-        
         [HttpGet("view-ticket/{ticketId}")]
         public async Task<IActionResult> FindTicket([FromRoute] long ticketId)
         {
@@ -50,8 +48,7 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
-
-        #region createTickes
+        #region Create Tickes
         [HttpPost("create-ticket")]
         public async Task<IActionResult> CreateTicket([FromForm] TicketDto ticketDto)
         {
@@ -88,6 +85,18 @@ namespace OurSite.WebApi.Controllers
                 default:
                     return JsonStatusResponse.Error("ارسال تیکت با خطا مواجه شد");
             }
+        }
+        #endregion
+
+        #region Delete Ticket
+        [HttpDelete("delete-ticket")]
+        public async Task<IActionResult> DeleteTicket([FromBody] long ticketId)
+        {
+            var check = await ticketService.DeleteTicket(ticketId);
+            if (check)
+                return JsonStatusResponse.Success("تیکت با موفقیت حذف شد");
+            return JsonStatusResponse.Error("حذف تیکت با خطا مواجه شد");
+
         }
         #endregion
     }

@@ -28,7 +28,7 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region createTicket
+        #region Create Ticket
         public async Task<ResTicketDto> createTicket(TicketDto ticketDto)
         {
             Ticket createTicket = new Ticket()
@@ -82,7 +82,7 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region Ticket list
+        #region Ticket List
         public async Task<List<GetAllTicketDto>> GetAllTicket()
         {
             var list = await ticketRepo.GetAllEntity().Where(x => x.IsRemove == false).Select(x => new GetAllTicketDto { TicketId = x.Id, TicketTitle = x.TicketTitle, IsClosed = x.IsClosed }).ToListAsync();
@@ -91,7 +91,7 @@ namespace OurSite.Core.Services.Repositories
 
         #endregion
 
-        #region findById
+        #region Find By Id
         public async Task<ResViewTicketDto> FindTicketById(long ticketId)
         {
             var ticket = await ticketRepo.GetEntity(ticketId);
@@ -109,5 +109,28 @@ namespace OurSite.Core.Services.Repositories
             return res;
         }
         #endregion
+
+        #region Delete Ticket
+        public async Task<bool> DeleteTicket(long TicketId)
+        {
+            var isdelete = await ticketRepo.DeleteEntity(TicketId);
+            if (isdelete)
+            {
+                try
+                {
+                    await ticketRepo.SaveEntity();
+
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+
+            return isdelete;
+
+        }
+        #endregion
+
     }
 }
