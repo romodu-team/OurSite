@@ -1,1 +1,48 @@
-/* You can add global styles to this file, and also import other style files */
+.btn-primary{
+    background-color: #FFC93C;
+    border: #FFC93C;
+    color: white !important;
+}
+.btn-primary:hover{
+    background-color: #d7a72c;
+    border: #d7a72c;
+}
+.btn-secondary{
+    background-color: #2E2E2E;
+    border: #2E2E2E;
+    color: #FFC93C;
+}
+.btn-outline-primary{
+    border: #FFC93C 1px solid;
+    color: #FFC93C;
+}
+.btn-outline-primary:hover{
+    border: #FFC93C;
+    background-color: #FFC93C;
+    color: white;
+}
+.btn-danger{
+    background-color: #E75444;
+    border: #E75444;
+}
+.btn-outline-danger{
+    border: #E75444 1px solid;
+    color: #E75444;
+}
+.btn-outline-danger:hover{
+    border: #E75444;
+    background-color: #E75444;
+    color: white;
+}
+.bg-primary{
+    background-color: #FFC93C !important;
+}
+.bg-success{
+    background-color: #35D35A !important;
+}
+.bg-dark{
+    background-color: #2E2E2E !important;
+}
+.bg-secondary{
+    background-color: #ffc83c73 !important;
+}
