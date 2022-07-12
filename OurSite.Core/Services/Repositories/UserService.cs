@@ -418,10 +418,59 @@ namespace OurSite.Core.Services.Repositories
         #region Get user list 
         public async Task<ResFilterUserDto> GetAlluser(ReqFilterUserDto filter) //for return a list of user that singup in our site for admin
         {
-            var usersQuery = userService.GetAllEntity();
+            var usersQuery = userService.GetAllEntity().AsQueryable();
+            switch (filter.OrderBy)
+            {
+                case UsersOrderBy.NameAsc:
+                    usersQuery = usersQuery.OrderBy(u => u.FirstName);
+                    break;
+                case UsersOrderBy.NameDec:
+                    usersQuery = usersQuery.OrderByDescending(u => u.FirstName);
+                    break;
+                case UsersOrderBy.CreateDateAsc:
+                    usersQuery = usersQuery.OrderBy(u => u.CreateDate);
+                    break;
+                case UsersOrderBy.CreateDateDec:
+                    usersQuery = usersQuery.OrderByDescending(u => u.CreateDate);
+                    break;
+                default:
+                    break;
+            }
+            switch (filter.ActiveationFilter)
+            {
+                case UsersActiveationFilter.Active:
+                    usersQuery = usersQuery.Where(u => u.IsActive == true);
+                    break;
+                case UsersActiveationFilter.NotActive:
+                    usersQuery = usersQuery.Where(u => u.IsActive == false);
+                    break;
+                case UsersActiveationFilter.All:
+                    break;
+                default:
+                    break;
+            }
+            switch (filter.RemoveFilter)
+            {
+                case UsersRemoveFilter.Deleted:
+                    usersQuery = usersQuery.Where(u => u.IsRemove == true);
+                    break;
+                case UsersRemoveFilter.NotDeleted:
+                    usersQuery = usersQuery.Where(u => u.IsRemove == false);
+                    break;
+                case UsersRemoveFilter.All:
+                    break;
+                default:
+                    break;
+            }
+            if (!string.IsNullOrWhiteSpace(filter.EmailSearchKey))
+                usersQuery = usersQuery.Where(u => u.Email.Contains(filter.EmailSearchKey));
+            if(!string.IsNullOrWhiteSpace(filter.UserNameSearchKey))
+                usersQuery= usersQuery.Where(u => u.UserName.Contains(filter.UserNameSearchKey));
+
             var count = (int)Math.Ceiling(usersQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list =await userService.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
+            var list =await usersQuery.Paging(pager).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
+            
             var result = new ResFilterUserDto();
             result.SetPaging(pager);
             return result.SetUsers(list);
