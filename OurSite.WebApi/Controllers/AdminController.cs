@@ -193,10 +193,10 @@ namespace OurSite.WebApi.Controllers
 
         #region List Admins
         [HttpGet("Admin-list")]
-        public async Task<IActionResult> GetAllAdmin()
+        public async Task<IActionResult> GetAllAdmin([FromQuery]ReqFilterUserDto filter )
         {
-            var list = await adminService.GetAllAdmin();
-            if (list.Any())
+            var list = await adminService.GetAllAdmin(filter);
+            if (list.Admins.Any())
             {
                 return JsonStatusResponse.Success(message: ("موفق"), ReturnData: list);
 
@@ -335,9 +335,9 @@ namespace OurSite.WebApi.Controllers
         #region role list
         [Authorize(Roles = "General Manager")] //find all role list
         [HttpGet("view-Roles")]
-        public async Task<IActionResult> GetAllRoles()
+        public async Task<IActionResult> GetAllRoles([FromQuery]ReqFilterRolesDto filter)
         {
-            var roles = await roleService.GetActiveRoles();
+            var roles = await roleService.GetActiveRoles(filter);
             if (roles is null)
                 return JsonStatusResponse.NotFound("هیچ نقشی پیدا نشد");
             return JsonStatusResponse.Success(roles, "موفق");

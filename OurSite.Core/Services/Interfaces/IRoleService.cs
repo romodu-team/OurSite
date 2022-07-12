@@ -16,7 +16,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResUpdateRole> UpdateRole(ReqUpdateRoleDto reqUpdate);
         Task<RoleDto> GetRoleById(long RoleId);
         Task<Role> GetRoleByName(string RoleName);
-        Task<List<RoleDto>> GetActiveRoles();
+        Task<ResRoleFilterDto> GetActiveRoles(ReqFilterRolesDto filter);
         Task<Role> GetAdminRole(long adminId);
 
         Task<bool> AddRoleToAdmin(AccounInRole accounInRole);

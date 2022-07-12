@@ -13,7 +13,8 @@ using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
-
+using OurSite.Core.DTOs.Paging;
+using OurSite.Core.Utilities.Extentions.Paging;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -286,10 +287,66 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Admin list
-        public async Task<List<GetAllAdminDto>> GetAllAdmin()
+        public async Task<ResFilterAdminDto> GetAllAdmin(ReqFilterUserDto filter)
         {
-            var list = await adminRepository.GetAllEntity().Where(x => x.IsRemove == false).Select(x => new GetAllAdminDto { Email = x.Email, FirstName = x.FirstName, LastName = x.LastName, AdminId = x.Id, UserName = x.UserName, IsDelete = x.IsRemove }).ToListAsync();
-            return list;
+            var adminQuery = adminRepository.GetAllEntity().AsQueryable();
+            switch (filter.OrderBy)
+            {
+                case UsersOrderBy.NameAsc:
+                    adminQuery = adminQuery.OrderBy(u => u.FirstName);
+                    break;
+                case UsersOrderBy.NameDec:
+                    adminQuery = adminQuery.OrderByDescending(u => u.FirstName);
+                    break;
+                case UsersOrderBy.CreateDateAsc:
+                    adminQuery = adminQuery.OrderBy(u => u.CreateDate);
+                    break;
+                case UsersOrderBy.CreateDateDec:
+                    adminQuery = adminQuery.OrderByDescending(u => u.CreateDate);
+                    break;
+                default:
+                    break;
+            }
+            switch (filter.ActiveationFilter)
+            {
+                case UsersActiveationFilter.Active:
+                    adminQuery = adminQuery.Where(u => u.IsActive == true);
+                    break;
+                case UsersActiveationFilter.NotActive:
+                    adminQuery = adminQuery.Where(u => u.IsActive == false);
+                    break;
+                case UsersActiveationFilter.All:
+                    break;
+                default:
+                    break;
+            }
+            switch (filter.RemoveFilter)
+            {
+                case UsersRemoveFilter.Deleted:
+                    adminQuery = adminQuery.Where(u => u.IsRemove == true);
+                    break;
+                case UsersRemoveFilter.NotDeleted:
+                    adminQuery = adminQuery.Where(u => u.IsRemove == false);
+                    break;
+                case UsersRemoveFilter.All:
+                    break;
+                default:
+                    break;
+            }
+            if (!string.IsNullOrWhiteSpace(filter.EmailSearchKey))
+                adminQuery = adminQuery.Where(u => u.Email.Contains(filter.EmailSearchKey));
+            if (!string.IsNullOrWhiteSpace(filter.UserNameSearchKey))
+                adminQuery = adminQuery.Where(u => u.UserName.Contains(filter.UserNameSearchKey));
+
+            var count = (int)Math.Ceiling(adminQuery.Count() / (double)filter.TakeEntity);
+            var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
+            var list = await adminQuery.Paging(pager).Select(x => new GetAllAdminDto { Email = x.Email, FirstName = x.FirstName, LastName = x.LastName, AdminId = x.Id, UserName = x.UserName, IsDelete = x.IsRemove }).ToListAsync();    //use the genric interface options and save values in variable
+
+            var result = new ResFilterAdminDto();
+            result.SetPaging(pager);
+            return result.SetAdmins(list);
+
+      
         }
 
         #endregion

@@ -25,7 +25,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<bool> ResetPassword(ReqResetPassword request);
         Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName);
         Task<Admin> GetAdminByEmailOrUserName(string EmailOrUserName);
-        Task <List<GetAllAdminDto>> GetAllAdmin();
+        Task <ResFilterAdminDto> GetAllAdmin(ReqFilterUserDto filter);
         #endregion
 
         #region Login
