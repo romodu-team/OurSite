@@ -16,7 +16,7 @@ namespace OurSite.Core.Utilities
             {
                 try
                 {
-                    var size = file.Length;
+                    var size = file.Length/1000;
                     if (size > maxSizeMb * 1024)
                         return new ResUploadDto { Status = resFileUploader.ToBig, FileName = null };
 
@@ -53,7 +53,7 @@ namespace OurSite.Core.Utilities
                         Directory.CreateDirectory(path);
                     }
                     string FileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    using (FileStream fileStream = System.IO.File.Create(path + FileName))
+                    using (FileStream fileStream = System.IO.File.Create(path +"//"+ FileName))
                     {
                         await file.CopyToAsync(fileStream);
                         fileStream.Flush();

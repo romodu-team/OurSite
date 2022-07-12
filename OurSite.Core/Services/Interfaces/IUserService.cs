@@ -1,6 +1,10 @@
 ﻿using OurSite.Core.DTOs;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.Core.DTOs.UserDtos;
+using OurSite.Core.DTOs.AdminDtos;
+using OurSite.Core.DTOs.Uploader;
+using Microsoft.AspNetCore.Http;
+using OurSite.Core.Utilities;
 
 namespace OurSite.Core.Services.Interfaces
 {
@@ -15,18 +19,23 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResActiveUser> ActiveUser(string activationCode);
         Task<bool> GetUserEmailandUserName(string Email , string UserName);
 
-        Task<bool> UpDate(ReqUpdateUserDto userdto);
+        Task<resFileUploader> ProfilePhotoUpload(IFormFile photo, long UserId);
+        Task<ResUpdate> UpDate(ReqUpdateUserDto userdto,long id);
+        Task<bool> IsMobileExist(string mobile , accountType type);
         Task<RessingupDto> SingUp(ReqSingupUserDto userDto);
 
         Task<ReqViewUserDto> ViewProfile(long id);
-        Task<User> ViewUser(long id);
+        Task<ResViewuserAdminDto> ViewUser(long id);
         Task<bool> ChangeUserStatus(long userId);
 
         #region User Mangement by admin
-        Task<List<User>> GetAlluser();
+        Task<ResFilterUserDto> GetAlluser(ReqFilterUserDto filter);
         Task<bool> DeleteUser(long id);
-        //Task AddUser(ReqSingupUserDto userDto);
+        Task<ResadduserDto> AddUser(ReqAddUserAdminDto userDto);
         #endregion
+
+
+
 
 
     }

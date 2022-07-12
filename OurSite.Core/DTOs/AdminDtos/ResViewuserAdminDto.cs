@@ -1,8 +1,10 @@
 ﻿using System;
+using OurSite.DataLayer.Entities.Accounts;
+
 namespace OurSite.Core.DTOs.UserDtos
 {
-	public class ResViewuserAdminDto
-	{
+    public class ResViewuserAdminDto
+    {
         public long Id { get; set; }
         public DateTime CreateDate { get; set; }
         public bool IsRemove { get; set; }

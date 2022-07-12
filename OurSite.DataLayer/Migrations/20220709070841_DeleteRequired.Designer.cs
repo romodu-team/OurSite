@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OurSite.DataLayer.Contexts;
 
@@ -11,9 +12,10 @@ using OurSite.DataLayer.Contexts;
 namespace OurSite.DataLayer.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220709070841_DeleteRequired")]
+    partial class DeleteRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,9 +118,6 @@ namespace OurSite.DataLayer.Migrations
 
                     b.Property<string>("ImageName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsRemove")
                         .HasColumnType("bit");
@@ -319,196 +318,23 @@ namespace OurSite.DataLayer.Migrations
                     b.ToTable("contactWithUs");
                 });
 
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Departments.Department", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DepartmentName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DepartmentTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsRemove")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("departments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreateDate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1847),
-                            DepartmentName = "Financial",
-                            DepartmentTitle = "بخش مالی",
-                            IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1881)
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            CreateDate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1883),
-                            DepartmentName = "Technical support",
-                            DepartmentTitle = "پشتیبانی فنی",
-                            IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1885)
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            CreateDate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1887),
-                            DepartmentName = "Other",
-                            DepartmentTitle = "سایر",
-                            IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1889)
-                        });
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("DepartmentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsClosed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRemove")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TicketSubject")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TicketTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("UserId")
-                        .IsRequired()
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("tickets");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.TicketMessageing.TicketMessage", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRemove")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSeen")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MessageText")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubmittedTicketFileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("TicketId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserOrAdminId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TicketId");
-
-                    b.ToTable("ticketMessages");
-                });
-
             modelBuilder.Entity("OurSite.DataLayer.Entities.Access.AccounInRole", b =>
                 {
                     b.HasOne("OurSite.DataLayer.Entities.Accounts.Admin", "Admin")
                         .WithMany("AccounInRoles")
                         .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("OurSite.DataLayer.Entities.Access.Role", "Role")
                         .WithMany("AccounInRoles")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Admin");
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>
-                {
-                    b.HasOne("OurSite.DataLayer.Entities.Departments.Department", "Department")
-                        .WithMany("Ticket")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OurSite.DataLayer.Entities.Accounts.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.TicketMessageing.TicketMessage", b =>
-                {
-                    b.HasOne("OurSite.DataLayer.Entities.Ticketing.Ticket", "Ticket")
-                        .WithMany("TicketMessages")
-                        .HasForeignKey("TicketId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Ticket");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Role", b =>
@@ -519,16 +345,6 @@ namespace OurSite.DataLayer.Migrations
             modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.Admin", b =>
                 {
                     b.Navigation("AccounInRoles");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Departments.Department", b =>
-                {
-                    b.Navigation("Ticket");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>
-                {
-                    b.Navigation("TicketMessages");
                 });
 #pragma warning restore 612, 618
         }

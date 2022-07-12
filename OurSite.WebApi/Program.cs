@@ -84,6 +84,20 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketMessageService, TicketMessageService>();
 builder.Services.AddAuthorization();
+
+#region Cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("EnableCors", mybuilder =>
+    {
+        mybuilder.WithOrigins("*")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    }
+
+    );
+});
+#endregion
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -93,8 +107,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseCors("EnableCors");
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();

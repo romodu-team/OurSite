@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OurSite.DataLayer.Contexts;
 
@@ -11,9 +12,10 @@ using OurSite.DataLayer.Contexts;
 namespace OurSite.DataLayer.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220711150938_nullableFields")]
+    partial class nullableFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -347,35 +349,6 @@ namespace OurSite.DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("departments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreateDate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1847),
-                            DepartmentName = "Financial",
-                            DepartmentTitle = "بخش مالی",
-                            IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1881)
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            CreateDate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1883),
-                            DepartmentName = "Technical support",
-                            DepartmentTitle = "پشتیبانی فنی",
-                            IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1885)
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            CreateDate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1887),
-                            DepartmentName = "Other",
-                            DepartmentTitle = "سایر",
-                            IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1889)
-                        });
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>

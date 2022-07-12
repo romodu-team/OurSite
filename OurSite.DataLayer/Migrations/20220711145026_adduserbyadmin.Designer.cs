@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OurSite.DataLayer.Contexts;
 
@@ -11,9 +12,10 @@ using OurSite.DataLayer.Contexts;
 namespace OurSite.DataLayer.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220711145026_adduserbyadmin")]
+    partial class adduserbyadmin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,9 +107,11 @@ namespace OurSite.DataLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -124,6 +128,7 @@ namespace OurSite.DataLayer.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -131,6 +136,7 @@ namespace OurSite.DataLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Mobile")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NationalCode")
@@ -162,6 +168,7 @@ namespace OurSite.DataLayer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ActivationCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Address")
@@ -179,9 +186,11 @@ namespace OurSite.DataLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -198,6 +207,7 @@ namespace OurSite.DataLayer.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -205,6 +215,7 @@ namespace OurSite.DataLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Mobile")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NationalCode")
@@ -347,35 +358,6 @@ namespace OurSite.DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("departments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            CreateDate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1847),
-                            DepartmentName = "Financial",
-                            DepartmentTitle = "بخش مالی",
-                            IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1881)
-                        },
-                        new
-                        {
-                            Id = 2L,
-                            CreateDate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1883),
-                            DepartmentName = "Technical support",
-                            DepartmentTitle = "پشتیبانی فنی",
-                            IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1885)
-                        },
-                        new
-                        {
-                            Id = 3L,
-                            CreateDate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1887),
-                            DepartmentName = "Other",
-                            DepartmentTitle = "سایر",
-                            IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 5, 12, 22, 35, 825, DateTimeKind.Local).AddTicks(1889)
-                        });
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>
