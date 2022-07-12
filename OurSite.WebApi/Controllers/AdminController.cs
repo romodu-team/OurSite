@@ -50,7 +50,7 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region singup
-        //[Authorize(Roles = "General Manager")]
+        [Authorize(Roles = "General Manager")]
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] ReqSingupUserDto req)
         {
@@ -74,7 +74,7 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Update admin profile
-        [Authorize(Roles = "General Manager")]
+       [Authorize(Roles = "General Manager")]
         [HttpPost("Update-another-Admin-profile")]
         public async Task<IActionResult> UpdateAnotherAdmin([FromBody] ReqUpdateAdminDto req,long id)
         {
