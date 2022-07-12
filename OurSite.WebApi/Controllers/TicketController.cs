@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.TicketsDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 
@@ -20,9 +20,40 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
 
+        #region ListTickets
+        [HttpGet("Ticket-list")]
+        public async Task<IActionResult> GetAllTicket()
+        {
+            var list = await ticketService.GetAllTicket();
+            if (list.Any())
+            {
+                return JsonStatusResponse.Success(message: ("موفق"), ReturnData: list);
 
+            }
+
+            return JsonStatusResponse.NotFound(message: "تیکتی پیدا نشد");
+        }
+
+        #endregion
+
+
+        #region found ticket by id
+        
+        [HttpGet("view-ticket/{ticketId}")]
+        public async Task<IActionResult> FindTicket([FromRoute] long ticketId)
+        {
+            var res = await ticketService.FindTicketById(ticketId);
+            if (res != null)
+                return JsonStatusResponse.Success(res, "موفق");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("تیکت پیدا نشد ");
+        }
+        #endregion
+
+
+        #region createTickes
         [HttpPost("create-ticket")]
-        public async Task<IActionResult> CreateTicket([FromBody] TicketDto ticketDto)
+        public async Task<IActionResult> CreateTicket([FromForm] TicketDto ticketDto)
         {
             if (ticketDto.SubmittedTicketFile != null)
             {
@@ -53,10 +84,11 @@ namespace OurSite.WebApi.Controllers
             {
                 case ResTicket.Success:
                     return JsonStatusResponse.Success("تیکت با موفقیت ارسال شد");
-                
+
                 default:
                     return JsonStatusResponse.Error("ارسال تیکت با خطا مواجه شد");
             }
         }
+        #endregion
     }
 }

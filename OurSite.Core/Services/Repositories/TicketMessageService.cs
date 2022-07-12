@@ -1,4 +1,4 @@
-﻿using OurSite.Core.DTOs;
+﻿using OurSite.Core.DTOs.TicketsDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.DataLayer.Entities.TicketMessageing;
 using OurSite.DataLayer.Interfaces;
