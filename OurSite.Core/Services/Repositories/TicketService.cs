@@ -42,7 +42,6 @@ namespace OurSite.Core.Services.Repositories
             };
             TicketMessage message = new TicketMessage()
             {
-                TicketId = createTicket.Id,
                 MessageText = ticketDto.MessageText,
                 UserOrAdminId = ticketDto.UserId,
                 CreateDate = DateTime.Now,
@@ -57,6 +56,8 @@ namespace OurSite.Core.Services.Repositories
             try
             {
                 await ticketRepo.AddEntity(createTicket);
+                await ticketRepo.SaveEntity();
+                message.TicketId = createTicket.Id;
                 await ticketMessageRepo.AddEntity(message);
                 await ticketRepo.SaveEntity();
                 return new ResTicketDto {resTicket= ResTicket.Success};
@@ -70,7 +71,9 @@ namespace OurSite.Core.Services.Repositories
         #region Dispose
         public void Dispose()
         {
-            throw new NotImplementedException();
+            ticketRepo.Dispose();
+            ticketMessageRepo.Dispose();
+
         }
         #endregion
     }
