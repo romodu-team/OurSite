@@ -1,1 +1,16 @@
-<p>card1 works!</p>
+<div class="p-4 rounded shadow w-100" (mouseenter)="cardHover()"
+ (mouseleave)="cardInHover()" [class]="[CardHover ,textHover]"
+  style="transition: .3s ease-in-out;cursor: pointer; position: relative;"
+  [routerLink]="[link]">
+    <div class="d-flex justify-content-end">
+        <img src="" width="50px" height="50px" alt="">
+    </div>
+    <div class="d-flex justify-content-end mt-4 ">
+    <h3 dir="rtl" class="col-6">{{ title }}</h3>
+       <div class="circle"></div>
+    </div>
+    <div class="d-flex justify-content-end my-2" style="position: relative;">
+        <span style="width:400px ; height: 2px; position: relative; background-color: rgb(254, 159, 18); " [style]="lineHover" ></span>
+    </div>
+   <p dir="rtl">{{ discription }}</p>
+</div>

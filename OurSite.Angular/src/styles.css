@@ -46,3 +46,9 @@
 .bg-secondary{
     background-color: #ffc83c73 !important;
 }
+.text-primary{
+    color: #FFC93C !important;
+}
+body{
+    background-color: #F7F7F7;
+}
