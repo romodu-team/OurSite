@@ -98,12 +98,11 @@ namespace OurSite.Core.Services.Repositories
         #region Update admin profile by self/admin
         public async Task<ResUpdate> UpdateAdmin(ReqUpdateAdminDto req, long id)
         {
-            var admin = await adminRepository.GetEntity(id);
+         //   var admin = await adminRepository.GetEntity(id);
+            var admin = adminRepository.GetAllEntity().Where(a => a.Id == id).Include(a => a.additionalDataOfAdmin).SingleOrDefault();
             if (admin == null)
                 return ResUpdate.NotFound;
 
-            if (!string.IsNullOrWhiteSpace(req.Address))
-                admin.Address = req.Address;
             if (!string.IsNullOrWhiteSpace(req.FirstName))
                 admin.FirstName = req.FirstName;
             if (!string.IsNullOrWhiteSpace(req.LastName))
@@ -114,14 +113,22 @@ namespace OurSite.Core.Services.Repositories
                 admin.Mobile = req.Mobile.Trim();
             if (!string.IsNullOrWhiteSpace(req.NationalCode))
                 admin.NationalCode = req.NationalCode.Trim();
-            if (!string.IsNullOrWhiteSpace(req.ImageName))
-                admin.ImageName = req.ImageName;
-            if (!string.IsNullOrWhiteSpace(req.Birthday))
-                admin.Birthday = req.Birthday;
-            if (req.Gender != null)
-                admin.Gender = (DataLayer.Entities.BaseEntities.gender?)req.Gender;
             if (!string.IsNullOrWhiteSpace(req.UserName))
                 admin.UserName = req.UserName.ToLower().Trim();
+
+            if(admin.additionalDataOfAdmin is not null)
+            {
+                if (!string.IsNullOrWhiteSpace(req.Address))
+                    admin.additionalDataOfAdmin.Address = req.Address;
+                if (!string.IsNullOrWhiteSpace(req.ImageName))
+                    admin.additionalDataOfAdmin.ImageName = req.ImageName;
+                if (!string.IsNullOrWhiteSpace(req.Birthday))
+                    admin.additionalDataOfAdmin.Birthday = req.Birthday;
+                if (req.Gender != null)
+                    admin.additionalDataOfAdmin.Gender = (DataLayer.Entities.Accounts.gender?)req.Gender;
+            }
+            
+
 
             //update admin role
             if (!string.IsNullOrWhiteSpace(req.Roleid))
