@@ -6,6 +6,7 @@ namespace OurSite.DataLayer.Entities.Accounts
 {
 	public class Admin : BaseEntityAccount
 	{
+
         #region Relations
         public ICollection<AccounInRole> AccounInRoles { get; set; }
 

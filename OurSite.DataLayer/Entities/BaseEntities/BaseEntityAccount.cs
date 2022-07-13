@@ -11,7 +11,8 @@ namespace OurSite.DataLayer.Entities.BaseEntities
         [MaxLength(50,ErrorMessage ="تعداد کاراکتر بیش از حد مجاز است")]
         public string? FirstName { get; set; }
 
-
+        [DisplayName("عکس کاربری")]
+        public string? ImageName { get; set; }
 
         [DisplayName("نام خانوادگی")]
         [MaxLength(50, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]

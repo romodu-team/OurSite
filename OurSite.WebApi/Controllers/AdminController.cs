@@ -165,7 +165,7 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
         #region Delete Admin Monharf
-        [Authorize(Roles = "General Manager")]
+        //[Authorize(Roles = "General Manager")]
         [HttpDelete("delete-admin")]
         public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
         {
@@ -177,7 +177,6 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region found admin by id
-        [Authorize(Roles = "General Manager")]
         [HttpGet("view-admin/{adminId}")]
         public async Task<IActionResult> GetAdmin([FromRoute] long adminId)
         {
@@ -208,7 +207,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Update admin by self
         [HttpPost("update-admin-profile")]
-        public async Task<IActionResult> UpdateAdminBySelf([FromBody] ReqUpdateAdminDto req)
+        public async Task<IActionResult> UpdateAdminBySelf([FromForm] ReqUpdateAdminDto req)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -462,7 +461,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Delete user
         [HttpPost("delete-user")]
-        public async Task<IActionResult> DeleteUser([FromBody]long id)
+        public async Task<IActionResult> DeleteUser([FromRoute]long id)
         {
             var check = await userService.DeleteUser(id);
             if (check)

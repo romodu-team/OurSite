@@ -15,6 +15,7 @@ using OurSite.DataLayer.Contexts;
 using OurSite.DataLayer.Interfaces;
 using OurSite.DataLayer.Repositories;
 using System.Text;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,5 +114,10 @@ app.UseCors("EnableCors");
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();
-
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "upload")),
+    RequestPath = "/upload"
+});
 app.Run();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,13 @@ namespace OurSite.Core.Utilities
 {
     public static class PathTools
     {
-        public const string Domain = "https://localhost:7181";
 
-        public const string ConsultationFile = Domain + "/upload/";
-        public static string ProfilePhotos = Directory.GetCurrentDirectory() + "//upload//Profiles";
+        public const string Domain = "https:\\localhost:7181";
 
-        public static string FileUploadPath = Directory.GetCurrentDirectory() + "//Content//File";
+       // public const string ConsultationFile = Domain + "/upload/";
+        public static string ProfilePhotos = Path.Combine(Directory.GetCurrentDirectory(), "upload\\images\\Profiles");
+        public static string GetProfilePhotos = "/upload/images/Profiles/";
+
+        public static string FileUploadPath =Path.Combine(Directory.GetCurrentDirectory() ,"upload\\File");
     }
 }

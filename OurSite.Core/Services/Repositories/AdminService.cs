@@ -22,6 +22,7 @@ namespace OurSite.Core.Services.Repositories
     {
         #region Constructor
         private IGenericReopsitories<Admin> adminRepository;
+        private IGenericReopsitories<AdditionalDataOfAdmin> AdditionalDataRepository;
         //  private IGenericReopsitories<AccounInRole> accounInRoleRepository;
         // private IGenericReopsitories<Role> RoleRepository;
         private IRoleService roleService;
@@ -29,13 +30,14 @@ namespace OurSite.Core.Services.Repositories
         private IMapper mapper;
         private IMailService mailService;
 
-        public AdminService(IRoleService roleService, IMailService mailService, IMapper mapper, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper)
+        public AdminService(IGenericReopsitories<AdditionalDataOfAdmin> additionalData, IRoleService roleService, IMailService mailService, IMapper mapper, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper)
         {
             this.mapper = mapper;
             this.adminRepository = adminRepository;
             this.passwordHelper = passwordHelper;
             this.mailService = mailService;
             this.roleService = roleService;
+            AdditionalDataRepository = additionalData;
         }
         #endregion
 
@@ -43,14 +45,24 @@ namespace OurSite.Core.Services.Repositories
         #region Delete Admin
         public async Task<bool> DeleteAdmin(long adminId)             //its return true/false -We do not have a real deletion
         {
+            bool flag = false;
             var isdelete = await adminRepository.DeleteEntity(adminId);
+            await adminRepository.SaveEntity();
+            var additionalData = AdditionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.AdminId == adminId).Result;
+            flag = isdelete;
+            if(additionalData is not null)
+            {
+                var isdeleteAdd = await AdditionalDataRepository.DeleteEntity(additionalData.Id);
+                await AdditionalDataRepository.SaveEntity();
 
-            if (isdelete)
+                flag = isdeleteAdd;
+            }
+            if (flag)
             {
                 try
                 {
 
-                    await adminRepository.SaveEntity();
+                   
                     var myres = await roleService.DeleteAdminRole(adminId);
                     switch (myres)
                     {
@@ -99,7 +111,7 @@ namespace OurSite.Core.Services.Repositories
         public async Task<ResUpdate> UpdateAdmin(ReqUpdateAdminDto req, long id)
         {
          //   var admin = await adminRepository.GetEntity(id);
-            var admin = adminRepository.GetAllEntity().Where(a => a.Id == id).Include(a => a.additionalDataOfAdmin).SingleOrDefault();
+            var admin =await adminRepository.GetAllEntity().Where(a => a.Id == id).Include(a => a.additionalDataOfAdmin).SingleOrDefaultAsync();
             if (admin == null)
                 return ResUpdate.NotFound;
 
@@ -120,12 +132,25 @@ namespace OurSite.Core.Services.Repositories
             {
                 if (!string.IsNullOrWhiteSpace(req.Address))
                     admin.additionalDataOfAdmin.Address = req.Address;
-                if (!string.IsNullOrWhiteSpace(req.ImageName))
-                    admin.additionalDataOfAdmin.ImageName = req.ImageName;
                 if (!string.IsNullOrWhiteSpace(req.Birthday))
                     admin.additionalDataOfAdmin.Birthday = req.Birthday;
                 if (req.Gender != null)
                     admin.additionalDataOfAdmin.Gender = (DataLayer.Entities.Accounts.gender?)req.Gender;
+            }
+            else if (req.Address != null || req.Birthday != null || req.Gender != null)
+            {
+                AdditionalDataOfAdmin addDataAdmin = new AdditionalDataOfAdmin
+                {
+                    AdminId = admin.Id
+                };
+                if (!string.IsNullOrWhiteSpace(req.Address))
+                    addDataAdmin.Address = req.Address;
+                if (!string.IsNullOrWhiteSpace(req.Birthday))
+                    addDataAdmin.Birthday = req.Birthday;
+                if (req.Gender != null)
+                    addDataAdmin.Gender = (DataLayer.Entities.Accounts.gender?)req.Gender;
+                await AdditionalDataRepository.AddEntity(addDataAdmin);
+                await AdditionalDataRepository.SaveEntity();
             }
             
 
@@ -159,39 +184,44 @@ namespace OurSite.Core.Services.Repositories
             var result = await FileUploader.UploadFile(PathTools.ProfilePhotos, photo, 3);
             if (result.Status == resFileUploader.Success)
             {
-                Admin user = await adminRepository.GetEntity(UserId);
-                user.ImageName = result.FileName;
-                adminRepository.UpDateEntity(user);
+                Admin admin = await adminRepository.GetEntity(UserId);
+                admin.ImageName = result.FileName;
+                adminRepository.UpDateEntity(admin);
                 await adminRepository.SaveEntity();
             }
             return result.Status;
         }
         #endregion
 
-        #region Admin founder with id 
+        #region Admin finder with id 
         public async Task<ResViewAdminDto> GetAdminById(long adminId)
         {
             var admin = await adminRepository.GetEntity(adminId);
             var adminRole = await roleService.GetAdminRole(adminId);
+            var additionalData = AdditionalDataRepository.GetAllEntity().SingleOrDefault(a => a.AdminId == admin.Id);
             ResViewAdminDto res = new ResViewAdminDto
             {
-                Address = admin.Address,
-                Birthday = admin.Birthday,
+                
                 CreateDate = admin.CreateDate,
                 LastName = admin.LastName,
                 FirstName = admin.FirstName,
                 LastUpdate = admin.LastUpdate,
                 Email = admin.Email,
-                Gender = admin.Gender.Value.ToString(),
                 Id = admin.Id,
-                ImageName = admin.ImageName,
+                ImageName =PathTools.GetProfilePhotos + admin.ImageName,
                 IsRemove = admin.IsRemove,
                 Mobile = admin.Mobile,
                 NationalCode = admin.NationalCode,
                 UserName = admin.UserName,
                 RoleName = adminRole.Title
             };
-
+            if (additionalData != null)
+            {
+                res.Address = additionalData.Address;
+                res.Birthday = additionalData.Birthday;
+                if(additionalData.Gender is not null)
+                    res.Gender = additionalData.Gender.Value.ToString();
+            }
             return res;
         }
 
