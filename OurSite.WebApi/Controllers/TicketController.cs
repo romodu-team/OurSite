@@ -37,7 +37,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Found Ticket By Id
 
-        [HttpGet("view-ticket/{ticketId}")]
+        [HttpGet("Find-Ticket")]
         public async Task<IActionResult> FindTicket([FromRoute] long ticketId)
         {
             var res = await ticketService.FindTicketById(ticketId);
@@ -49,7 +49,7 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Create Tickes
-        [HttpPost("create-ticket")]
+        [HttpPost("Create-Ticket")]
         public async Task<IActionResult> CreateTicket([FromForm] TicketDto ticketDto)
         {
             if (ticketDto.SubmittedTicketFile != null)
@@ -89,7 +89,7 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Delete Ticket
-        [HttpDelete("delete-ticket")]
+        [HttpDelete("Delete-Ticket")]
         public async Task<IActionResult> DeleteTicket([FromBody] long ticketId)
         {
             var check = await ticketService.DeleteTicket(ticketId);
@@ -97,6 +97,17 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.Success("تیکت با موفقیت حذف شد");
             return JsonStatusResponse.Error("حذف تیکت با خطا مواجه شد");
 
+        }
+        #endregion
+
+        #region Change The Ticket Status
+        [HttpGet("Change-Ticket-Status")]
+        public async Task<IActionResult> ChangeAdminStatus([FromQuery] long ticketId)
+        {
+            var res = await ticketService.ChangeTicketStatus(ticketId);
+            if (res)
+                return JsonStatusResponse.Success("وضعیت تیکت تغییر کرد");
+            return JsonStatusResponse.Error("تغییر وضعیت با خطا مواجه شد");
         }
         #endregion
     }

@@ -10,7 +10,9 @@ namespace OurSite.Core.DTOs.TicketsDtos
     {
         public long TicketId { get; set; }
         public string TicketTitle { get; set; }
+        public string TicketSubject { get; set; }
         public bool IsClosed { get; set; }
+        public string DepartmentName { get; set; }
 
     }
 }

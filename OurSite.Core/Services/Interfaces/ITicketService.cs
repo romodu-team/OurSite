@@ -14,6 +14,8 @@ namespace OurSite.Core.Services.Interfaces
         Task<List<GetAllTicketDto>> GetAllTicket();
         Task<ResViewTicketDto> FindTicketById(long ticketId);
         Task<bool> DeleteTicket(long ticketId);
+        Task<bool> ChangeTicketStatus(long ticketId);
+        Task<List<GetAllTicketDto>> GetAllUserTicket(long userId);
 
     }
 }

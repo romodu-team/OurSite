@@ -16,7 +16,6 @@ namespace OurSite.Core.Services.Repositories
 {
     public class TicketService : ITicketService
     {
-        private DataBaseContext context;
 
         #region constructor
         private readonly IGenericReopsitories<Ticket> ticketRepo;
@@ -132,5 +131,37 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
+        #region Change Ticket Status
+        public async Task<bool> ChangeTicketStatus(long ticketId)
+        {
+            try
+            {
+                var ticket = await ticketRepo.GetEntity(ticketId);
+                ticket.IsClosed = !ticket.IsClosed;
+                ticketRepo.UpDateEntity(ticket);
+                await ticketRepo.SaveEntity();
+                return true;
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
+
+        public Task<List<GetAllTicketDto>> GetAllUserTicket()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region Get All User Ticket
+        public async Task<List<GetAllTicketDto>> GetAllUserTicket(long userId)
+        {
+            var user = ticketRepo.GetAllEntity().Where(x => x.UserId == userId).Include(x => x.Department).Select(x => new GetAllTicketDto { TicketTitle = x.TicketTitle, DepartmentName = x.Department.DepartmentName, IsClosed = x.IsClosed, TicketId = x.Id, TicketSubject = x.TicketSubject });
+            return await user.ToListAsync();
+        }
+        #endregion
     }
 }
