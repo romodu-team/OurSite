@@ -110,5 +110,20 @@ namespace OurSite.WebApi.Controllers
             return JsonStatusResponse.Error("تغییر وضعیت با خطا مواجه شد");
         }
         #endregion
+
+        #region Seen All User Tickets
+        [HttpPost("See-User-Tickets")]
+        public async Task<IActionResult> seenAllUserTickets([FromBody] long userId)
+        {
+            var listOfUserTicket = await ticketService.GetAllUserTicket(userId);
+            if (listOfUserTicket.Any())
+            {
+                return JsonStatusResponse.Success(message: ("تیکت باموفقیت پیدا شد"), ReturnData: listOfUserTicket);
+
+            }
+
+            return JsonStatusResponse.NotFound(message: "تیکتی برای کاربر ثبت نشده");
+        }
+        #endregion
     }
 }
