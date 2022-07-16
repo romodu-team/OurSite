@@ -1,1 +1,16 @@
-<p>services works!</p>
+<div class="container">
+    <div class="text-center mb-4">
+        <h2> خدمات ارایه شده</h2>
+        <h4 class="text-primary fw-normal my-3">توسط تیم سیپا</h4>
+
+        <div class="d-flex justify-content-center">
+            <h4 class="fw-normal col-6">لورم ایسپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</h4>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-around flex-wrap">
+        <app-card1 *ngFor="let card of cards$ |async" class="col-3 mx-1 my-4"
+         [title]="card.title" [discription]="card.discription" [link]="card.url"></app-card1>
+    </div>
+</div>
+

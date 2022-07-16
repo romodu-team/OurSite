@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-services',
@@ -11,5 +12,6 @@ export class ServicesComponent implements OnInit {
 
   ngOnInit(): void {
   }
+  cards$! :Observable<any[]>
 
 }
