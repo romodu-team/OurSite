@@ -23,6 +23,17 @@ namespace OurSite.DataLayer.Entities.Access
         public ICollection<AccounInRole> AccounInRoles { get; set; }
         #endregion
 
+
+
+
+
+    }
+
+    public enum Roles
+    {
+        SuperAdmin,
+        Admin,
+        Basic
     }
 }
 

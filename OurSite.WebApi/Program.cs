@@ -17,6 +17,8 @@ using OurSite.DataLayer.Repositories;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
+using OurSite.Core.Security.Authorizations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +69,6 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
-
 
 #endregion
 #region Autentication
