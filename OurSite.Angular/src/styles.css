@@ -44,5 +44,8 @@
     background-color: #2E2E2E !important;
 }
 .bg-secondary{
-    background-color: #ffc83c73 !important;
+    background-color: #213C47 !important;
+}
+.text-primary{
+    color: #FFC93C !important;
 }
