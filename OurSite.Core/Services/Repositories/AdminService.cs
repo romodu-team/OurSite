@@ -227,7 +227,7 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Add new admin
-        public async Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req)
+        public async Task<RessingupDto> RegisterAdmin(ReqRegisterAdminDto req)
         {
             var check = await IsAdminExist(req.UserName.Trim().ToLower(), req.Email.ToLower().Trim());
             if (check)

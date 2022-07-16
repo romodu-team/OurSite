@@ -60,9 +60,8 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [Authorize(Roles = "General Manager")]
         [HttpPost("register-admin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] ReqSingupUserDto req)
+        public async Task<IActionResult> RegisterAdmin([FromBody] ReqRegisterAdminDto req)
         {
             if (ModelState.IsValid)
             {
