@@ -18,6 +18,12 @@ namespace OurSite.WebApi.Controllers
             this.contactWithUsService = contactWithUsService;
         }
 
+        #region form
+        /// <summary>
+        ///  form contact with us {Get request from form}
+        /// </summary>
+        /// <param name="sendContactForm"></param>
+        /// <returns></returns>
         [HttpPost("send-form")]
         public async Task<IActionResult> SendContactWithUsForm([FromForm] ContactWithUsDto sendContactForm)
         {
@@ -30,6 +36,8 @@ namespace OurSite.WebApi.Controllers
             {
                 return JsonStatusResponse.Error("اطلاعات ارسال شده معتبر نمی‌باشد");
             }
+            #endregion
+
         }
     }
 }

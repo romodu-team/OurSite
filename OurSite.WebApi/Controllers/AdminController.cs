@@ -31,6 +31,11 @@ namespace OurSite.WebApi.Controllers
         #region Admin activities
 
         #region login
+        /// <summary>
+        ///  API for Login Admin into system {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("login-Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] ReqLoginDto reqLogin)
         {
@@ -50,6 +55,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region singup
+        /// <summary>
+        ///  API for Register new Admin by system administrator {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Authorize(Roles = "General Manager")]
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] ReqSingupUserDto req)
@@ -74,8 +84,13 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Update admin profile
-       [Authorize(Roles = "General Manager")]
-        [HttpPost("Update-another-Admin-profile")]
+        /// <summary>
+        ///  API for Update Admin Profile by system administrator {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "General Manager")]
+        [HttpPut("Update-another-Admin-profile")]
         public async Task<IActionResult> UpdateAnotherAdmin([FromBody] ReqUpdateAdminDto req,long id)
         {
             if (ModelState.IsValid)
@@ -116,6 +131,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Reset Password
+        /// <summary>
+        ///  API for Reset Password Admin {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ReqResetPassword request)
         {
@@ -131,6 +151,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Send Reset Password Emailupda
+        /// <summary>
+        ///  API for send reset password for Admin Email {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("SendEmail-ResetUserPass")]
         public async Task<IActionResult> SendResetPassLink([FromBody] string EmailOrUserName)
         {
@@ -149,72 +174,21 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
-
-        #endregion
-
-        #region Admin Management
-        #region Change admin status
-        [Authorize(Roles = "General Manager,Admin")]
-        [HttpGet("change-admin-status/{adminId}")]
-        public async Task<IActionResult> ChangeAdminStatus([FromRoute] long adminId)
-        {
-            var res = await adminService.ChangeAdminStatus(adminId);
-            if (res)
-                return JsonStatusResponse.Success("وضعیت ادمین تغییر کرد");
-            return JsonStatusResponse.Error("عملیات نا موفق بود");
-        }
-        #endregion
-        #region Delete Admin Monharf
-        //[Authorize(Roles = "General Manager")]
-        [HttpDelete("delete-admin")]
-        public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
-        {
-            var res = await adminService.DeleteAdmin(adminId);
-            if (res)
-                return JsonStatusResponse.Success("با موفقیت حذف شد");
-            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-        }
-        #endregion
-
-        #region found admin by id
-        [HttpGet("view-admin/{adminId}")]
-        public async Task<IActionResult> GetAdmin([FromRoute] long adminId)
-        {
-            var res = await adminService.GetAdminById(adminId);
-            if (res != null)
-                return JsonStatusResponse.Success(res, "موفق");
-            HttpContext.Response.StatusCode = 404;
-            return JsonStatusResponse.NotFound("پیدا نشد");
-        }
-        #endregion
-
-        #endregion
-
-        #region List Admins
-        [HttpGet("Admin-list")]
-        public async Task<IActionResult> GetAllAdmin([FromQuery]ReqFilterUserDto filter )
-        {
-            var list = await adminService.GetAllAdmin(filter);
-            if (list.Admins.Any())
-            {
-                return JsonStatusResponse.Success(message: ("موفق"), ReturnData: list);
-
-            }
-
-            return JsonStatusResponse.NotFound(message: "آدمینی پیدا نشد");
-        }
-        #endregion
-
         #region Update admin by self
-        [HttpPost("update-admin-profile")]
-        public async Task<IActionResult> UpdateAdminBySelf([FromForm] ReqUpdateAdminDto req)
+        /// <summary>
+        ///  API for Update admin profile by self{Get request from form}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut("update-admin-profile")]
+        public async Task<IActionResult> UpdateAdminBySelf([FromBody] ReqUpdateAdminDto req)
         {
             if (User.Identity.IsAuthenticated)
             {
                 if (ModelState.IsValid)
                 {
                     var Adminid = User.FindFirst(ClaimTypes.NameIdentifier);
-                    var res = await adminService.UpdateAdmin(req,Convert.ToInt64(Adminid.Value));
+                    var res = await adminService.UpdateAdmin(req, Convert.ToInt64(Adminid.Value));
                     if (req.ProfilePhoto != null)
                     {
                         var resProfilePhoto = await adminService.ProfilePhotoUpload(req.ProfilePhoto, Convert.ToInt64(Adminid.Value));
@@ -254,9 +228,94 @@ namespace OurSite.WebApi.Controllers
 
         }
         #endregion
+        #endregion
+
+        #region Admin Management
+        #region Change admin status
+        /// <summary>
+        ///  API for change status(activity and last update) Admin Panel {Get request from Route}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "General Manager,Admin")]
+        [HttpGet("change-admin-status/{adminId}")]
+        public async Task<IActionResult> ChangeAdminStatus([FromRoute] long adminId)
+        {
+            var res = await adminService.ChangeAdminStatus(adminId);
+            if (res)
+                return JsonStatusResponse.Success("وضعیت ادمین تغییر کرد");
+            return JsonStatusResponse.Error("عملیات نا موفق بود");
+        }
+        #endregion
+
+
+        #region Delete Admin Monharf
+        /// <summary>
+        ///  API for Delete Admin Panel by system administrator {Get request from Query}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        //[Authorize(Roles = "General Manager")]
+        [HttpDelete("delete-admin")]
+        public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
+        {
+            var res = await adminService.DeleteAdmin(adminId);
+            if (res)
+                return JsonStatusResponse.Success("با موفقیت حذف شد");
+            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+        }
+        #endregion
+
+        #region found admin by id
+        /// <summary>
+        ///  API for find Admin Profile by admin id{Get request from route}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet("view-admin/{adminId}")]
+        public async Task<IActionResult> GetAdmin([FromRoute] long adminId)
+        {
+            var res = await adminService.GetAdminById(adminId);
+            if (res != null)
+                return JsonStatusResponse.Success(res, "موفق");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("پیدا نشد");
+        }
+        #endregion
+
+        #region List Admins
+        /// <summary>
+        ///  API for Get List of all admins{Get request from Query}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet("Admin-list")]
+        public async Task<IActionResult> GetAllAdmin([FromQuery] ReqFilterUserDto filter)
+        {
+            var list = await adminService.GetAllAdmin(filter);
+            if (list.Admins.Any())
+            {
+                return JsonStatusResponse.Success(message: ("موفق"), ReturnData: list);
+
+            }
+
+            return JsonStatusResponse.NotFound(message: "آدمینی پیدا نشد");
+        }
+        #endregion
+
+
+        #endregion
+
+
+
         #region Role Management
 
         #region Add new role
+        /// <summary>
+        ///  API for Add new role by system administrator {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Authorize(Roles = "General Manager")] //add new role
         [HttpPost("add-role")]
         public async Task<IActionResult> AddRole([FromBody] RoleDto role)
@@ -284,9 +343,14 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Delete a role
+        /// <summary>
+        ///  API for Delete role by system administrator {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Authorize(Roles = "General Manager")] //remove role
         [HttpDelete("delete-role")]
-        public async Task<IActionResult> RemoveRole([FromBody] long RoleId)
+        public async Task<IActionResult> RemoveRole([FromQuery] long RoleId)
         {
             var res = await roleService.RemoveRole(RoleId);
             if (res)
@@ -320,6 +384,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Found role by role id
+        /// <summary>
+        ///  API for find role by role id {Get request from route}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Authorize(Roles = "General Manager")] //Find role by id
         [HttpGet("view-Role/{RoleId}")]
         public async Task<IActionResult> GetRoleById([FromRoute] long RoleId)
@@ -332,6 +401,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region role list
+        /// <summary>
+        ///  API for Get list of all{Get request from Query}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Authorize(Roles = "General Manager")] //find all role list
         [HttpGet("view-Roles")]
         public async Task<IActionResult> GetAllRoles([FromQuery]ReqFilterRolesDto filter)
@@ -348,8 +422,13 @@ namespace OurSite.WebApi.Controllers
         #region User management
 
         #region View user profile by admin
-        [HttpGet("view-user/{userid}")] //view user by admin
-        public async Task<IActionResult> ViewUser(long userid)
+        /// <summary>
+        ///  API for view user panel by admin {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet("view-user/{id}")] //view user by admin
+        public async Task<IActionResult> ViewUser([FromRoute]long userid)
         {
             var user = await userService.ViewUser(userid);
             if (user is not null)
@@ -361,6 +440,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region User list
+        /// <summary>
+        ///  API for Get list of all user by admin {Get request from Query}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet("view-all-users")] //Get user list
         public async Task<IActionResult> GetAllUser([FromQuery] ReqFilterUserDto filter)
         {
@@ -375,6 +459,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Change user status
+        /// <summary>
+        ///  API for change user status(activity and last update) by admin {Get request from route}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Authorize(Roles = "General Manager,Admin")]
         [HttpGet("change-user-status/{userId}")]
         public async Task<IActionResult> ChangeUserStatus([FromRoute] long userId)
@@ -387,6 +476,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Add user by admin
+        /// <summary>
+        ///  API for add new user by admin {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         //[Authorize(Roles = "General Manager,Admin")]
         [HttpPost("add-user")]
         public async Task<IActionResult> AddUser([FromBody]ReqAddUserAdminDto userDto)
@@ -411,8 +505,13 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region update user's profile by admin
-        [HttpPost("update-user-profile")]
-        public async Task<IActionResult> UpdateUserByAdmin(ReqUpdateUserDto userDto , long id)
+        /// <summary>
+        ///  API for update user by admin {Get request from form}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut("update-user-profile")]
+        public async Task<IActionResult> UpdateUserByAdmin([FromForm]ReqUpdateUserDto userDto , long id)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -460,8 +559,13 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Delete user
-        [HttpPost("delete-user")]
-        public async Task<IActionResult> DeleteUser([FromRoute]long id)
+        /// <summary>
+        ///  API for delete user by admin {Get request from route}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpDelete("delete-user")]
+        public async Task<IActionResult> DeleteUser([FromQuery]long id)
         {
             var check = await userService.DeleteUser(id);
             if (check)

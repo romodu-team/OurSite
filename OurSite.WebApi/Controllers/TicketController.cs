@@ -19,8 +19,12 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
-
-
+        #region Creat ticket
+        /// <summary>
+        /// creat new ticket by customers {Get request from body}
+        /// </summary>
+        /// <param name="ticketDto"></param>
+        /// <returns></returns>
         [HttpPost("create-ticket")]
         public async Task<IActionResult> CreateTicket([FromBody] TicketDto ticketDto)
         {
@@ -53,10 +57,13 @@ namespace OurSite.WebApi.Controllers
             {
                 case ResTicket.Success:
                     return JsonStatusResponse.Success("تیکت با موفقیت ارسال شد");
-                
+
                 default:
                     return JsonStatusResponse.Error("ارسال تیکت با خطا مواجه شد");
             }
         }
+        #endregion
+
+
     }
 }
