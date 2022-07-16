@@ -383,7 +383,6 @@ namespace OurSite.Core.Services.Repositories
             {
                 var user = await userService.GetEntity(userId);
                 user.IsActive = !user.IsActive;
-                user.LastUpdate = DateTime.Now;
                 userService.UpDateEntity(user);
                 await userService.SaveEntity();
                 return true;

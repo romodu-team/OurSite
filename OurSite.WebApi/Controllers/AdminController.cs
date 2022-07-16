@@ -233,7 +233,7 @@ namespace OurSite.WebApi.Controllers
         #region Admin Management
         #region Change admin status
         /// <summary>
-        ///  API for change status(activity and last update) Admin Panel {Get request from Route}
+        ///  API for change status(is activity or not) Admin Panel {Get request from Route}
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -460,7 +460,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Change user status
         /// <summary>
-        ///  API for change user status(activity and last update) by admin {Get request from route}
+        ///  API for change user status(is activity or not) by admin {Get request from route}
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
