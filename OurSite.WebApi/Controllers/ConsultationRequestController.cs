@@ -23,6 +23,12 @@ namespace OurSite.WebApi.Controllers
 
 
 
+        #region send form with file
+        /// <summary>
+        /// send file in forms and tickets {Get request from form}
+        /// </summary>
+        /// <param name="sendConsultationFormWithFile"></param>
+        /// <returns></returns>
         [HttpPost("send-form-with-file")]
         public async Task<IActionResult> SendConsultationForm([FromForm] ConsultationRequestDto sendConsultationFormWithFile)
         {
@@ -55,5 +61,6 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.Success("درخواست با موفقیت ارسال گردید");
             return JsonStatusResponse.Error("درخواست شما ارسال نگردید");
         }
+        #endregion
     }
 }
