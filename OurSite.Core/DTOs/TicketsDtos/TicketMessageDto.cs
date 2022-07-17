@@ -14,6 +14,8 @@ namespace OurSite.Core.DTOs.TicketsDtos
         public long UserOrAdminId { get; set; }
         public long? TicketId { get; set; }
         public IFormFile? SubmittedTicketFile { get; set; }
+        public bool IsAdmin { get; set; }
+
 
     }
 }

@@ -27,6 +27,8 @@ namespace OurSite.Core.Services.Repositories
             {
                 MessageText = ticketMessageDto.MessageText,
                 SubmittedTicketFileName = ticketMessageDto.SubmittedTicketFileName,
+                UserOrAdminId=ticketMessageDto.UserOrAdminId,
+                IsAdmin=ticketMessageDto.IsAdmin,
 
             };
             try
