@@ -13,7 +13,6 @@ export class Card2Component implements OnInit {
   }
   @Input() title:string ='هدر شفاف'
   @Input() discription:string = 'هدر شفاف به همراه اسلایدر با تون رنگی متناسب با صفحات سایت هدر شفاف به همراه اسلایدر با تون رنگی متناسب با صفحات سایت'
-  @Input() link:string = ''
 
   textHover :string = 'text-black'
   bgHover : string = 'bg-white'
