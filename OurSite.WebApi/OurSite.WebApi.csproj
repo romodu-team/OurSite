@@ -26,6 +26,7 @@
 	<ItemGroup>
 		<Folder Include="Content\File\" />
 		<Folder Include="wwwroot\" />
+		<Folder Include="Controllers\AdminControllers\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -33,6 +34,7 @@
 		<None Remove="Microsoft.EntityFrameworkCore.SqlServer" />
 		<None Remove="Microsoft.EntityFrameworkCore.Design" />
 		<None Remove="Microsoft.EntityFrameworkCore" />
+		<None Remove="Controllers\AdminControllers\" />
 	</ItemGroup>
 
 	<ItemGroup>

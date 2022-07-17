@@ -36,9 +36,6 @@ namespace OurSite.Core.Services.Repositories
                 {
                     Role newRole = new Role()
                     {
-                        CreateDate = DateTime.Now,
-                        LastUpdate = DateTime.Now,
-                        IsRemove = false,
                         Name = role.Name,
                         Title = role.Title
                     };
