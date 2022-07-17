@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Observable , of } from 'rxjs';
 
 @Component({
-  selector: 'app-demo',
-  templateUrl: './demo.component.html',
-  styleUrls: ['./demo.component.css']
+  selector: 'app-feature',
+  templateUrl: './feature.component.html',
+  styleUrls: ['./feature.component.css']
 })
-export class DemoComponent implements OnInit {
+export class FeatureComponent implements OnInit {
 
   constructor() { }
 
