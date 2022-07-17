@@ -1,0 +1,11 @@
+<div class="container">
+    <div class="d-flex justify-content-between" dir="rtl">
+        <div></div>
+        <div class="my-5 col-9">
+            <h4 class="text-secondary mb-5">نمونه کار طراحی سایت</h4>
+            <app-card4 *ngFor="let card of cards$|async"
+                [title]="card.title" [like]="card.like"
+                [siteLink]="card.url"></app-card4>
+        </div>
+    </div>
+</div>

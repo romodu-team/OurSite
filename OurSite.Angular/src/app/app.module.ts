@@ -13,6 +13,8 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { Card2Component } from './shared/card2/card2.component';
 import { Card3Component } from './shared/card3/card3.component';
+import { DemoMainComponent } from './pages/demo/demo-main/demo-main.component';
+import { Card4Component } from './shared/card4/card4.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { Card3Component } from './shared/card3/card3.component';
     NavbarComponent,
     FooterComponent,
     Card2Component,
-    Card3Component
+    Card3Component,
+    DemoMainComponent,
+    Card4Component
   ],
   imports: [
     BrowserModule,
