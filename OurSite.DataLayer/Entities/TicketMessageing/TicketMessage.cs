@@ -22,10 +22,11 @@ namespace OurSite.DataLayer.Entities.TicketMessageing
         public bool IsAdmin { get; set; }
         #endregion
 
+
         #region Realation
 
         public Ticket Ticket { get; set; }
-        
+
         #endregion
     }
 }
