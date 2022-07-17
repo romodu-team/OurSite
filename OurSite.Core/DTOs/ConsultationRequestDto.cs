@@ -34,5 +34,7 @@ namespace OurSite.Core.DTOs
 
         [DisplayName("فایل ارسالی")]
         public IFormFile? SubmittedFile { get; set; }
+
+        public ICollection<ItemSelectedDto> ItemSelecteds { get; set; }
     }
 }

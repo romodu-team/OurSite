@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OurSite.DataLayer.Contexts;
 
@@ -11,9 +12,10 @@ using OurSite.DataLayer.Contexts;
 namespace OurSite.DataLayer.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220716055845_checkBox")]
+    partial class checkBox
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,7 +261,7 @@ namespace OurSite.DataLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("checkBoxes");
+                    b.ToTable("CheckBoxs");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.ConsultationRequest.ConsultationRequest", b =>
@@ -315,6 +317,9 @@ namespace OurSite.DataLayer.Migrations
                     b.Property<long>("CheckBoxId")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("CheckBoxsId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("ConsultationFormId")
                         .HasColumnType("bigint");
 
@@ -329,11 +334,11 @@ namespace OurSite.DataLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CheckBoxId");
+                    b.HasIndex("CheckBoxsId");
 
                     b.HasIndex("ConsultationFormId");
 
-                    b.ToTable("itemsSelecteds");
+                    b.ToTable("ItemSelected");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.ContactWithUs.ContactWithUs", b =>
@@ -413,29 +418,29 @@ namespace OurSite.DataLayer.Migrations
                         new
                         {
                             Id = 1L,
-                            CreateDate = new DateTime(2022, 7, 16, 11, 1, 9, 66, DateTimeKind.Local).AddTicks(9773),
+                            CreateDate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6275),
                             DepartmentName = "Financial",
                             DepartmentTitle = "بخش مالی",
                             IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 16, 11, 1, 9, 66, DateTimeKind.Local).AddTicks(9802)
+                            LastUpdate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6303)
                         },
                         new
                         {
                             Id = 2L,
-                            CreateDate = new DateTime(2022, 7, 16, 11, 1, 9, 66, DateTimeKind.Local).AddTicks(9805),
+                            CreateDate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6305),
                             DepartmentName = "Technical support",
                             DepartmentTitle = "پشتیبانی فنی",
                             IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 16, 11, 1, 9, 66, DateTimeKind.Local).AddTicks(9806)
+                            LastUpdate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6307)
                         },
                         new
                         {
                             Id = 3L,
-                            CreateDate = new DateTime(2022, 7, 16, 11, 1, 9, 66, DateTimeKind.Local).AddTicks(9808),
+                            CreateDate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6309),
                             DepartmentName = "Other",
                             DepartmentTitle = "سایر",
                             IsRemove = false,
-                            LastUpdate = new DateTime(2022, 7, 16, 11, 1, 9, 66, DateTimeKind.Local).AddTicks(9809)
+                            LastUpdate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6310)
                         });
                 });
 
@@ -544,9 +549,9 @@ namespace OurSite.DataLayer.Migrations
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.ConsultationRequest.ItemSelected", b =>
                 {
-                    b.HasOne("OurSite.DataLayer.Entities.ConsultationRequest.CheckBoxs", "CheckBox")
+                    b.HasOne("OurSite.DataLayer.Entities.ConsultationRequest.CheckBoxs", "CheckBoxs")
                         .WithMany("ItemSelecteds")
-                        .HasForeignKey("CheckBoxId")
+                        .HasForeignKey("CheckBoxsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -556,7 +561,7 @@ namespace OurSite.DataLayer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("CheckBox");
+                    b.Navigation("CheckBoxs");
 
                     b.Navigation("ConsultationRequests");
                 });

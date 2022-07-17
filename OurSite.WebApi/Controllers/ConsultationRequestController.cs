@@ -24,7 +24,7 @@ namespace OurSite.WebApi.Controllers
 
 
         [HttpPost("send-form-with-file")]
-        public async Task<IActionResult> SendConsultationForm([FromForm] ConsultationRequestDto sendConsultationFormWithFile)
+        public async Task<IActionResult> SendConsultationForm([FromBody] ConsultationRequestDto sendConsultationFormWithFile)
         {
 
             if (sendConsultationFormWithFile.SubmittedFile != null)

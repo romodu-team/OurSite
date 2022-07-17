@@ -14,15 +14,20 @@ namespace OurSite.Core.Services.Repositories
     {
         #region constructor
         private readonly IGenericReopsitories<ConsultationRequest> consultationRequestRepo;
-        public ConsultationRequestService(IGenericReopsitories<ConsultationRequest> consultationRequestRepo)
+        private readonly IGenericReopsitories<CheckBoxs> checkBoxsRepo;
+        private readonly IGenericReopsitories<ItemSelected> itemSelectedRepo;
+        public ConsultationRequestService(IGenericReopsitories<ItemSelected> itemSelectedRepo, IGenericReopsitories<CheckBoxs> checkBoxsRepo, IGenericReopsitories<ConsultationRequest> consultationRequestRepo)
         {
             this.consultationRequestRepo = consultationRequestRepo;
+            this.checkBoxsRepo = checkBoxsRepo;
+            this.itemSelectedRepo = itemSelectedRepo;
         }
         #endregion
 
 
         public async Task<bool> SendConsultationForm(ConsultationRequestDto consultationRequestDto)
         {
+            bool flag = true;
             ConsultationRequest request = new ConsultationRequest()
             {
                 UserFullName = consultationRequestDto.UserFullName,
@@ -35,11 +40,42 @@ namespace OurSite.Core.Services.Repositories
             {
                 await consultationRequestRepo.AddEntity(request);
                 await consultationRequestRepo.SaveEntity();
-                return true;
+            }
+            catch (Exception)
+            {
+
+                flag = false;
+                return flag;
+            }
+           
+
+            foreach (var item in consultationRequestDto.ItemSelecteds)
+            {
+                if (item.IsCheck == true)
+                {
+                    if (await checkBoxsRepo.GetEntity(item.CheckBoxId) != null)
+                    {
+                        var selectedItem = new ItemSelected()
+                        {
+                            CheckBoxId = item.CheckBoxId,
+                            ConsultationFormId = request.Id
+                            
+                        };
+                        await itemSelectedRepo.AddEntity(selectedItem);
+                    }
+                }
+            }
+            try
+            {
+                await itemSelectedRepo.SaveEntity();
+                
+                flag= true;
+                return flag;
             }
             catch
             {
-                return false;
+                flag= false;
+                return flag;
             }
         }
 

@@ -26,6 +26,10 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<Department> departments { get; set; }
         public DbSet<Ticket> tickets { get; set; }
         public DbSet<TicketMessage> ticketMessages { get; set; }
+        public DbSet<ItemSelected> itemsSelecteds { get; set; }
+        public DbSet<CheckBoxs> checkBoxes { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
