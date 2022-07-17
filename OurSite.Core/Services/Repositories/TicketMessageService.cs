@@ -20,6 +20,7 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
+        #region Send Ticket Message
         public async Task<bool> SendTicketMessage(TicketMessageDto ticketMessageDto)
         {
             TicketMessage messageText = new TicketMessage()
@@ -39,7 +40,7 @@ namespace OurSite.Core.Services.Repositories
                 return false;
             }
         }
-
+        #endregion
 
         #region Dispose
         public void Dispose()

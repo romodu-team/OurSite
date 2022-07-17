@@ -19,18 +19,18 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
-        #region List Tickets
+        #region List Of All Tickets
         [HttpGet("Ticket-list")]
-        public async Task<IActionResult> GetAllTicket()
+        public async Task<IActionResult> GetAllTicket([FromQuery] ReqFilterTicketDto filter)
         {
-            var list = await ticketService.GetAllTicket();
-            if (list.Any())
+            var ticket = await ticketService.GetAllTicket(filter);
+            if (ticket.Tickets.Any())
             {
-                return JsonStatusResponse.Success(message: ("موفق"), ReturnData: list);
+                return JsonStatusResponse.Success(message: ("موفق"), ReturnData: ticket);
 
             }
 
-            return JsonStatusResponse.NotFound(message: "تیکتی پیدا نشد");
+            return JsonStatusResponse.NotFound(message: "تیکتی یافت نشد");
         }
 
         #endregion

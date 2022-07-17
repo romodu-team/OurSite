@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -6,20 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.DTOs
+namespace OurSite.Core.DTOs.ConsultationRequestDtos
 {
-    public class ContactWithUsDto
+    public class ConsultationRequestDto
     {
         [Required(ErrorMessage = "این فیلد اجباری است")]
-        [DisplayName("نام")]
-        [MaxLength(50, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
-        public string UserFirstName { get; set; }
-
-
-        [Required(ErrorMessage = "این فیلد اجباری است")]
-        [DisplayName("نام خانوادگی")]
-        [MaxLength(50, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
-        public string UserLastName { get; set; }
+        [DisplayName("نام و نام خانوادگی")]
+        [MaxLength(100, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
+        public string UserFullName { get; set; }
 
         [EmailAddress(ErrorMessage = "آدرس ایمیل معتبر نیست")]
         [Required(ErrorMessage = "این فیلد اجباری است")]
@@ -33,5 +28,13 @@ namespace OurSite.Core.DTOs
 
         [Required(ErrorMessage = "لطفا توضیحات را وارد کنید")]
         public string Expration { get; set; }
+
+        [DisplayName("نام فایل ارسالی")]
+        public string? SubmittedFileName { get; set; }
+
+        [DisplayName("فایل ارسالی")]
+        public IFormFile? SubmittedFile { get; set; }
+
+        public ICollection<ItemSelectedDto> ItemSelecteds { get; set; }
     }
 }

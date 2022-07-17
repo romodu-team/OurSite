@@ -1,5 +1,8 @@
-﻿using OurSite.Core.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.ConsultationRequestDtos;
+using OurSite.Core.DTOs.Paging;
 using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Interfaces;
 using System;
@@ -78,6 +81,25 @@ namespace OurSite.Core.Services.Repositories
                 return flag;
             }
         }
+
+
+
+        #region See All ConsultationRequest Form
+
+        public async Task<ResFilterConsultationRequestDto> GetAllConsultationRequest(ReqFilterConsultationRequestDto filter)
+        {
+
+            var consultationRequestQuery = consultationRequestRepo.GetAllEntity();
+            var count = (int)Math.Ceiling(consultationRequestQuery.Count() / (double)filter.TakeEntity);
+            var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
+            var list = await consultationRequestRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllConsultationRequestDto { UserFullName = x.UserFullName, UserEmail = x.UserEmail, UserPhoneNumber = x.UserPhoneNumber }).ToListAsync();    //use the genric interface options and save values in variable
+            var result = new ResFilterConsultationRequestDto();
+            result.SetPaging(pager);
+            return result.SetConsultationRequests(list);
+
+        }
+
+        #endregion
 
 
         #region Dispose

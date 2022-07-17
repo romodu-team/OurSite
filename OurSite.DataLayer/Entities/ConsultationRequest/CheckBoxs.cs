@@ -12,7 +12,9 @@ namespace OurSite.DataLayer.Entities.ConsultationRequest
         public string CheckBoxName { get; set; }
         public section sectionName { get; set; }
 
+        #region Realation
         public ICollection<ItemSelected> ItemSelecteds { get; set; }
+        #endregion
     }
     public enum section
     {

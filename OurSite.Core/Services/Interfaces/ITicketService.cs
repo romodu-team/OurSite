@@ -11,7 +11,7 @@ namespace OurSite.Core.Services.Interfaces
     public interface ITicketService : IDisposable
     {
         Task<ResTicketDto> createTicket(TicketDto ticketDto);
-        Task<List<GetAllTicketDto>> GetAllTicket();
+        Task<ResFilterTicketDto> GetAllTicket(ReqFilterTicketDto filter);
         Task<ResViewTicketDto> FindTicketById(long ticketId);
         Task<bool> DeleteTicket(long ticketId);
         Task<bool> ChangeTicketStatus(long ticketId);

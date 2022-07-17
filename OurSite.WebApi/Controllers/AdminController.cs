@@ -255,6 +255,7 @@ namespace OurSite.WebApi.Controllers
 
         }
         #endregion
+
         #region Role Management
 
         #region Add new role
@@ -473,7 +474,6 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #endregion
-
 
     }
 

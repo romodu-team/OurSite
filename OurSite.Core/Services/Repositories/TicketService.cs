@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.TicketsDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
+using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.DataLayer.Contexts;
 using OurSite.DataLayer.Entities.Ticketing;
 using OurSite.DataLayer.Entities.TicketMessageing;
@@ -81,13 +83,17 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region Ticket List
-        public async Task<List<GetAllTicketDto>> GetAllTicket()
+        #region List Of All Tickets
+        public async Task<ResFilterTicketDto> GetAllTicket(ReqFilterTicketDto filter)
         {
-            var list = await ticketRepo.GetAllEntity().Where(x => x.IsRemove == false).Select(x => new GetAllTicketDto { TicketId = x.Id, TicketTitle = x.TicketTitle, IsClosed = x.IsClosed }).ToListAsync();
-            return list;
+            var ticketQuery = ticketRepo.GetAllEntity();
+            var count = (int)Math.Ceiling(ticketQuery.Count() / (double)filter.TakeEntity);
+            var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
+            var list = await ticketRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllTicketDto { TicketId = x.Id, TicketTitle = x.TicketTitle, IsClosed = x.IsClosed }).ToListAsync();    //use the genric interface options and save values in variable
+            var result = new ResFilterTicketDto();
+            result.SetPaging(pager);
+            return result.SetTickets(list);
         }
-
         #endregion
 
         #region Find By Id
@@ -150,10 +156,6 @@ namespace OurSite.Core.Services.Repositories
 
         }
 
-        public Task<List<GetAllTicketDto>> GetAllUserTicket()
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region Get All User Ticket

@@ -1,17 +1,18 @@
-﻿using OurSite.Core.DTOs.Paging;
+﻿using OurSite.Core.DTOs.ContactWithUs;
+using OurSite.Core.DTOs.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.DTOs.UserDtos
+namespace OurSite.Core.DTOs.ContactWithUsDtos
 {
-    public class ResFilterUserDto : BasePaging
+    public class ResFilterContactWithUsDto : BasePaging
     {
-        public List<GetAllUserDto>? Users { get; set; }
+        public List<GetAllContactWithUsDto>? ContactWithUses { get; set; }
 
-        public ResFilterUserDto SetPaging(BasePaging paging)
+        public ResFilterContactWithUsDto SetPaging(BasePaging paging)
         {
             this.PageId = paging.PageId;
             this.PageCount = paging.PageCount;
@@ -22,9 +23,9 @@ namespace OurSite.Core.DTOs.UserDtos
             this.ActivePage = paging.ActivePage;
             return this;
         }
-        public ResFilterUserDto SetUsers(List<GetAllUserDto> users)
+        public ResFilterContactWithUsDto SetContactWithUses(List<GetAllContactWithUsDto> contactWithUses)
         {
-            this.Users = users;
+            this.ContactWithUses = contactWithUses;
             return this;
         }
     }
