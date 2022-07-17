@@ -1,0 +1,18 @@
+<div class="col-4 p-4 shadow rounded" dir="rtl" (mouseenter)="CardHover()"
+(mouseleave)="CardInHover()" [class]="[textHover ,  bgHover]"
+style="transition: .3s ease-in-out;cursor: pointer; position: relative;"
+[routerLink]="[link]">
+    <div class="d-flex">
+        <img src="" alt="" width="40px" height="40px">
+        <h2>{{ title }}</h2>
+    </div>
+
+    <div class="col-8 my-4">
+        <p>{{ discription }}</p>
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <p>مشاهده بیشتر</p>
+        <img src="" alt="" width="20px" height="20px">
+    </div>
+</div>

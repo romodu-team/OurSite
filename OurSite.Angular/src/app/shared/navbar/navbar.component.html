@@ -1,1 +1,39 @@
-<p>navbar works!</p>
+<div class="d-flex justify-content-between align-items-center
+            w-100 text-white container py-2" dir="rtl"
+            style="background-color: transparent; position: absolute;" *ngIf="!dark">
+    <div class="d-flex justify-content-center align-items-center">
+        <img src="../../../assets/imgs/Logo-Nicode copy-fin3.png" alt="" width="65px">
+        <h4 class="mx-4"> تیــم نیــکد</h4>
+    </div>
+    <div class="d-flex justify-content-between align-items-center col-5">
+        <p>صفحه اصلی</p>
+        <p>خدمات</p>
+        <p>درباره ما</p>
+        <p>تماس باما</p>
+    </div>
+    <div class="d-flex justify-content-around align-items-center">
+        <button class="btn btn-primary mx-3">عضویت</button>
+        <button class="btn btn-outline-primary">ورود</button>
+    </div>
+</div>
+
+<div class="w-100 d-flex justify-content-center py-2 bg-dark" style="position: absolute;" *ngIf="dark">
+
+    <div class="d-flex justify-content-between align-items-center
+                w-100 text-white container " dir="rtl" style="background-color: transparent;">
+        <div class="d-flex justify-content-center align-items-center">
+            <img src="../../../assets/imgs/Logo-Nicode copy-fin3.png" alt="" width="65px">
+            <h4 class="mx-4"> تیــم نیــکد</h4>
+        </div>
+        <div class="d-flex justify-content-between align-items-center col-5">
+            <p>صفحه اصلی</p>
+            <p>خدمات</p>
+            <p>درباره ما</p>
+            <p>تماس باما</p>
+        </div>
+        <div class="d-flex justify-content-around align-items-center">
+            <button class="btn btn-primary mx-3">عضویت</button>
+            <button class="btn btn-outline-primary">ورود</button>
+        </div>
+    </div>
+</div>
