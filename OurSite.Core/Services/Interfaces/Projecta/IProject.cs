@@ -1,0 +1,21 @@
+﻿using System;
+using OurSite.Core.DTOs.ProjectDtos;
+using OurSite.DataLayer.Entities.Projects;
+using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
+
+namespace OurSite.Core.Services.Interfaces.Projects
+{
+    public interface IProject : IDisposable
+    {
+        Task<Project> GetAllProject();
+        Task<Project> GetProject(long ProjectId);
+        Task<ResProject> CreatProject(CreatProjectDto prodto, long userId);
+        Task<bool> UploadContract(ReqUploadContractDto profiledto);
+        Task<bool> DeleteProject(long ProjectId);
+
+        #region Admin
+        Task<ResProject> EditProject(EditProjectDto prodto);
+        #endregion
+    }
+}
+
