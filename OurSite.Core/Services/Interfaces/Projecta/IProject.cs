@@ -3,7 +3,7 @@ using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.DataLayer.Entities.Projects;
 using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
 
-namespace OurSite.Core.Services.Interfaces.Projects
+namespace OurSite.Core.Services.Interfaces.Projecta
 {
     public interface IProject : IDisposable
     {

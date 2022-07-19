@@ -86,7 +86,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("update-role")]
-        public async Task<IActionResult> UpdateRole([FromBody]ReqUpdateRoleDto reqUpdate)
+        public async Task<IActionResult> UpdateRole([FromBody] ReqUpdateRoleDto reqUpdate)
         {
             if (ModelState.IsValid)
             {

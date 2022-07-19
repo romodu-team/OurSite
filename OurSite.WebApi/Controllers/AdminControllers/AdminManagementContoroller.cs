@@ -86,7 +86,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             var list = await adminService.GetAllAdmin(filter);
             if (list.Admins.Any())
             {
-                return JsonStatusResponse.Success(message: ("موفق"), ReturnData: list);
+                return JsonStatusResponse.Success(message: "موفق", ReturnData: list);
 
             }
 

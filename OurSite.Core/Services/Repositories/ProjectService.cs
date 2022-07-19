@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs.ProjectDtos;
-using OurSite.Core.Services.Interfaces.Projects;
+using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
 using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
 
-namespace OurSite.Core.Services.Repositories.Forms
+namespace OurSite.Core.Services.Repositories
 {
     public class ProjectService : IProject
     {

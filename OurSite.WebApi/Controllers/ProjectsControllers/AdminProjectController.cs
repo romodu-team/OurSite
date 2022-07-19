@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.ProjectDtos;
-using OurSite.Core.Services.Interfaces.Projects;
+using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities;
 using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
 

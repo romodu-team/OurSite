@@ -39,6 +39,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         [HttpPost("login-Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] ReqLoginDto reqLogin)
         {
+            AuthenticationHelper authenticationHelper = new AuthenticationHelper(roleService);
             if (ModelState.IsValid)
             {
                 var admin = await adminService.Login(reqLogin);
@@ -46,9 +47,9 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     return JsonStatusResponse.NotFound("اطلاعات کاربری اشتباه است");
                 var role = await roleService.GetAdminRole(admin.Id);
 
-                var token = AuthenticationHelper.GenerateAdminToken(admin, role, 3);
+                var token = authenticationHelper.GenerateAdminToken(admin, role, 3);
                 HttpContext.Response.StatusCode = 200;
-                return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, FirstName = admin.FirstName, LastName = admin.LastName }, "ورود با موفقیت انجام شد");
+                return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, admin.FirstName, admin.LastName }, "ورود با موفقیت انجام شد");
             }
             return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
         }
