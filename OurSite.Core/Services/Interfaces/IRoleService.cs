@@ -23,5 +23,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResDeleteAdminRole> DeleteAdminRole(long adminId);
         Task<bool> UpdateAdminRole(AccounInRole accounInRole);
         Task<AccounInRole> GetAdminInRole(long adminId);
+
+        Task<List<Permission>> GetRolePermissions(long roleId);
     }
 }

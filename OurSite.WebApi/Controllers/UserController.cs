@@ -23,10 +23,12 @@ namespace OurSite.WebApi.Controllers
     {
         #region constructor
         private IUserService userservice;
+        private IRoleService Roleservice;
 
-        public UserController(IUserService userService)
+        public UserController(IRoleService Roleservice,IUserService userService)
         {
             this.userservice = userService;
+            this.Roleservice=Roleservice;
 
         }
         #endregion
@@ -42,13 +44,14 @@ namespace OurSite.WebApi.Controllers
         {
             if (ModelState.IsValid)
             {
+                AuthenticationHelper authenticationHelper = new AuthenticationHelper(Roleservice);
                 var res = await userservice.LoginUser(request);
                 switch (res)
                 {
                     case ResLoginDto.Success:
 
                         var user = await userservice.GetUserByUserPass(request.UserName, request.Password);
-                        var token = AuthenticationHelper.GenerateUserToken(user, 3);
+                        var token = authenticationHelper.GenerateUserToken(user, 3);
                         HttpContext.Response.StatusCode = 200;
                         return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName }, "ورود با موفقیت انجام شد");
                     case ResLoginDto.IncorrectData:

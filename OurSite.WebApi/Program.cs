@@ -37,7 +37,7 @@ builder.Services.AddSwaggerGen(option =>
         In = ParameterLocation.Header,
         Description = "Please enter a valid token",
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
+        Type = SecuritySchemeType.ApiKey,
         BearerFormat = "JWT",
         Scheme = "Bearer"
     });
@@ -72,7 +72,13 @@ builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 
 #endregion
 #region Autentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+builder.Services.AddAuthentication(options=>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>{
+options.SaveToken=true;
 options.TokenValidationParameters = new TokenValidationParameters()
 {
     ValidateIssuer = true,
@@ -80,15 +86,21 @@ options.TokenValidationParameters = new TokenValidationParameters()
     ValidateLifetime = true,
     ValidIssuer = PathTools.Domain,
     ValidateIssuerSigningKey = true,
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sajjadhaniehfaezeherfanmobinsinamehdi"))
-});
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Wx7Xl6rPABrWvLbLaXoBcaLQ8nQJg7L1Dce3zfE0"))
+};
+}
+);
 #endregion
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketMessageService, TicketMessageService>();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("viewUser", policy => policy.RequireClaim("viewUser"));
+    
+});
 
 #region Cors
 builder.Services.AddCors(options =>
@@ -114,9 +126,9 @@ if (app.Environment.IsDevelopment())
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 }
 
-//app.UseHttpsRedirection();
-app.UseAuthentication();
+app.UseHttpsRedirection();
 app.UseCors("EnableCors");
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();

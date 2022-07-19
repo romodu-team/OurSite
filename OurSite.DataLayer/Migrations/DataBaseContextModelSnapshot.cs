@@ -54,6 +54,32 @@ namespace OurSite.DataLayer.Migrations
                     b.ToTable("AccounInRoles");
                 });
 
+            modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Permission", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRemove")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PermissionTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Permission");
+                });
+
             modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Role", b =>
                 {
                     b.Property<long>("Id")
@@ -84,6 +110,38 @@ namespace OurSite.DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("OurSite.DataLayer.Entities.Access.RolePermission", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRemove")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("PermissionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PermissionId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("RolePermission");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.AdditionalDataOfAdmin", b =>
@@ -508,6 +566,25 @@ namespace OurSite.DataLayer.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("OurSite.DataLayer.Entities.Access.RolePermission", b =>
+                {
+                    b.HasOne("OurSite.DataLayer.Entities.Access.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OurSite.DataLayer.Entities.Access.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.AdditionalDataOfAdmin", b =>
                 {
                     b.HasOne("OurSite.DataLayer.Entities.Accounts.Admin", null)
@@ -556,9 +633,16 @@ namespace OurSite.DataLayer.Migrations
                     b.Navigation("Ticket");
                 });
 
+            modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
             modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Role", b =>
                 {
                     b.Navigation("AccounInRoles");
+
+                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.Admin", b =>

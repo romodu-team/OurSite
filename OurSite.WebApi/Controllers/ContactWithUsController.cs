@@ -12,7 +12,7 @@ namespace OurSite.WebApi.Controllers
     public class ContactWithUsController : ControllerBase
     {
         private IContactWithUsService contactWithUsService;
-
+        
         public ContactWithUsController(IContactWithUsService contactWithUsService)
         {
             this.contactWithUsService = contactWithUsService;

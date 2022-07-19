@@ -19,10 +19,12 @@ namespace OurSite.Core.Services.Repositories
         #region Constructor
         private IGenericReopsitories<Role> RoleRepository;
         private IGenericReopsitories<AccounInRole> accounInRoleRepository;
-        public RoleService(IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<AccounInRole> accounInRoleRepository)
+        private IGenericReopsitories<RolePermission> RolePermissionRepository;
+        public RoleService(IGenericReopsitories<RolePermission> RolePermissionRepository,IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<AccounInRole> accounInRoleRepository)
         {
             this.RoleRepository = RoleRepository;
             this.accounInRoleRepository = accounInRoleRepository;
+            this.RolePermissionRepository=RolePermissionRepository;
         }
         #endregion
 
@@ -255,6 +257,12 @@ namespace OurSite.Core.Services.Repositories
         public async Task<AccounInRole> GetAdminInRole(long adminId)
         {
             return await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(a => a.AdminId == adminId && a.IsRemove == false);
+        }
+
+        public async Task<List<Permission>> GetRolePermissions(long roleId)
+        {
+            var RolePermission=  await RolePermissionRepository.GetAllEntity().Include(u=>u.Permission).Select(r=> new Permission{Id=r.Permission.Id,PermissionTitle=r.Permission.PermissionTitle,CreateDate=r.Permission.CreateDate,LastUpdate=r.Permission.LastUpdate}).ToListAsync();
+            return RolePermission;
         }
 
         #endregion

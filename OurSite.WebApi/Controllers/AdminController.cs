@@ -20,6 +20,7 @@ namespace OurSite.WebApi.Controllers
         private readonly IAdminService adminService;
         private readonly IUserService userService;
         private readonly IRoleService roleService;
+
         public AdminController(IAdminService adminService, IUserService userService, IRoleService roleService)
         {
             this.adminService = adminService;
@@ -39,6 +40,7 @@ namespace OurSite.WebApi.Controllers
         [HttpPost("login-Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] ReqLoginDto reqLogin)
         {
+            AuthenticationHelper authenticationHelper = new AuthenticationHelper(roleService);
             if (ModelState.IsValid)
             {
                 var admin = await adminService.Login(reqLogin);
@@ -46,7 +48,7 @@ namespace OurSite.WebApi.Controllers
                     return JsonStatusResponse.NotFound("اطلاعات کاربری اشتباه است");
                 var role = await roleService.GetAdminRole(admin.Id);
 
-                var token = AuthenticationHelper.GenerateAdminToken(admin, role, 3);
+                var token = authenticationHelper.GenerateAdminToken(admin, role, 3);
                 HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, FirstName = admin.FirstName, LastName = admin.LastName }, "ورود با موفقیت انجام شد");
             }
@@ -60,7 +62,7 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [Authorize(Roles = "General Manager")]
+        //[Authorize(Roles = "General Manager")]
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] ReqSingupUserDto req)
         {
@@ -445,6 +447,7 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Authorize(Policy ="viewUser")]
         [HttpGet("view-all-users")] //Get user list
         public async Task<IActionResult> GetAllUser([FromQuery] ReqFilterUserDto filter)
         {
