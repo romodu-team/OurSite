@@ -88,10 +88,10 @@ namespace OurSite.Core.Utilities
                 
                 if (userRoles != null)
                 {
-                    var roleClaim = await _roleService.GetRolePermissions(userRoles.Id);
+                    var roleClaim = await _roleService.GetSelectedPermissionOfRole(userRoles.Id);
                     foreach (var RoleClaim in roleClaim)
                     {
-                        claims.Add(new Claim(RoleClaim.PermissionTitle,RoleClaim.PermissionTitle));
+                        claims.Add(new Claim(RoleClaim.PermissionName,RoleClaim.PermissionName));
                     }
                 }
            

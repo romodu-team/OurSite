@@ -13,7 +13,7 @@ namespace OurSite.DataLayer.Interfaces
 		IQueryable<TEntity> GetAllEntity();
 		Task<TEntity> GetEntity(long Id);
 
-
+		Task<bool> RealDeleteEntity(long Id);
 
 	}
 }

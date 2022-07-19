@@ -26,6 +26,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName);
         Task<Admin> GetAdminByEmailOrUserName(string EmailOrUserName);
         Task <ResFilterAdminDto> GetAllAdmin(ReqFilterUserDto filter);
+        Task<ResUpdate> UpdateAdminRole(long adminId, long RoleId);
         #endregion
 
         #region Login

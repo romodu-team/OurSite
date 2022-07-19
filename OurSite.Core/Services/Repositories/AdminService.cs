@@ -386,8 +386,39 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
+
+        #region Update Admin Role
+        public async Task<ResUpdate> UpdateAdminRole(long adminId, long RoleId)
+        {
+            var Admin =await adminRepository.GetEntity(adminId);
+            if (Admin is null)
+                return ResUpdate.NotFound;
+            var Role = await roleService.GetRoleById(RoleId);
+            if (Role is null)
+                return ResUpdate.RoleNotFound;
+
+            var adminRole =await roleService.GetAdminInRole(adminId);
+            if(adminRole is not null)
+            {
+                adminRole.RoleId = RoleId;
+                var res=await roleService.UpdateAdminRole(adminRole);
+                if (res)
+                    return ResUpdate.Success;
+                return ResUpdate.Error;
+            }
+            else
+            {
+                var adminInRole = new AccounInRole() { AdminId=adminId,RoleId=RoleId};
+                var res =await roleService.AddRoleToAdmin(adminInRole);
+                if (res)
+                    return ResUpdate.Success;
+                return ResUpdate.Error;
+            }
+        }
+
         #endregion
-        
+        #endregion
+
 
 
         #region login
@@ -411,7 +442,8 @@ namespace OurSite.Core.Services.Repositories
             roleService.Dispose();
         }
 
-   
+     
+
 
         #endregion
 
