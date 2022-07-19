@@ -27,6 +27,8 @@
 		<Folder Include="Content\File\" />
 		<Folder Include="wwwroot\" />
 		<Folder Include="Controllers\AdminControllers\" />
+		<Folder Include="Controllers\Forms\" />
+		<Folder Include="Controllers\ProjectsControllers\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -35,6 +37,8 @@
 		<None Remove="Microsoft.EntityFrameworkCore.Design" />
 		<None Remove="Microsoft.EntityFrameworkCore" />
 		<None Remove="Controllers\AdminControllers\" />
+		<None Remove="Controllers\Forms\" />
+		<None Remove="Controllers\ProjectController\" />
 	</ItemGroup>
 
 	<ItemGroup>
