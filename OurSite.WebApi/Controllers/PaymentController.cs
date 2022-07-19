@@ -13,7 +13,7 @@ namespace OurSite.WebApi.Controllers
         private static readonly HttpClient client = new HttpClient();
 
         [HttpPost]
-        public async Task<IActionResult> RequestPayment(PaymentRequestDto paymentRequestDto)
+        public async Task<IActionResult> RequestPayment([FromBody]PaymentRequestDto paymentRequestDto)
         {
             var _url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRequest.json";
 
@@ -37,12 +37,12 @@ namespace OurSite.WebApi.Controllers
 
 
             var finalUrl = $"https://sandbox.zarinpal.com/pg/StartPay/{_zarinPalResponseModel.Authority/*+"/Sad"*/}";
-           return Ok(finalUrl); 
-            
-        }
+            return Ok(finalUrl);
 
+        }
+        
         [HttpGet("VerifyPayment")]
-        public async Task<IActionResult> VerifyPayment(string Authority, PaymentRequestDto paymentRequestDto)
+        public async Task<IActionResult> VerifyPayment(string Authority, string amount)
         {
             var _url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentVerification.json";
 
@@ -50,7 +50,7 @@ namespace OurSite.WebApi.Controllers
             {
                { "MerchantID", "00000000-0000-0000-0000-000000000000" }, //Change This To work, some thing like this : xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
                { "Authority", Authority },
-               { "Amount", paymentRequestDto.amount } //Toman
+               { "Amount", amount } //Toman
             };
 
             var _paymenResponsetJsonValue = JsonConvert.SerializeObject(_values);
