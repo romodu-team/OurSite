@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.Services.Repositories
+namespace OurSite.Core.Services.Repositories.Forms
 {
     public class TicketMessageService : ITicketMessageService
     {

@@ -7,7 +7,7 @@ using OurSite.Core.Utilities;
 using OurSite.DataLayer.Contexts;
 using OurSite.DataLayer.Entities.ConsultationRequest;
 
-namespace OurSite.WebApi.Controllers
+namespace OurSite.WebApi.Controllers.Forms
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -24,6 +24,12 @@ namespace OurSite.WebApi.Controllers
 
         #region Send ConsultationRequest Form
 
+        #region send form with file
+        /// <summary>
+        /// send file in forms and tickets {Get request from form}
+        /// </summary>
+        /// <param name="sendConsultationFormWithFile"></param>
+        /// <returns></returns>
         [HttpPost("send-form-with-file")]
         public async Task<IActionResult> SendConsultationForm([FromBody] ConsultationRequestDto sendConsultationFormWithFile)
         {

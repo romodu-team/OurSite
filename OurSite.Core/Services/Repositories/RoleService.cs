@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.RoleDtos;
 using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Interfaces;
 using System;
@@ -17,10 +19,12 @@ namespace OurSite.Core.Services.Repositories
         #region Constructor
         private IGenericReopsitories<Role> RoleRepository;
         private IGenericReopsitories<AccounInRole> accounInRoleRepository;
-        public RoleService(IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<AccounInRole> accounInRoleRepository)
+        private IGenericReopsitories<RolePermission> RolePermissionRepository;
+        public RoleService(IGenericReopsitories<RolePermission> RolePermissionRepository,IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<AccounInRole> accounInRoleRepository)
         {
             this.RoleRepository = RoleRepository;
             this.accounInRoleRepository = accounInRoleRepository;
+            this.RolePermissionRepository=RolePermissionRepository;
         }
         #endregion
 
@@ -34,9 +38,6 @@ namespace OurSite.Core.Services.Repositories
                 {
                     Role newRole = new Role()
                     {
-                        CreateDate = DateTime.Now,
-                        LastUpdate = DateTime.Now,
-                        IsRemove = false,
                         Name = role.Name,
                         Title = role.Title
                     };
@@ -64,9 +65,53 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Get roles
-        public async Task<List<RoleDto>> GetActiveRoles()        //
+        public async Task<ResRoleFilterDto> GetActiveRoles(ReqFilterRolesDto filter)        //
         {
-            return await RoleRepository.GetAllEntity().Select(r => new RoleDto { Name = r.Name, Title = r.Title }).ToListAsync();
+            var RolesQuery = RoleRepository.GetAllEntity().AsQueryable();
+            switch (filter.RolesOrderBy)
+            {
+                case RolesOrderBy.NameAsc:
+                    RolesQuery = RolesQuery.OrderBy(u => u.Title);
+                    break;
+                case RolesOrderBy.NameDec:
+                    RolesQuery = RolesQuery.OrderByDescending(u => u.Title);
+                    break;
+                case RolesOrderBy.CreateDateAsc:
+                    RolesQuery = RolesQuery.OrderBy(u => u.CreateDate);
+                    break;
+                case RolesOrderBy.CreateDateDec:
+                    RolesQuery = RolesQuery.OrderByDescending(u => u.CreateDate);
+                    break;
+                default:
+                    break;
+            }
+            switch (filter.RolesRemoveFilter)
+            {
+                case RolesRemoveFilter.Deleted:
+                    RolesQuery = RolesQuery.Where(u => u.IsRemove == true);
+                    break;
+                case RolesRemoveFilter.NotDeleted:
+                    RolesQuery = RolesQuery.Where(u => u.IsRemove == false);
+                    break;
+                case RolesRemoveFilter.All:
+                    break;
+                default:
+                    break;
+            }
+            
+            if (!string.IsNullOrWhiteSpace(filter.RoleTitleSearchKey))
+                RolesQuery = RolesQuery.Where(u => u.Title.Contains(filter.RoleTitleSearchKey));
+            if (!string.IsNullOrWhiteSpace(filter.RoleNameSearchKey))
+                RolesQuery = RolesQuery.Where(u => u.Name.Contains(filter.RoleNameSearchKey));
+
+            var count = (int)Math.Ceiling(RolesQuery.Count() / (double)filter.TakeEntity);
+            var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
+            var list = await RolesQuery.Paging(pager).Select(r => new RoleDto { Name = r.Name, Title = r.Title }).ToListAsync();    //use the genric interface options and save values in variable
+
+            var result = new ResRoleFilterDto();
+            result.SetPaging(pager);
+            return result.SetRoles(list);
+            //return await RoleRepository.GetAllEntity().Select(r => new RoleDto { Name = r.Name, Title = r.Title }).ToListAsync();
         }
         #endregion
 
@@ -81,24 +126,20 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Delete role
-        public async Task<bool> RemoveRole(long RoleId)
+        public async Task<ResRole> RemoveRole(long RoleId)
         {
-            var role = await RoleRepository.GetEntity(RoleId);
-            if (role is null)
-                return false;
-            role.IsRemove = true;
-            role.LastUpdate = DateTime.Now;
-            try
+            var IsRemove = await RoleRepository.DeleteEntity(RoleId);
+            if (IsRemove is true)
             {
-                RoleRepository.UpDateEntity(role);
                 await RoleRepository.SaveEntity();
-                return true;
+                return ResRole.Success;
             }
-            catch (Exception)
+            else
             {
+                return ResRole.Error;
 
-                return false;
             }
+            return ResRole.NotFound;
         }
         #endregion
 
@@ -209,6 +250,12 @@ namespace OurSite.Core.Services.Repositories
         public async Task<AccounInRole> GetAdminInRole(long adminId)
         {
             return await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(a => a.AdminId == adminId && a.IsRemove == false);
+        }
+
+        public async Task<List<Permission>> GetRolePermissions(long roleId)
+        {
+            var RolePermission=  await RolePermissionRepository.GetAllEntity().Include(u=>u.Permission).Select(r=> new Permission{Id=r.Permission.Id,PermissionTitle=r.Permission.PermissionTitle,CreateDate=r.Permission.CreateDate,LastUpdate=r.Permission.LastUpdate}).ToListAsync();
+            return RolePermission;
         }
 
         #endregion

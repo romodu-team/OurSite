@@ -19,6 +19,8 @@ namespace OurSite.DataLayer.Contexts
 
         public DbSet<Admin> Admins { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<AdditionalDataOfAdmin> AdditionalDataOfAdmin { get; set; }
+        public DbSet<AdditionalDataOfUser> AdditionalDataOfUsers { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<AccounInRole> AccounInRoles { get; set; }
         public DbSet<ContactWithUs> contactWithUs { get; set; }
@@ -39,7 +41,7 @@ namespace OurSite.DataLayer.Contexts
 
             foreach (var fk in cascadeFKs)
                 fk.DeleteBehavior = DeleteBehavior.Restrict;
-
+            
             base.OnModelCreating(modelBuilder);
 
 

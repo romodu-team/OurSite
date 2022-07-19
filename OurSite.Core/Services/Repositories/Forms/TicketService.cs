@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.Services.Repositories
+namespace OurSite.Core.Services.Repositories.Forms
 {
     public class TicketService : ITicketService
     {
@@ -41,8 +41,6 @@ namespace OurSite.Core.Services.Repositories
                 DepartmentId = ticketDto.DepartmentId,
                 IsClosed = false,
                 UserId = ticketDto.UserId
-
-
 
             };
             TicketMessage message = new TicketMessage()
