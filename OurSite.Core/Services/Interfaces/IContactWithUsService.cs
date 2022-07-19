@@ -1,4 +1,4 @@
-﻿using OurSite.Core.DTOs;
+﻿using OurSite.Core.DTOs.ContactWithUsDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +10,7 @@ namespace OurSite.Core.Services.Interfaces
     public interface IContactWithUsService : IDisposable
     {
         Task<bool> SendContactForm(ContactWithUsDto contactWithUsDto);
+
+        Task<ResFilterContactWithUsDto> GetAllContactWithUs(ReqFilterContactWithUsDto filter);
     }
 }

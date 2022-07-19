@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.DTOs.UserDtos
+namespace OurSite.Core.DTOs.ConsultationRequestDtos
 {
-    public class ResFilterUserDto : BasePaging
+    public class ResFilterConsultationRequestDto : BasePaging
     {
-        public List<GetAllUserDto>? Users { get; set; }
+        public List<GetAllConsultationRequestDto>? ConsultationRequests { get; set; }
 
-        public ResFilterUserDto SetPaging(BasePaging paging)
+        public ResFilterConsultationRequestDto SetPaging(BasePaging paging)
         {
             this.PageId = paging.PageId;
             this.PageCount = paging.PageCount;
@@ -22,10 +22,11 @@ namespace OurSite.Core.DTOs.UserDtos
             this.ActivePage = paging.ActivePage;
             return this;
         }
-        public ResFilterUserDto SetUsers(List<GetAllUserDto> users)
+        public ResFilterConsultationRequestDto SetConsultationRequests(List<GetAllConsultationRequestDto> consultationRequests)
         {
-            this.Users = users;
+            this.ConsultationRequests = consultationRequests;
             return this;
         }
     }
 }
+

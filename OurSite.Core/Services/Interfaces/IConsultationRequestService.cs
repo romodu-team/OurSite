@@ -1,4 +1,4 @@
-﻿using OurSite.Core.DTOs;
+﻿using OurSite.Core.DTOs.ConsultationRequestDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,8 @@ namespace OurSite.Core.Services.Interfaces
     public interface IConsultationRequestService : IDisposable
     {
         Task<bool> SendConsultationForm(ConsultationRequestDto consultationRequestDto);
+
+        Task<ResFilterConsultationRequestDto> GetAllConsultationRequest(ReqFilterConsultationRequestDto filter);
 
     }
 }

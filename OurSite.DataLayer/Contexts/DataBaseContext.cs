@@ -28,6 +28,10 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<Department> departments { get; set; }
         public DbSet<Ticket> tickets { get; set; }
         public DbSet<TicketMessage> ticketMessages { get; set; }
+        public DbSet<ItemSelected> itemsSelecteds { get; set; }
+        public DbSet<CheckBoxs> checkBoxes { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +43,14 @@ namespace OurSite.DataLayer.Contexts
                 fk.DeleteBehavior = DeleteBehavior.Restrict;
             
             base.OnModelCreating(modelBuilder);
+
+
+            modelBuilder.Entity<Department>()
+              .HasData(
+               new Department { Id = 1, DepartmentName = "Financial", DepartmentTitle = "بخش مالی", CreateDate = DateTime.Now, LastUpdate = DateTime.Now },
+               new Department { Id = 2, DepartmentName = "Technical support", DepartmentTitle = "پشتیبانی فنی", CreateDate = DateTime.Now, LastUpdate = DateTime.Now },
+               new Department { Id = 3, DepartmentName = "Other", DepartmentTitle = "سایر", CreateDate = DateTime.Now, LastUpdate = DateTime.Now }
+               );
         }
     }
 }

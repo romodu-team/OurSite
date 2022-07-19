@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.ContactWithUsDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Repositories;
 using OurSite.Core.Utilities;
@@ -18,6 +18,7 @@ namespace OurSite.WebApi.Controllers.Forms
             this.contactWithUsService = contactWithUsService;
         }
 
+        #region Send ContactWithUs
         #region form
         /// <summary>
         ///  form contact with us {Get request from form}
@@ -39,5 +40,20 @@ namespace OurSite.WebApi.Controllers.Forms
             #endregion
 
         }
+        #endregion
+
+        #region ContactWithUs All Form
+        [HttpGet("view-all-ContactWithUs")] //Get user list
+        public async Task<IActionResult> GetAllContactWithUs([FromQuery] ReqFilterContactWithUsDto filter)
+        {
+            var contactWithUs = await contactWithUsService.GetAllContactWithUs(filter);
+            if (contactWithUs.ContactWithUses.Any())
+            {
+                return JsonStatusResponse.Success(message: "موفق", ReturnData: contactWithUs);
+            }
+            return JsonStatusResponse.NotFound(message: "فرمی یافت نشد");
+
+        }
+        #endregion
     }
 }
