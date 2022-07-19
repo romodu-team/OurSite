@@ -22,6 +22,7 @@ using OurSite.Core.DTOs.Uploader;
 using Microsoft.AspNetCore.Http;
 using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.Core.DTOs.Paging;
+using gender = OurSite.DataLayer.Entities.Accounts.gender;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -550,7 +551,7 @@ namespace OurSite.Core.Services.Repositories
                 adminview.AccountType = (accountType?)user.AccountType;
                 if (user.AdditionalDataOfUser != null)
                 {
-                    adminview.Gender = (DTOs.UserDtos.gender?)user.AdditionalDataOfUser.Gender;
+                    adminview.Gender = (gender?)user.AdditionalDataOfUser.Gender;
                     adminview.Address = user.AdditionalDataOfUser.Address;
                     adminview.Phone = user.AdditionalDataOfUser.Phone;
                     adminview.Birthday = user.AdditionalDataOfUser.Birthday;

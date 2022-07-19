@@ -1,6 +1,7 @@
 ﻿using System;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.DataLayer.Entities.Accounts;
+using gender = OurSite.DataLayer.Entities.Accounts.gender;
 
 namespace OurSite.Core.DTOs.AdminDtos
 {
