@@ -70,7 +70,27 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                     return JsonStatusResponse.Error("Invalid input");
                 default:
                     return JsonStatusResponse.Error("An error has occurred. Try again later.");
-                    break;
+            }
+        }
+        #endregion
+
+
+
+        #region Delete project
+        [HttpDelete("delete-project")]
+        public async Task<IActionResult> DeleteProject(long ProjectId)
+        {
+            var remove = await projectservice.DeleteProject(ProjectId);
+            switch (remove)
+            {
+                case ResProject.Success:
+                    return JsonStatusResponse.Success("The project has been deleted successfully");
+                case ResProject.Error:
+                    return JsonStatusResponse.Error("Project delete failed. Try again later.");
+                case ResProject.NotFound:
+                    return JsonStatusResponse.NotFound("Project not Found");
+                default:
+                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
             }
         }
         #endregion

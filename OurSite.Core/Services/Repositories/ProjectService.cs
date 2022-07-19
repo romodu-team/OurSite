@@ -16,8 +16,8 @@ namespace OurSite.Core.Services.Repositories.Forms
             this.ProjectsRepository = ProjectsRepository;
         }
 
-
-        public async Task<ResProject> CreatProject(CreatProjectDto prodto,long userId)
+        #region Creat project
+        public async Task<ResProject> CreatProject(CreatProjectDto prodto, long userId)
         {
             if (!string.IsNullOrWhiteSpace(prodto.Name) && !string.IsNullOrWhiteSpace(prodto.Description))
             {
@@ -26,11 +26,11 @@ namespace OurSite.Core.Services.Repositories.Forms
                     IsRemove = false,
                     Name = prodto.Name,
                     Type = prodto.Type,
-                    Situation=situations.Pending,
+                    Situation = situations.Pending,
                     UserId = userId,
                     Description = prodto.Description,
                     PlanDetails = prodto.PlanDetails,
-                    
+
                 };
 
                 try
@@ -38,25 +38,40 @@ namespace OurSite.Core.Services.Repositories.Forms
                     await ProjectsRepository.AddEntity(newPro);
                     await ProjectsRepository.SaveEntity();
                     return ResProject.Success;
-            }
+                }
                 catch (Exception ex)
-            {
-                return ResProject.Faild; //error in save
+                {
+                    return ResProject.Faild; //error in save
+                }
             }
-        }
             return ResProject.InvalidInput;
-         }
-
-        public Task<bool> DeleteProject(long ProjectId)
-        {
-            throw new NotImplementedException();
         }
+        #endregion
+
+        #region Delete project
+        public async Task<ResProject> DeleteProject(long ProjectId)
+        {
+            var IsRemove = await ProjectsRepository.DeleteEntity(ProjectId);
+            if (IsRemove is true)
+            {
+                await ProjectsRepository.SaveEntity();
+                return ResProject.Success;
+            }
+            else
+            {
+                return ResProject.Error;
+
+            }
+            return ResProject.NotFound;
+        }
+        #endregion
 
         public void Dispose()
         {
             ProjectsRepository.Dispose();
         }
 
+        #region Update project
         public async Task<ResProject> EditProject(EditProjectDto prodto)
         {
             var res = await ProjectsRepository.GetAllEntity().AnyAsync(x => x.Id == prodto.ProId);
@@ -95,11 +110,13 @@ namespace OurSite.Core.Services.Repositories.Forms
                     return ResProject.Faild;
                 }
 
-   
+
             }
             return ResProject.NotFound;
 
         }
+        #endregion
+
 
         public Task<Project> GetAllProject()
         {

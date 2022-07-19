@@ -11,7 +11,7 @@ namespace OurSite.Core.Services.Interfaces.Projects
         Task<Project> GetProject(long ProjectId);
         Task<ResProject> CreatProject(CreatProjectDto prodto, long userId);
         Task<bool> UploadContract(ReqUploadContractDto profiledto);
-        Task<bool> DeleteProject(long ProjectId);
+        Task<ResProject> DeleteProject(long ProjectId);
 
         #region Admin
         Task<ResProject> EditProject(EditProjectDto prodto);
