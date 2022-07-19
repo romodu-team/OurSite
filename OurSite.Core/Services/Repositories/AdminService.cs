@@ -93,7 +93,6 @@ namespace OurSite.Core.Services.Repositories
             {
                 var admin = await adminRepository.GetEntity(adminId);
                 admin.IsActive = !admin.IsActive;
-                admin.LastUpdate = DateTime.Now;
                 adminRepository.UpDateEntity(admin);
                 await adminRepository.SaveEntity();
                 return true;
