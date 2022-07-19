@@ -30,6 +30,8 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<TicketMessage> ticketMessages { get; set; }
         public DbSet<ItemSelected> itemsSelecteds { get; set; }
         public DbSet<CheckBoxs> checkBoxes { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
 
 
 

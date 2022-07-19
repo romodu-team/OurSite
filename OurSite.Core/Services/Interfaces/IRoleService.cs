@@ -24,6 +24,8 @@ namespace OurSite.Core.Services.Interfaces
         Task<bool> UpdateAdminRole(AccounInRole accounInRole);
         Task<AccounInRole> GetAdminInRole(long adminId);
 
-        Task<List<Permission>> GetRolePermissions(long roleId);
+        Task<List<Permission>> GetSelectedPermissionOfRole(long roleId);
+        Task<List<ResGetAllPermissions>> GetAllPermission(long roleId);
+        Task<resUpdatePermissionRole> UpdatePermissionRole(ReqUpdatePermissionRole request);
     }
 }

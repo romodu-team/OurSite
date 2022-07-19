@@ -17,9 +17,11 @@ namespace OurSite.WebApi.Controllers.AdminControllers
     {
         #region Constructor
         private readonly IRoleService roleService;
-        public AdminRoleManagementController(IRoleService roleService)
+        private readonly IAdminService _adminService;
+        public AdminRoleManagementController(IAdminService adminService, IRoleService roleService)
         {
             this.roleService = roleService;
+            _adminService = adminService;
 
         }
         #endregion
@@ -138,6 +140,63 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             if (roles is null)
                 return JsonStatusResponse.NotFound("هیچ نقشی پیدا نشد");
             return JsonStatusResponse.Success(roles, "موفق");
+        }
+        #endregion
+
+        #region Update admin role(delete before account in role and add new one)
+        [HttpPut("Update-admin-role")]
+        public async Task<IActionResult> UpdateAdminRole(long adminId,long RoleId)
+        {
+            var res = await _adminService.UpdateAdminRole(adminId, RoleId);
+            switch (res)
+            {
+                case Core.DTOs.AdminDtos.ResUpdate.Success:
+                    return JsonStatusResponse.Success("role has been updated successfully ");
+                case Core.DTOs.AdminDtos.ResUpdate.NotFound:
+                    return JsonStatusResponse.Success("admin not found");
+               
+                case Core.DTOs.AdminDtos.ResUpdate.Error:
+                    return JsonStatusResponse.Success("role has not been updated ");
+
+                case Core.DTOs.AdminDtos.ResUpdate.RoleNotFound:
+                    return JsonStatusResponse.Success("role not found");
+
+                default:
+                    return JsonStatusResponse.Success("role has not been updated ");
+
+            }
+        }
+        #endregion
+
+        #region get all permission
+        [HttpGet("get-all-permissions")]
+        public async Task<IActionResult> GetAllPermissions(long roleId)
+        {
+            var permissions =await roleService.GetAllPermission(roleId);
+            if (permissions.Any())
+                return JsonStatusResponse.Success(permissions, "success");
+            return JsonStatusResponse.NotFound("No permissons found");
+        }
+        #endregion
+
+        #region Update role permissions(delete before perrmissions and add new permissions)
+        [HttpPut("update-permissions-role")]
+        public async Task<IActionResult> UpdatePermissionRole([FromBody]ReqUpdatePermissionRole request)
+        {
+            var res =await roleService.UpdatePermissionRole(request);
+            switch (res)
+            {
+                case resUpdatePermissionRole.Success:
+                    return JsonStatusResponse.Success("permissions of role has been updated successfully");
+                case resUpdatePermissionRole.RoleNotFound:
+                    return JsonStatusResponse.NotFound("role not found");
+                case resUpdatePermissionRole.permissionNotFound:
+                    return JsonStatusResponse.NotFound("one of the permissions not found");
+                case resUpdatePermissionRole.Error:
+                    return JsonStatusResponse.Error("server error");
+                default:
+                    return JsonStatusResponse.Error("server error");
+            }
         }
         #endregion
     }

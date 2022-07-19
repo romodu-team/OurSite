@@ -64,6 +64,7 @@ namespace OurSite.Core.DTOs.AdminDtos
     {
         Success,
         NotFound,
-        Error
+        Error,
+        RoleNotFound
     }
 }
