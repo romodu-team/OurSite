@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.RoleDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
+using OurSite.DataLayer.Entities.Access;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace OurSite.WebApi.Controllers
+namespace OurSite.WebApi.Controllers.AdminControllers
 {
     [Route("api/[controller]")]
     public class AdminRoleManagementController : Controller
@@ -63,10 +64,18 @@ namespace OurSite.WebApi.Controllers
         [HttpDelete("delete-role")]
         public async Task<IActionResult> RemoveRole([FromQuery] long RoleId)
         {
-            var res = await roleService.RemoveRole(RoleId);
-            if (res)
-                return JsonStatusResponse.Success("نقش با موفقیت حذف شد");
-            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+            var remove = await roleService.RemoveRole(RoleId);
+            switch (remove)
+            {
+                case ResRole.Success:
+                    return JsonStatusResponse.Success("The project has been deleted successfully");
+                case ResRole.Error:
+                    return JsonStatusResponse.Error("Project delete failed. Try again later.");
+                case ResRole.NotFound:
+                    return JsonStatusResponse.NotFound("Project not Found");
+                default:
+                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+            }
         }
         #endregion
 

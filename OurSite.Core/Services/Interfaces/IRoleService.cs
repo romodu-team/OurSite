@@ -12,7 +12,7 @@ namespace OurSite.Core.Services.Interfaces
     public interface IRoleService:IDisposable
     {
         Task<ResAddRole> AddRole(RoleDto role);
-        Task<bool> RemoveRole(long RoleId);
+        Task<ResRole> RemoveRole(long RoleId);
         Task<ResUpdateRole> UpdateRole(ReqUpdateRoleDto reqUpdate);
         Task<RoleDto> GetRoleById(long RoleId);
         Task<Role> GetRoleByName(string RoleName);

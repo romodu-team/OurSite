@@ -28,6 +28,14 @@ namespace OurSite.DataLayer.Entities.Access
 
 
     }
+    public enum ResRole
+    {
+        Success,
+        Faild,
+        Error,
+        NotFound,
+        InvalidInput
+    }
 
     public enum Roles
     {

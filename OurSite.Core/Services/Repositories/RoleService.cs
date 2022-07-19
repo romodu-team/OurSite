@@ -124,24 +124,20 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Delete role
-        public async Task<bool> RemoveRole(long RoleId)
+        public async Task<ResRole> RemoveRole(long RoleId)
         {
-            var role = await RoleRepository.GetEntity(RoleId);
-            if (role is null)
-                return false;
-            role.IsRemove = true;
-            role.LastUpdate = DateTime.Now;
-            try
+            var IsRemove = await RoleRepository.DeleteEntity(RoleId);
+            if (IsRemove is true)
             {
-                RoleRepository.UpDateEntity(role);
                 await RoleRepository.SaveEntity();
-                return true;
+                return ResRole.Success;
             }
-            catch (Exception)
+            else
             {
+                return ResRole.Error;
 
-                return false;
             }
+            return ResRole.NotFound;
         }
         #endregion
 
