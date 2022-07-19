@@ -29,9 +29,9 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpPost("creat-project")]
-        public async Task<IActionResult> CreatProject([FromBody]CreatProjectDto prodto, long userId)
+        public async Task<IActionResult> CreateProject([FromBody]CreatProjectDto prodto, long userId)
         {
-            var res = await projectservice.CreatProject(prodto , userId);
+            var res = await projectservice.CreateProject(prodto , userId);
             switch (res)
             {
                 case ResProject.Success:

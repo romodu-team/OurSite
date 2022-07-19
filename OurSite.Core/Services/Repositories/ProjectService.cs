@@ -17,7 +17,7 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #region Creat project
-        public async Task<ResProject> CreatProject(CreatProjectDto prodto, long userId)
+        public async Task<ResProject> CreateProject(CreatProjectDto prodto, long userId)
         {
             if (!string.IsNullOrWhiteSpace(prodto.Name) && !string.IsNullOrWhiteSpace(prodto.Description))
             {
