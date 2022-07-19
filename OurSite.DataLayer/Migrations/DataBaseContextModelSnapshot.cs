@@ -405,6 +405,67 @@ namespace OurSite.DataLayer.Migrations
                     b.ToTable("departments");
                 });
 
+            modelBuilder.Entity("OurSite.DataLayer.Entities.Projects.Project", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long?>("AdminId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ContractFileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRemove")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PlanDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float?>("Price")
+                        .HasColumnType("real");
+
+                    b.Property<int>("Situation")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Project");
+                });
+
             modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>
                 {
                     b.Property<long>("Id")
@@ -526,6 +587,23 @@ namespace OurSite.DataLayer.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OurSite.DataLayer.Entities.Projects.Project", b =>
+                {
+                    b.HasOne("OurSite.DataLayer.Entities.Accounts.Admin", "Admin")
+                        .WithMany("Projects")
+                        .HasForeignKey("AdminId");
+
+                    b.HasOne("OurSite.DataLayer.Entities.Accounts.User", "User")
+                        .WithMany("Projects")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>
                 {
                     b.HasOne("OurSite.DataLayer.Entities.Departments.Department", "Department")
@@ -565,12 +643,16 @@ namespace OurSite.DataLayer.Migrations
                 {
                     b.Navigation("AccounInRoles");
 
+                    b.Navigation("Projects");
+
                     b.Navigation("additionalDataOfAdmin");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.User", b =>
                 {
                     b.Navigation("AdditionalDataOfUser");
+
+                    b.Navigation("Projects");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Departments.Department", b =>

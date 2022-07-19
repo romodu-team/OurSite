@@ -8,16 +8,16 @@ namespace OurSite.Core.DTOs.ProjectDtos
         public string Name { get; set; }
         public ProType Type { get; set; }
         public string Description { get; set; }
-        public situations Situation { get; set; }
-        public string PlanDetails { get; set; }
+        public string? PlanDetails { get; set; }
 
-
+        
 
         public enum ResProject
         {
             Success,
             Faild,
             Error,
+            NotFound,
             InvalidInput
         }
     }
