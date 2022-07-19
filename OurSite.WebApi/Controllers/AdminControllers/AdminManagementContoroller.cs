@@ -10,7 +10,7 @@ using OurSite.Core.Utilities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace OurSite.WebApi.Controllers
+namespace OurSite.WebApi.Controllers.AdminControllers
 {
     [Route("api/[controller]")]
     public class AdminManagementContoroller : Controller
@@ -86,7 +86,7 @@ namespace OurSite.WebApi.Controllers
             var list = await adminService.GetAllAdmin(filter);
             if (list.Admins.Any())
             {
-                return JsonStatusResponse.Success(message: ("موفق"), ReturnData: list);
+                return JsonStatusResponse.Success(message: "موفق", ReturnData: list);
 
             }
 

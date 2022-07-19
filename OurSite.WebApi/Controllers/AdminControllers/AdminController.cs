@@ -10,7 +10,7 @@ using OurSite.Core.Utilities;
 using System.Linq;
 using System.Security.Claims;
 
-namespace OurSite.WebApi.Controllers
+namespace OurSite.WebApi.Controllers.AdminControllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -49,7 +49,7 @@ namespace OurSite.WebApi.Controllers
 
                 var token = authenticationHelper.GenerateAdminToken(admin, role, 3);
                 HttpContext.Response.StatusCode = 200;
-                return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, FirstName = admin.FirstName, LastName = admin.LastName }, "ورود با موفقیت انجام شد");
+                return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, admin.FirstName, admin.LastName }, "ورود با موفقیت انجام شد");
             }
             return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
         }

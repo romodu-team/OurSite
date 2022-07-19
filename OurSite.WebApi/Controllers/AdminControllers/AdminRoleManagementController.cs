@@ -9,7 +9,7 @@ using OurSite.Core.Utilities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace OurSite.WebApi.Controllers
+namespace OurSite.WebApi.Controllers.AdminControllers
 {
     [Route("api/[controller]")]
     public class AdminRoleManagementController : Controller
@@ -77,7 +77,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("update-role")]
-        public async Task<IActionResult> UpdateRole([FromBody]ReqUpdateRoleDto reqUpdate)
+        public async Task<IActionResult> UpdateRole([FromBody] ReqUpdateRoleDto reqUpdate)
         {
             if (ModelState.IsValid)
             {

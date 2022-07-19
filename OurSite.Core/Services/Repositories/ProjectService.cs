@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs.ProjectDtos;
-using OurSite.Core.Services.Interfaces.Projects;
+using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
 using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
 
-namespace OurSite.Core.Services.Repositories.Forms
+namespace OurSite.Core.Services.Repositories
 {
     public class ProjectService : IProject
     {
@@ -17,7 +17,7 @@ namespace OurSite.Core.Services.Repositories.Forms
         }
 
 
-        public async Task<ResProject> CreatProject(CreatProjectDto prodto,long userId)
+        public async Task<ResProject> CreatProject(CreatProjectDto prodto, long userId)
         {
             if (!string.IsNullOrWhiteSpace(prodto.Name) && !string.IsNullOrWhiteSpace(prodto.Description))
             {
@@ -26,11 +26,11 @@ namespace OurSite.Core.Services.Repositories.Forms
                     IsRemove = false,
                     Name = prodto.Name,
                     Type = prodto.Type,
-                    Situation=situations.Pending,
+                    Situation = situations.Pending,
                     UserId = userId,
                     Description = prodto.Description,
                     PlanDetails = prodto.PlanDetails,
-                    
+
                 };
 
                 try
@@ -38,14 +38,14 @@ namespace OurSite.Core.Services.Repositories.Forms
                     await ProjectsRepository.AddEntity(newPro);
                     await ProjectsRepository.SaveEntity();
                     return ResProject.Success;
-            }
+                }
                 catch (Exception ex)
-            {
-                return ResProject.Faild; //error in save
+                {
+                    return ResProject.Faild; //error in save
+                }
             }
-        }
             return ResProject.InvalidInput;
-         }
+        }
 
         public Task<bool> DeleteProject(long ProjectId)
         {
@@ -95,7 +95,7 @@ namespace OurSite.Core.Services.Repositories.Forms
                     return ResProject.Faild;
                 }
 
-   
+
             }
             return ResProject.NotFound;
 

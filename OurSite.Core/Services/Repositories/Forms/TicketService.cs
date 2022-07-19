@@ -10,14 +10,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.Services.Repositories
+namespace OurSite.Core.Services.Repositories.Forms
 {
     public class TicketService : ITicketService
     {
         #region constructor
         private readonly IGenericReopsitories<Ticket> ticketRepo;
         private readonly IGenericReopsitories<TicketMessage> ticketMessageRepo;
-        public TicketService(IGenericReopsitories<Ticket> ticketRepo , IGenericReopsitories<TicketMessage> ticketMessageRepo)
+        public TicketService(IGenericReopsitories<Ticket> ticketRepo, IGenericReopsitories<TicketMessage> ticketMessageRepo)
         {
             this.ticketRepo = ticketRepo;
             this.ticketMessageRepo = ticketMessageRepo;
@@ -57,11 +57,11 @@ namespace OurSite.Core.Services.Repositories
                 await ticketRepo.AddEntity(createTicket);
                 await ticketMessageRepo.AddEntity(message);
                 await ticketRepo.SaveEntity();
-                return new ResTicketDto {resTicket= ResTicket.Success};
+                return new ResTicketDto { resTicket = ResTicket.Success };
             }
             catch
             {
-               return new ResTicketDto {resTicket= ResTicket.Failed};
+                return new ResTicketDto { resTicket = ResTicket.Failed };
             }
         }
 
