@@ -12,6 +12,11 @@ export class FeatureComponent implements OnInit {
 
   ngOnInit(): void {
   }
+  flag:boolean = true
+
+  chengCardStyle(){
+    this.flag = !this.flag
+  }
   
   Cards$:Observable<any[]> = of(
     [

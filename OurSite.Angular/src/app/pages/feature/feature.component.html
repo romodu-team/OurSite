@@ -31,7 +31,7 @@
             </div>
 
               <div class="d-flex">
-                  <img src="" alt="" width="40px" height="40px">
+                  <img src="" alt="" width="40px" height="40px" (click)="chengCardStyle()">
                   <img class="mx-2" src="" alt="" width="40px" height="40px">
               </div>
 
@@ -39,8 +39,13 @@
 
           <div class="  d-flex justify-content-start flex-wrap ">  
             <div class="d-flex justify-content-center flex-wrap">
-              <app-card2 class="col-3 m-4" *ngFor="let card of Cards$ |async" [discription]="card.discription" 
-              [title]="card.title"></app-card2>
+              <!-- <div *ngIf="flag"> -->
+                <app-card2 class="col-3 m-4" *ngFor="let card of Cards$ |async" [discription]="card.discription" 
+                [title]="card.title"></app-card2>
+              <!-- </div> -->
+              <div *ngIf="!flag">
+                <app-card3 *ngFor="let card of Cards$ |async" [discription]="card.discription"   [title]="card.title" > </app-card3>
+              </div>
           
             </div>
           </div>

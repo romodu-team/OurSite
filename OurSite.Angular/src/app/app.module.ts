@@ -15,6 +15,7 @@ import { Card2Component } from './shared/card2/card2.component';
 import { Card3Component } from './shared/card3/card3.component';
 import { FeatureComponent } from './pages/feature/feature.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +28,8 @@ import { FeatureComponent } from './pages/feature/feature.component';
     FooterComponent,
     Card2Component,
     Card3Component,
-    FeatureComponent
+    FeatureComponent,
+
   ],
   imports: [
     BrowserModule,
