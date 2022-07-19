@@ -16,6 +16,9 @@ import { Card3Component } from './shared/card3/card3.component';
 import { DemoMainComponent } from './pages/demo/demo-main/demo-main.component';
 import { Card4Component } from './shared/card4/card4.component';
 
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,7 +37,9 @@ import { Card4Component } from './shared/card4/card4.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatSlideToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent]
