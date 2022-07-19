@@ -140,6 +140,18 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             return JsonStatusResponse.Success(roles, "موفق");
         }
         #endregion
+
+        #region Update admin role(delete before account in role and add new one)
+
+        #endregion
+
+        #region get all permission
+
+        #endregion
+
+        #region Update role permissions(delete before perrmissions and add new permissions)
+
+        #endregion
     }
 }
 
