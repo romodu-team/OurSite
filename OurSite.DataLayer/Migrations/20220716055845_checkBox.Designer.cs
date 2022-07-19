@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OurSite.DataLayer.Contexts;
 
@@ -11,9 +12,10 @@ using OurSite.DataLayer.Contexts;
 namespace OurSite.DataLayer.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220716055845_checkBox")]
+    partial class checkBox
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,32 +56,6 @@ namespace OurSite.DataLayer.Migrations
                     b.ToTable("AccounInRoles");
                 });
 
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Permission", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRemove")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PermissionTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Permission");
-                });
-
             modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Role", b =>
                 {
                     b.Property<long>("Id")
@@ -112,127 +88,6 @@ namespace OurSite.DataLayer.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Access.RolePermission", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRemove")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("PermissionId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("RolePermission");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.AdditionalDataOfAdmin", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(800)
-                        .HasColumnType("nvarchar(800)");
-
-                    b.Property<long>("AdminId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Birthday")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Gender")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsRemove")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdminId")
-                        .IsUnique();
-
-                    b.ToTable("AdditionalDataOfAdmin");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.AdditionalDataOfUser", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(800)
-                        .HasColumnType("nvarchar(800)");
-
-                    b.Property<string>("Birthday")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BusinessCode")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Gender")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsRemove")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RegistrationNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShabaNumbers")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("AdditionalDataOfUsers");
-                });
-
             modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.Admin", b =>
                 {
                     b.Property<long>("Id")
@@ -240,6 +95,13 @@ namespace OurSite.DataLayer.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(800)
+                        .HasColumnType("nvarchar(800)");
+
+                    b.Property<string>("Birthday")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -250,6 +112,9 @@ namespace OurSite.DataLayer.Migrations
                     b.Property<string>("FirstName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<string>("ImageName")
                         .HasColumnType("nvarchar(max)");
@@ -301,6 +166,17 @@ namespace OurSite.DataLayer.Migrations
                     b.Property<string>("ActivationCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Address")
+                        .HasMaxLength(800)
+                        .HasColumnType("nvarchar(800)");
+
+                    b.Property<string>("Birthday")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BusinessCode")
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -310,6 +186,9 @@ namespace OurSite.DataLayer.Migrations
                     b.Property<string>("FirstName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<string>("ImageName")
                         .HasColumnType("nvarchar(max)");
@@ -338,6 +217,15 @@ namespace OurSite.DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegistrationNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShabaNumbers")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -345,6 +233,35 @@ namespace OurSite.DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("OurSite.DataLayer.Entities.ConsultationRequest.CheckBoxs", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("CheckBoxName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRemove")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("sectionName")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CheckBoxs");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.ConsultationRequest.ConsultationRequest", b =>
@@ -387,6 +304,41 @@ namespace OurSite.DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("consultationRequest");
+                });
+
+            modelBuilder.Entity("OurSite.DataLayer.Entities.ConsultationRequest.ItemSelected", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("CheckBoxId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CheckBoxsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ConsultationFormId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRemove")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CheckBoxsId");
+
+                    b.HasIndex("ConsultationFormId");
+
+                    b.ToTable("ItemSelected");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.ContactWithUs.ContactWithUs", b =>
@@ -461,67 +413,35 @@ namespace OurSite.DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("departments");
-                });
 
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Projects.Project", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<long?>("AdminId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ContractFileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRemove")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlanDetails")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float?>("Price")
-                        .HasColumnType("real");
-
-                    b.Property<int>("Situation")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Project");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CreateDate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6275),
+                            DepartmentName = "Financial",
+                            DepartmentTitle = "بخش مالی",
+                            IsRemove = false,
+                            LastUpdate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6303)
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            CreateDate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6305),
+                            DepartmentName = "Technical support",
+                            DepartmentTitle = "پشتیبانی فنی",
+                            IsRemove = false,
+                            LastUpdate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6307)
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            CreateDate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6309),
+                            DepartmentName = "Other",
+                            DepartmentTitle = "سایر",
+                            IsRemove = false,
+                            LastUpdate = new DateTime(2022, 7, 16, 10, 28, 44, 926, DateTimeKind.Local).AddTicks(6310)
+                        });
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>
@@ -627,58 +547,23 @@ namespace OurSite.DataLayer.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Access.RolePermission", b =>
+            modelBuilder.Entity("OurSite.DataLayer.Entities.ConsultationRequest.ItemSelected", b =>
                 {
-                    b.HasOne("OurSite.DataLayer.Entities.Access.Permission", "Permission")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionId")
+                    b.HasOne("OurSite.DataLayer.Entities.ConsultationRequest.CheckBoxs", "CheckBoxs")
+                        .WithMany("ItemSelecteds")
+                        .HasForeignKey("CheckBoxsId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OurSite.DataLayer.Entities.Access.Role", "Role")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("RoleId")
+                    b.HasOne("OurSite.DataLayer.Entities.ConsultationRequest.ConsultationRequest", "ConsultationRequests")
+                        .WithMany("ItemSelecteds")
+                        .HasForeignKey("ConsultationFormId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Permission");
+                    b.Navigation("CheckBoxs");
 
-                    b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.AdditionalDataOfAdmin", b =>
-                {
-                    b.HasOne("OurSite.DataLayer.Entities.Accounts.Admin", null)
-                        .WithOne("additionalDataOfAdmin")
-                        .HasForeignKey("OurSite.DataLayer.Entities.Accounts.AdditionalDataOfAdmin", "AdminId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.AdditionalDataOfUser", b =>
-                {
-                    b.HasOne("OurSite.DataLayer.Entities.Accounts.User", null)
-                        .WithOne("AdditionalDataOfUser")
-                        .HasForeignKey("OurSite.DataLayer.Entities.Accounts.AdditionalDataOfUser", "UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Projects.Project", b =>
-                {
-                    b.HasOne("OurSite.DataLayer.Entities.Accounts.Admin", "Admin")
-                        .WithMany("Projects")
-                        .HasForeignKey("AdminId");
-
-                    b.HasOne("OurSite.DataLayer.Entities.Accounts.User", "User")
-                        .WithMany("Projects")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-
-                    b.Navigation("User");
+                    b.Navigation("ConsultationRequests");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Ticketing.Ticket", b =>
@@ -711,32 +596,24 @@ namespace OurSite.DataLayer.Migrations
                     b.Navigation("Ticket");
                 });
 
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Permission", b =>
-                {
-                    b.Navigation("RolePermissions");
-                });
-
             modelBuilder.Entity("OurSite.DataLayer.Entities.Access.Role", b =>
                 {
                     b.Navigation("AccounInRoles");
-
-                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.Admin", b =>
                 {
                     b.Navigation("AccounInRoles");
-
-                    b.Navigation("Projects");
-
-                    b.Navigation("additionalDataOfAdmin");
                 });
 
-            modelBuilder.Entity("OurSite.DataLayer.Entities.Accounts.User", b =>
+            modelBuilder.Entity("OurSite.DataLayer.Entities.ConsultationRequest.CheckBoxs", b =>
                 {
-                    b.Navigation("AdditionalDataOfUser");
+                    b.Navigation("ItemSelecteds");
+                });
 
-                    b.Navigation("Projects");
+            modelBuilder.Entity("OurSite.DataLayer.Entities.ConsultationRequest.ConsultationRequest", b =>
+                {
+                    b.Navigation("ItemSelecteds");
                 });
 
             modelBuilder.Entity("OurSite.DataLayer.Entities.Departments.Department", b =>

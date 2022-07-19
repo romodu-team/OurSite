@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OurSite.Core.DTOs;
+using OurSite.Core.DTOs.ConsultationRequestDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Repositories;
 using OurSite.Core.Utilities;
@@ -22,6 +22,7 @@ namespace OurSite.WebApi.Controllers.Forms
         }
 
 
+        #region Send ConsultationRequest Form
 
         #region send form with file
         /// <summary>
@@ -30,7 +31,7 @@ namespace OurSite.WebApi.Controllers.Forms
         /// <param name="sendConsultationFormWithFile"></param>
         /// <returns></returns>
         [HttpPost("send-form-with-file")]
-        public async Task<IActionResult> SendConsultationForm([FromForm] ConsultationRequestDto sendConsultationFormWithFile)
+        public async Task<IActionResult> SendConsultationForm([FromBody] ConsultationRequestDto sendConsultationFormWithFile)
         {
 
             if (sendConsultationFormWithFile.SubmittedFile != null)
@@ -61,6 +62,21 @@ namespace OurSite.WebApi.Controllers.Forms
                 return JsonStatusResponse.Success("درخواست با موفقیت ارسال گردید");
             return JsonStatusResponse.Error("درخواست شما ارسال نگردید");
         }
+        #endregion
+
+        #region ConsultationRequest All Form
+        [HttpGet("view-all-ConsultationRequest")] //Get user list
+        public async Task<IActionResult> GetAllConsultationRequest([FromQuery] ReqFilterConsultationRequestDto filter)
+        {
+            var consultationRequest = await consultationRequestService.GetAllConsultationRequest(filter);
+            if (consultationRequest.ConsultationRequests.Any())
+            {
+                return JsonStatusResponse.Success(message: "موفق", ReturnData: consultationRequest);
+            }
+            return JsonStatusResponse.NotFound(message: "فرمی یافت نشد");
+
+        }
+        #endregion
         #endregion
     }
 }

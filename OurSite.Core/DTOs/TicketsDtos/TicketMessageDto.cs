@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.DTOs
+namespace OurSite.Core.DTOs.TicketsDtos
 {
     public class TicketMessageDto
     {
@@ -14,6 +14,8 @@ namespace OurSite.Core.DTOs
         public long UserOrAdminId { get; set; }
         public long? TicketId { get; set; }
         public IFormFile? SubmittedTicketFile { get; set; }
+        public bool IsAdmin { get; set; }
+
 
     }
 }

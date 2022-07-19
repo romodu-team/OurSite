@@ -1,4 +1,4 @@
-﻿using OurSite.Core.DTOs;
+﻿using OurSite.Core.DTOs.TicketsDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.DataLayer.Entities.TicketMessageing;
 using OurSite.DataLayer.Interfaces;
@@ -20,12 +20,15 @@ namespace OurSite.Core.Services.Repositories.Forms
         }
         #endregion
 
+        #region Send Ticket Message
         public async Task<bool> SendTicketMessage(TicketMessageDto ticketMessageDto)
         {
             TicketMessage messageText = new TicketMessage()
             {
                 MessageText = ticketMessageDto.MessageText,
                 SubmittedTicketFileName = ticketMessageDto.SubmittedTicketFileName,
+                UserOrAdminId=ticketMessageDto.UserOrAdminId,
+                IsAdmin=ticketMessageDto.IsAdmin,
 
             };
             try
@@ -39,12 +42,12 @@ namespace OurSite.Core.Services.Repositories.Forms
                 return false;
             }
         }
-
+        #endregion
 
         #region Dispose
         public void Dispose()
         {
-            throw new NotImplementedException();
+            ticketMessageRepo.Dispose();
         }
         #endregion
     }
