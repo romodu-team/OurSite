@@ -20,11 +20,13 @@ namespace OurSite.Core.Services.Repositories
         private IGenericReopsitories<Role> RoleRepository;
         private IGenericReopsitories<AccounInRole> accounInRoleRepository;
         private IGenericReopsitories<RolePermission> RolePermissionRepository;
-        public RoleService(IGenericReopsitories<RolePermission> RolePermissionRepository,IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<AccounInRole> accounInRoleRepository)
+        private IGenericReopsitories<Permission> PermissionRepository;
+        public RoleService(IGenericReopsitories<Permission> PermissionRepository, IGenericReopsitories<RolePermission> RolePermissionRepository,IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<AccounInRole> accounInRoleRepository)
         {
             this.RoleRepository = RoleRepository;
             this.accounInRoleRepository = accounInRoleRepository;
             this.RolePermissionRepository=RolePermissionRepository;
+            this.PermissionRepository=PermissionRepository;
         }
         #endregion
 
@@ -252,12 +254,72 @@ namespace OurSite.Core.Services.Repositories
             return await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(a => a.AdminId == adminId && a.IsRemove == false);
         }
 
-        public async Task<List<Permission>> GetRolePermissions(long roleId)
+        public async Task<List<Permission>> GetSelectedPermissionOfRole(long roleId)
         {
-            var RolePermission=  await RolePermissionRepository.GetAllEntity().Include(u=>u.Permission).Select(r=> new Permission{Id=r.Permission.Id,PermissionTitle=r.Permission.PermissionTitle,CreateDate=r.Permission.CreateDate,LastUpdate=r.Permission.LastUpdate}).ToListAsync();
+            var RolePermission=  await RolePermissionRepository.GetAllEntity().Include(u=>u.Permission).Select(r=> new Permission{Id=r.Permission.Id,PermissionName=r.Permission.PermissionName,PermissionTitle=r.Permission.PermissionTitle,CreateDate=r.Permission.CreateDate,LastUpdate=r.Permission.LastUpdate}).ToListAsync();
             return RolePermission;
         }
 
+
+        public async Task<List<ResGetAllPermissions>> GetAllPermission(long roleId)
+        {
+            var SelectedPermissions =await RolePermissionRepository.GetAllEntity().Where(rp => rp.RoleId == roleId).Include(rp => rp.Permission).Select(p => new ResGetAllPermissions {IsCheck=true, PermissionId = p.Permission.Id, PermissionName = p.Permission.PermissionName, PermissionTitle = p.Permission.PermissionTitle, ParentId = p.Permission.ParentId }).ToListAsync();
+            var allPermissions =await PermissionRepository.GetAllEntity().ToListAsync();
+            foreach (var item in allPermissions)
+            {
+                if (!SelectedPermissions.Any(p => p.PermissionId == item.Id))
+                {
+                    SelectedPermissions.Add(new ResGetAllPermissions { IsCheck = false, PermissionId = item.Id, PermissionName = item.PermissionName, PermissionTitle = item.PermissionTitle, ParentId = item.ParentId });
+                }
+            }
+            return SelectedPermissions;
+        }
+
+        public async Task<resUpdatePermissionRole> UpdatePermissionRole(ReqUpdatePermissionRole request)
+        {
+            //check role is exist
+            var roleExist =await RoleRepository.GetEntity(request.RoleId);
+            if (roleExist is null)
+                return resUpdatePermissionRole.RoleNotFound;
+            if(request.PermissionsId is not null)
+            {
+                // delete all before permissions
+                var allExistRolePermission = await RolePermissionRepository.GetAllEntity().Where(r => r.RoleId == request.RoleId).ToListAsync();
+                foreach (var item in allExistRolePermission)
+                {
+                    await RolePermissionRepository.RealDeleteEntity(item.Id);
+                }
+                await RoleRepository.SaveEntity();
+                // add new permissions
+                foreach (var permission in request.PermissionsId)
+                {
+                    if (PermissionRepository.GetAllEntity().Any(p => p.Id == permission))
+                    {
+                        var rolePermission = new RolePermission()
+                        {
+                            PermissionId = permission,
+                            RoleId = request.RoleId
+                        };
+                        await RolePermissionRepository.AddEntity(rolePermission);
+                    }
+                    else
+                        return resUpdatePermissionRole.permissionNotFound;
+                }
+                try
+                {
+                    await RolePermissionRepository.SaveEntity();
+                    return resUpdatePermissionRole.Success;
+                }
+                catch (Exception)
+                {
+
+                    return resUpdatePermissionRole.Error;
+                }
+               
+            }
+            return resUpdatePermissionRole.permissionNotFound;
+
+        }
         #endregion
 
     }
