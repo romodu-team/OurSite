@@ -1,7 +1,8 @@
 ﻿using System;
+using OurSite.Core.DTOs.UserDtos;
 using OurSite.DataLayer.Entities.Accounts;
 
-namespace OurSite.Core.DTOs.UserDtos
+namespace OurSite.Core.DTOs.AdminDtos
 {
     public class ResViewuserAdminDto
     {

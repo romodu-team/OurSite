@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OurSite.Core.DTOs.ContactWithUs;
 using OurSite.Core.DTOs.ContactWithUsDtos;
 using OurSite.Core.DTOs.Paging;
 using OurSite.Core.Services.Interfaces;

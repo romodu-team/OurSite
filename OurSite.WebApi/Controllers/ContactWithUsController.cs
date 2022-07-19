@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OurSite.Core.DTOs.ContactWithUs;
 using OurSite.Core.DTOs.ContactWithUsDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Repositories;

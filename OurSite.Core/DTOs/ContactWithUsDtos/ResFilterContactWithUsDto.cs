@@ -1,5 +1,4 @@
-﻿using OurSite.Core.DTOs.ContactWithUs;
-using OurSite.Core.DTOs.Paging;
+﻿using OurSite.Core.DTOs.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
