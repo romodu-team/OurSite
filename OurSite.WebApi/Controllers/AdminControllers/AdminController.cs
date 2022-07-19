@@ -10,7 +10,7 @@ using OurSite.Core.Utilities;
 using System.Linq;
 using System.Security.Claims;
 
-namespace OurSite.WebApi.Controllers
+namespace OurSite.WebApi.Controllers.AdminControllers
 {
     [Route("api/[controller]")]
     [ApiController]

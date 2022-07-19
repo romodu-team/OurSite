@@ -5,7 +5,7 @@ using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Repositories;
 using OurSite.Core.Utilities;
 
-namespace OurSite.WebApi.Controllers
+namespace OurSite.WebApi.Controllers.Forms
 {
     [Route("api/[controller]")]
     [ApiController]

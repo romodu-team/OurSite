@@ -7,7 +7,7 @@ using OurSite.Core.Utilities;
 using OurSite.DataLayer.Contexts;
 using OurSite.DataLayer.Entities.ConsultationRequest;
 
-namespace OurSite.WebApi.Controllers
+namespace OurSite.WebApi.Controllers.Forms
 {
     [Route("api/[controller]")]
     [ApiController]

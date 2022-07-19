@@ -4,7 +4,7 @@ using OurSite.Core.DTOs;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 
-namespace OurSite.WebApi.Controllers
+namespace OurSite.WebApi.Controllers.Forms
 {
     [ApiController]
     [Route("api/[controller]")]
