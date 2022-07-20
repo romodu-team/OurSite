@@ -24,7 +24,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Creat Project
         /// <summary>
-        /// Create project by admin for user {get request from body}
+        /// Api for Create project by admin for user {get request from body}
         /// </summary>
         /// <param name="prodto"></param>
         /// <param name="userId"></param>
@@ -52,7 +52,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Edit Project
         /// <summary>
-        /// edit project details by admin {get request from body}
+        /// Api for edit project details by admin {get request from body}
         /// </summary>
         /// <param name="prodto"></param>
         /// <returns></returns>
@@ -97,6 +97,24 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                 default:
                     return JsonStatusResponse.Error("An error has occurred. Try again later.");
             }
+        }
+        #endregion
+
+
+        #region View project
+        /// <summary>
+        /// Api for get one project by admin {Get request from route}
+        /// </summary>
+        /// <param name="ProjectId"></param>
+        /// <returns></returns>
+        [HttpGet("view-project-by-admin/{ProjectId}")]
+        public async Task<IActionResult> GetProject([FromRoute]long ProjectId)
+        {
+            var res = await projectservice.GetProject(ProjectId);
+            if (res is not null)
+                return JsonStatusResponse.Success(ReturnData: res,message: "Project find successfully");
+
+            return JsonStatusResponse.Error("Project Not found");
         }
         #endregion
     }

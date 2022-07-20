@@ -157,20 +157,23 @@ namespace OurSite.Core.Services.Repositories
         public async Task<GetProjectDto> GetProject(long ProjectId)
         {
             var project = await ProjectsRepository.GetEntity(ProjectId);
-            GetProjectDto ViewrProject = new GetProjectDto()
+            if (project is not null)
             {
-                ProId = project.Id,
-                Name = project.Name,
-                Type = project.Type,
-                StartTime = project.StartTime,
-                EndTime = project.EndTime,
-                Price = project.Price,
-                Description = project.Description,
-                Situation = project.Situation,
-                PlanDetails = project.PlanDetails,
-                ContractFileName = project.ContractFileName
-            };
-            return ViewrProject;
+                GetProjectDto ViewrProject = new GetProjectDto()
+                {
+                    Name = project.Name,
+                    Type = project.Type,
+                    StartTime = project.StartTime,
+                    EndTime = project.EndTime,
+                    Price = project.Price,
+                    Description = project.Description,
+                    Situation = project.Situation,
+                    PlanDetails = project.PlanDetails,
+                    ContractFileName = project.ContractFileName
+                };
+                return ViewrProject;
+            }
+            return null;
         }
 
         public Task<bool> UploadContract(ReqUploadContractDto profiledto)
