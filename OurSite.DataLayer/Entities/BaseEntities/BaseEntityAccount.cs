@@ -6,14 +6,13 @@ namespace OurSite.DataLayer.Entities.BaseEntities
 {
 	public class BaseEntityAccount:BaseEntity
 	{
-  
-
 
         [DisplayName("نام")]
         [MaxLength(50,ErrorMessage ="تعداد کاراکتر بیش از حد مجاز است")]
         public string? FirstName { get; set; }
 
-
+        [DisplayName("عکس کاربری")]
+        public string? ImageName { get; set; }
 
         [DisplayName("نام خانوادگی")]
         [MaxLength(50, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
@@ -44,29 +43,11 @@ namespace OurSite.DataLayer.Entities.BaseEntities
         [DisplayName("نام کاربری")]
         public string UserName { get; set; }
 
-        [DisplayName("جنیست")]
-        public gender? Gender { get; set; }
-
-        [MaxLength(800, ErrorMessage = " آدرس نمی‌تواند بیش از {0} کاراکتر باشد")]
-        [DisplayName("آدرس")]
-        public string? Address { get; set; }
-
-
-        [DisplayName("عکس کاربری")]
-        public string? ImageName { get; set; }
-
-
-        [DisplayName("تاریخ تولد")]
-        public string? Birthday { get; set; }
+        public bool IsActive { get; set; }
 
     }
 
 
-    public enum gender
-    {
-        male,
-        female,
-        other
-    }
+
 }
 

@@ -21,4 +21,16 @@
     <ProjectReference Include="..\OurSite.DataLayer\OurSite.DataLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Security\Authorizations\" />
+    <None Remove="Services\Interfaces\IProjecta\" />
+    <None Remove="DTOs\ProjectDtos\" />
+    <None Remove="Services\Repositories\Forms\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Security\Authorizations\" />
+    <Folder Include="Services\Interfaces\Projecta\" />
+    <Folder Include="DTOs\ProjectDtos\" />
+    <Folder Include="Services\Repositories\Forms\" />
+  </ItemGroup>
 </Project>
