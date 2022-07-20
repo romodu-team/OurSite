@@ -84,6 +84,7 @@ builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestServi
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketMessageService, TicketMessageService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddAuthorization();
 
 #region Cors
