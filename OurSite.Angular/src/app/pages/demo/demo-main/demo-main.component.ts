@@ -13,6 +13,8 @@ export class DemoMainComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  panelOpenState:boolean = false
+
   cards$: Observable<any[]> = of([
     {
       title:'نیکد',
@@ -35,5 +37,9 @@ export class DemoMainComponent implements OnInit {
       url:'www.nicode.com'
     },
   ])
+
+  openPannel(){
+    this.panelOpenState = !this.panelOpenState
+  }
 
 }
