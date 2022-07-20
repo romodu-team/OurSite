@@ -14,6 +14,7 @@ export class Card5Component implements OnInit {
 
   hover:string = 'bg-white'
   shadow:string = 'shadow-sm'
+  color:string = 'm'
 
   Hover(){
     this.hover = 'bg-primary'
@@ -23,6 +24,14 @@ export class Card5Component implements OnInit {
   InHover(){
     this.hover = 'bg-white'
     this.shadow = 'shadow-sm'
+  }
+
+  Color(){
+    this.color = 'text-white'
+  }
+
+  InColor(){
+    this.color = 'm'
   }
 
 }
