@@ -19,7 +19,6 @@ namespace OurSite.DataLayer.Entities.Ticketing
         public bool IsClosed { get; set; }
         public long DepartmentId { get; set; }
         public long? UserId { get; set; }
-       
         #endregion
 
         #region Realation

@@ -34,5 +34,6 @@
   <ItemGroup>
     <Folder Include="Contexts\" />
     <Folder Include="Entities\Projects\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>
