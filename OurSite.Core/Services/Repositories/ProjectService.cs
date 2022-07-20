@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.Services.Interfaces.Projecta;
+using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
 using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
@@ -157,9 +158,46 @@ namespace OurSite.Core.Services.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<bool> UploadContract(ReqUploadContractDto profiledto)
+        public async Task<resUploadContract> UploadContract(ReqUploadContractDto reqUploadContract)
         {
-            throw new NotImplementedException();
+            // check if project exist
+            var Project =await ProjectsRepository.GetEntity(reqUploadContract.ProjectId);
+            if(Project is null)
+                return resUploadContract.projectNotFound;
+            //if file not null
+            if(reqUploadContract.ContractFile is null)
+                return resUploadContract.FileNotFound;
+            //upload file and save file name in database
+            var resUpload =await FileUploader.UploadFile(PathTools.ContractUploadPath,reqUploadContract.ContractFile,10);
+            switch (resUpload.Status)
+            {
+                case resFileUploader.Success:
+                    //save filename in database
+                    Project.ContractFileName=resUpload.FileName;
+                    try
+                    {
+                        ProjectsRepository.UpDateEntity(Project);
+                    await ProjectsRepository.SaveEntity();
+                    return resUploadContract.Success;
+                    }
+                    catch (System.Exception)
+                    {
+                        
+                        return resUploadContract.Error;
+                    }
+                    
+                    
+                case resFileUploader.NoContent:
+                    return resUploadContract.FileNotFound;
+                case resFileUploader.ToBig:
+                    return resUploadContract.TooBig;
+                case resFileUploader.InvalidExtention:
+                    return resUploadContract.FileExtentionError;
+                case resFileUploader.Failure:
+                    return resUploadContract.Error;
+                default:
+                    return resUploadContract.Error;
+            }
         }
     }
 }

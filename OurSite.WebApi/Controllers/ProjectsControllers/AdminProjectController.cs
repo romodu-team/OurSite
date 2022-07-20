@@ -99,6 +99,34 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
             }
         }
         #endregion
+
+        #region Upload contract File
+        [HttpPost]
+        [Route("Upload-Contract")]
+        public async Task<IActionResult> UploadContract(ReqUploadContractDto request)
+        {
+            var res = await projectservice.UploadContract(request);
+            switch (res)
+            {
+                case resUploadContract.Success:
+                    return JsonStatusResponse.Success("contract file uploaded successfully");
+                case resUploadContract.projectNotFound:
+                    return JsonStatusResponse.NotFound("project not found");
+                case resUploadContract.FileNotFound:
+                    return JsonStatusResponse.NotFound("contract file not found");
+                case resUploadContract.Error:
+                    return JsonStatusResponse.Error("server error");
+                case resUploadContract.TooBig:
+                    return JsonStatusResponse.Error("contract file is very big");
+                case resUploadContract.FileExtentionError:
+                    return JsonStatusResponse.Error("contract file extention invalid");
+               
+                default:
+                    return JsonStatusResponse.Error("server error");
+            }
+        }
+            
+        #endregion
     }
 }
 
