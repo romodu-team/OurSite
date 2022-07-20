@@ -19,6 +19,7 @@ import { Card4Component } from './shared/card4/card4.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { Slider1Component } from './shared/slider1/slider1.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     Card2Component,
     Card3Component,
     DemoMainComponent,
-    Card4Component
+    Card4Component,
+    Slider1Component
   ],
   imports: [
     BrowserModule,
