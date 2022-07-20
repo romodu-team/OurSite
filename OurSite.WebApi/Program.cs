@@ -104,7 +104,6 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("viewUser", policy => policy.RequireClaim("viewUser"));
     
 });
-builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 #region Cors
 builder.Services.AddCors(options =>
