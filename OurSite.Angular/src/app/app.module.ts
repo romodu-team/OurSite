@@ -14,6 +14,7 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { Card2Component } from './shared/card2/card2.component';
 import { Card3Component } from './shared/card3/card3.component';
 import { FeatureComponent } from './pages/feature/feature.component';
+import { Card6Component } from './shared/card6/card6.component';
 
 
 @NgModule({
@@ -29,6 +30,7 @@ import { FeatureComponent } from './pages/feature/feature.component';
     Card2Component,
     Card3Component,
     FeatureComponent,
+    Card6Component,
 
   ],
   imports: [
