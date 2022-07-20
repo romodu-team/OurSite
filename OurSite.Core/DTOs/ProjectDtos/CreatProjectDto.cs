@@ -17,6 +17,7 @@ namespace OurSite.Core.DTOs.ProjectDtos
             Success,
             Faild,
             Error,
+            SitutionError,
             NotFound,
             InvalidInput
         }

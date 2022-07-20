@@ -77,10 +77,15 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
 
         #region Delete project
-        [HttpDelete("delete-project")]
-        public async Task<IActionResult> DeleteProject(long ProjectId)
+        /// <summary>
+        /// Api for Delete project by admin{Get request from body}
+        /// </summary>
+        /// <param name="ReqDeleteProject"></param>
+        /// <returns></returns>
+        [HttpDelete("admin-delete-project")]
+        public async Task<IActionResult> DeleteProject([FromBody]DeleteProjectDto ReqDeleteProject)
         {
-            var remove = await projectservice.DeleteProject(ProjectId);
+            var remove = await projectservice.DeleteProject(ReqDeleteProject);
             switch (remove)
             {
                 case ResProject.Success:
