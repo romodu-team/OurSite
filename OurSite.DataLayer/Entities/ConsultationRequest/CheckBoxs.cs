@@ -1,4 +1,5 @@
 ﻿using OurSite.DataLayer.Entities.BaseEntities;
+using OurSite.DataLayer.Entities.Projects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace OurSite.DataLayer.Entities.ConsultationRequest
 
         #region Realation
         public ICollection<ItemSelected> ItemSelecteds { get; set; }
+        public ICollection<SelectedProjectPlan> selectedProjectPlans{get;set;}
         #endregion
     }
     public enum section

@@ -8,7 +8,7 @@ namespace OurSite.Core.DTOs.ProjectDtos
         public string Name { get; set; }
         public ProType Type { get; set; }
         public string Description { get; set; }
-        public string? PlanDetails { get; set; }
+        public List<long>? PlanDetails { get; set; }
 
         
 

@@ -13,7 +13,6 @@ namespace OurSite.DataLayer.Entities.Projects
         public float? Price { get; set; }
         public string Description { get; set; }
         public situations Situation { get; set; }
-        public string? PlanDetails { get; set; }
         public long? AdminId { get; set; }
         public long UserId { get; set; }
         public string? ContractFileName { get; set; }
@@ -23,6 +22,8 @@ namespace OurSite.DataLayer.Entities.Projects
         #region Relations
         public Admin Admin { get; set; }
         public User User { get; set; }
+
+        public ICollection<SelectedProjectPlan> selectedProjectPlans{get;set;}
         #endregion
     }
 

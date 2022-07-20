@@ -10,11 +10,11 @@ namespace OurSite.Core.Services.Interfaces.Projecta
         Task<Project> GetAllProject();
         Task<Project> GetProject(long ProjectId);
         Task<ResProject> CreateProject(CreatProjectDto prodto, long userId);
-        Task<resUploadContract> UploadContract(ReqUploadContractDto reqUploadContract);
         Task<ResProject> DeleteProject(DeleteProjectDto ReqDeleteProject);
 
         #region Admin
         Task<ResProject> EditProject(EditProjectDto prodto);
+        Task<resUploadContract> UploadContract(ReqUploadContractDto reqUploadContract);
         #endregion
     }
 }
