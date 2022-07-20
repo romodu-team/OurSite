@@ -23,15 +23,15 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         
         #region Creat Project
         /// <summary>
-        /// Creat project by user
+        /// Api for Creat project by user
         /// </summary>
         /// <param name="prodto"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpPost("creat-project")]
-        public async Task<IActionResult> CreatProject([FromBody]CreatProjectDto prodto, long userId)
+        public async Task<IActionResult> CreateProject([FromBody]CreatProjectDto prodto, long userId)
         {
-            var res = await projectservice.CreatProject(prodto , userId);
+            var res = await projectservice.CreateProject(prodto , userId);
             switch (res)
             {
                 case ResProject.Success:
@@ -46,8 +46,35 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
             }
         }
         #endregion
-   
- 
+
+
+        #region Delete project
+        /// <summary>
+        /// Api for Delete project by user {Get request from body}
+        /// </summary>
+        /// <param name="ReqDeleteProject"></param>
+        /// <returns></returns>
+        [HttpDelete("user-delete-project")]
+        public async Task<IActionResult> DeleteProject([FromBody] DeleteProjectDto ReqDeleteProject)
+        {
+            var remove = await projectservice.DeleteProject(ReqDeleteProject);
+            switch (remove)
+            {
+                case ResProject.Success:
+                    return JsonStatusResponse.Success("The project has been deleted successfully");
+                case ResProject.Error:
+                    return JsonStatusResponse.Error("Project delete failed. Try again later.");
+                case ResProject.SitutionError:
+                    return JsonStatusResponse.Error("Can't delete project at this time.");
+                case ResProject.NotFound:
+                    return JsonStatusResponse.NotFound("Project not Found");
+                default:
+                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+            }
+        }
+        #endregion
+
+
     }
 }
 

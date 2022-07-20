@@ -24,15 +24,15 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Creat Project
         /// <summary>
-        /// Creat project by admin for user {get request from body}
+        /// Create project by admin for user {get request from body}
         /// </summary>
         /// <param name="prodto"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpPost("creat-project")]
-        public async Task<IActionResult> CreatProject([FromBody]CreatProjectDto prodto, long userId)
+        [HttpPost("create-project")]
+        public async Task<IActionResult> CreateProject([FromBody]CreatProjectDto prodto, long userId)
         {
-            var res = await projectservice.CreatProject(prodto , userId);
+            var res = await projectservice.CreateProject(prodto , userId);
             switch (res)
             {
                 case ResProject.Success:
@@ -56,7 +56,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// </summary>
         /// <param name="prodto"></param>
         /// <returns></returns>
-        [HttpPut("edite-Project")]
+        [HttpPut("edit-Project")]
         public async Task<IActionResult> EditProject([FromBody] EditProjectDto prodto)
         {
             var res = await projectservice.EditProject(prodto);
@@ -77,10 +77,15 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
 
         #region Delete project
-        [HttpDelete("delete-project")]
-        public async Task<IActionResult> DeleteProject(long ProjectId)
+        /// <summary>
+        /// Api for Delete project by admin{Get request from body}
+        /// </summary>
+        /// <param name="ReqDeleteProject"></param>
+        /// <returns></returns>
+        [HttpDelete("admin-delete-project")]
+        public async Task<IActionResult> DeleteProject([FromBody]DeleteProjectDto ReqDeleteProject)
         {
-            var remove = await projectservice.DeleteProject(ProjectId);
+            var remove = await projectservice.DeleteProject(ReqDeleteProject);
             switch (remove)
             {
                 case ResProject.Success:

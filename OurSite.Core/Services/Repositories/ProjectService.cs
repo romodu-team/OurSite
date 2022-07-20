@@ -17,7 +17,7 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #region Creat project
-        public async Task<ResProject> CreatProject(CreatProjectDto prodto, long userId)
+        public async Task<ResProject> CreateProject(CreatProjectDto prodto, long userId)
         {
             if (!string.IsNullOrWhiteSpace(prodto.Name) && !string.IsNullOrWhiteSpace(prodto.Description))
             {
@@ -49,20 +49,49 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Delete project
-        public async Task<ResProject> DeleteProject(long ProjectId)
+        public async Task<ResProject> DeleteProject(DeleteProjectDto ReqDeleteProject)
         {
-            var IsRemove = await ProjectsRepository.DeleteEntity(ProjectId);
-            if (IsRemove is true)
+            var project = await ProjectsRepository.GetEntity(ReqDeleteProject.ProId);
+            if(project is not null)
             {
-                await ProjectsRepository.SaveEntity();
-                return ResProject.Success;
-            }
-            else
-            {
-                return ResProject.Error;
+                if(ReqDeleteProject.AdminId is not null && ReqDeleteProject.UserId is null)
+                {
+                    var IsRemove = await ProjectsRepository.DeleteEntity(project.Id);
+                    if (IsRemove is true)
+                    {
+                        await ProjectsRepository.SaveEntity();
+                        return ResProject.Success;
+                    }
+                    else
+                    {
+                        return ResProject.Error;
 
+                    }
+                }
+
+                else
+                {
+                    if (project.Situation == situations.Pending)
+                    {
+                        var IsRemove = await ProjectsRepository.DeleteEntity(project.Id);
+                        if (IsRemove is true)
+                        {
+                            await ProjectsRepository.SaveEntity();
+                            return ResProject.Success;
+                        }
+                        else
+                        {
+                            return ResProject.Error;
+
+                        }
+                    }
+                    return ResProject.SitutionError;
+
+                }
             }
+
             return ResProject.NotFound;
+            
         }
         #endregion
 
