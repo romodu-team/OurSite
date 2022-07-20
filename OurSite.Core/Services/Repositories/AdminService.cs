@@ -158,7 +158,16 @@ namespace OurSite.Core.Services.Repositories
             if (!string.IsNullOrWhiteSpace(req.Roleid))
             {
                 var accountinrole = await roleService.GetAdminInRole(id);
-                accountinrole.RoleId = Convert.ToInt64(req.Roleid);
+                if(accountinrole is not null)
+                    accountinrole.RoleId = Convert.ToInt64(req.Roleid);
+                else{
+                    accountinrole = new AccounInRole(){
+                        AdminId=id,
+                        RoleId=Convert.ToInt64(req.Roleid),
+
+
+                    };
+                }
                 var res = await roleService.UpdateAdminRole(accountinrole);
 
 
