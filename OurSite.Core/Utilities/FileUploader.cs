@@ -40,6 +40,7 @@ namespace OurSite.Core.Utilities
                         {
                             //accept the file, yay!
                             acceptFile = true;
+                            break;
                         }
                     }
 

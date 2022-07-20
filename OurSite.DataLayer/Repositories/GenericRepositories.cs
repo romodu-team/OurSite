@@ -65,6 +65,30 @@ namespace OurSite.DataLayer.Repositories
             return get;
         }
 
+        public async Task<bool> RealDeleteEntity(long Id)
+        {
+
+            var find = await dbset.AnyAsync(x => x.Id == Id);
+            try
+            {
+                if (find == true)
+                {
+                    var entity = await dbset.FindAsync(Id);
+                    dbset.Remove(entity);
+                    return true;
+
+                }
+                else
+                    return false;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
         public async Task SaveEntity()
         {
 

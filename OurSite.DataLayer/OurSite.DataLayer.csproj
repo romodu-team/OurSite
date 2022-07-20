@@ -14,6 +14,7 @@
     <None Remove="Contexts\" />
     <None Remove="Interfaces\" />
     <None Remove="Repositories\" />
+    <None Remove="Entities\Projects\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HtmlSanitizer" Version="7.1.488" />
@@ -27,10 +28,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contexts\" />
-    <Folder Include="Migrations\" />
+    <Folder Include="Entities\Projects\" />
   </ItemGroup>
 </Project>
