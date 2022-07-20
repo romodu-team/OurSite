@@ -21,11 +21,13 @@ namespace OurSite.Core.Services.Interfaces
 
         Task<bool> AddRoleToAdmin(AccounInRole accounInRole);
         Task<ResDeleteAdminRole> DeleteAdminRole(long adminId);
+        Task<ResDeleteAdminRole> DeleteAdminRoleByRoleId(long RoleId);
         Task<bool> UpdateAdminRole(AccounInRole accounInRole);
         Task<AccounInRole> GetAdminInRole(long adminId);
 
         Task<List<Permission>> GetSelectedPermissionOfRole(long roleId);
         Task<List<ResGetAllPermissions>> GetAllPermission(long roleId);
         Task<resUpdatePermissionRole> UpdatePermissionRole(ReqUpdatePermissionRole request);
+        Task<bool> DeletePermissionOfRole(List<Permission> permissions);
     }
 }
