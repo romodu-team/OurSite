@@ -105,7 +105,6 @@ builder.Services.AddAuthorization(options =>
     
 });
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-builder.Services.AddAuthorization();
 
 #region Cors
 builder.Services.AddCors(options =>
@@ -126,7 +125,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(options =>
-    options.SerializeAsV2 = true); ;
+    options.SerializeAsV2 = true); 
     app.UseSwaggerUI(options=>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 }
