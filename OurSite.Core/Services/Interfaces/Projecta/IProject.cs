@@ -8,7 +8,7 @@ namespace OurSite.Core.Services.Interfaces.Projecta
     public interface IProject : IDisposable
     {
         Task<Project> GetAllProject();
-        Task<Project> GetProject(long ProjectId);
+        Task<GetProjectDto> GetProject(long ProjectId);
         Task<ResProject> CreateProject(CreatProjectDto prodto, long userId);
         Task<bool> UploadContract(ReqUploadContractDto profiledto);
         Task<ResProject> DeleteProject(DeleteProjectDto ReqDeleteProject);

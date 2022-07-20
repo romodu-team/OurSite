@@ -10,11 +10,18 @@ namespace OurSite.Core.Services.Repositories
 {
     public class ProjectService : IProject
     {
+        #region Cons&Dis
         private IGenericReopsitories<Project> ProjectsRepository;
         public ProjectService(IGenericReopsitories<Project> ProjectsRepository)
         {
             this.ProjectsRepository = ProjectsRepository;
         }
+
+        public void Dispose()
+        {
+            ProjectsRepository.Dispose();
+        }
+        #endregion
 
         #region Creat project
         public async Task<ResProject> CreateProject(CreatProjectDto prodto, long userId)
@@ -95,11 +102,6 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        public void Dispose()
-        {
-            ProjectsRepository.Dispose();
-        }
-
         #region Update project
         public async Task<ResProject> EditProject(EditProjectDto prodto)
         {
@@ -152,9 +154,23 @@ namespace OurSite.Core.Services.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Project> GetProject(long ProjectId)
+        public async Task<GetProjectDto> GetProject(long ProjectId)
         {
-            throw new NotImplementedException();
+            var project = await ProjectsRepository.GetEntity(ProjectId);
+            GetProjectDto ViewrProject = new GetProjectDto()
+            {
+                ProId = project.Id,
+                Name = project.Name,
+                Type = project.Type,
+                StartTime = project.StartTime,
+                EndTime = project.EndTime,
+                Price = project.Price,
+                Description = project.Description,
+                Situation = project.Situation,
+                PlanDetails = project.PlanDetails,
+                ContractFileName = project.ContractFileName
+            };
+            return ViewrProject;
         }
 
         public Task<bool> UploadContract(ReqUploadContractDto profiledto)
