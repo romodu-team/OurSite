@@ -10,8 +10,11 @@ namespace OurSite.DataLayer.Entities.ConsultationRequest
 {
     public class ItemSelected : BaseEntity
     {
+
+        #region Properties
         public long ConsultationFormId { get; set; }
         public long CheckBoxId { get; set; }
+        #endregion
 
         #region Realation
         [ForeignKey("ConsultationFormId")]
