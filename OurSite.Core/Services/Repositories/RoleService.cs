@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Net.Http.Headers;
+using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.RoleDtos;
 using OurSite.Core.Services.Interfaces;
@@ -133,6 +134,12 @@ namespace OurSite.Core.Services.Repositories
             var IsRemove = await RoleRepository.DeleteEntity(RoleId);
             if (IsRemove is true)
             {
+                //delete permission of this role
+                var permissions =await GetSelectedPermissionOfRole(RoleId);
+                var res = await DeletePermissionOfRole(permissions);
+
+                //delele roles of admin
+                var resDeleteAdminRoles= await DeleteAdminRoleByRoleId(RoleId);
                 await RoleRepository.SaveEntity();
                 return ResRole.Success;
             }
@@ -172,7 +179,9 @@ namespace OurSite.Core.Services.Repositories
         public async Task<Role> GetAdminRole(long adminId)
         {
             var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove == false);
-            return role.Role;
+            if(role is not null)
+                return role.Role;
+            return null;
         }
 
         #region Dispose
@@ -197,7 +206,25 @@ namespace OurSite.Core.Services.Repositories
             }
            
         }
-
+        public async  Task<ResDeleteAdminRole> DeleteAdminRoleByRoleId(long RoleId)
+        {
+            var allAdminInRoles = await accounInRoleRepository.GetAllEntity().Where(a=>a.RoleId==RoleId).ToListAsync();
+            foreach (var AdminInRole in allAdminInRoles)
+            {
+                await accounInRoleRepository.DeleteEntity(AdminInRole.Id);
+            }
+            try
+            {
+                await accounInRoleRepository.SaveEntity();
+                return ResDeleteAdminRole.Success;
+            }
+            catch (System.Exception)
+            {
+                
+                return ResDeleteAdminRole.Faild;
+            }
+            
+        }
         public async Task<ResDeleteAdminRole> DeleteAdminRole(long adminId)
         {
             var AdminInRole= await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove == false);
@@ -248,7 +275,25 @@ namespace OurSite.Core.Services.Repositories
            
 
         }
+        public async Task<bool> DeletePermissionOfRole(List<Permission> permissions)
+        {
+            foreach (var permission in permissions)
+            {
+                await RolePermissionRepository.RealDeleteEntity(permission.Id);
 
+            }
+            try
+            {
+                 await RolePermissionRepository.SaveEntity();
+                 return true;
+            }
+            catch (System.Exception e)
+            {
+                
+                return false;
+            }
+           
+        }
         public async Task<AccounInRole> GetAdminInRole(long adminId)
         {
             return await accounInRoleRepository.GetAllEntity().SingleOrDefaultAsync(a => a.AdminId == adminId && a.IsRemove == false);
@@ -263,7 +308,7 @@ namespace OurSite.Core.Services.Repositories
 
         public async Task<List<ResGetAllPermissions>> GetAllPermission(long roleId)
         {
-            var SelectedPermissions =await RolePermissionRepository.GetAllEntity().Where(rp => rp.RoleId == roleId).Include(rp => rp.Permission).Select(p => new ResGetAllPermissions {IsCheck=true, PermissionId = p.Permission.Id, PermissionName = p.Permission.PermissionName, PermissionTitle = p.Permission.PermissionTitle, ParentId = p.Permission.ParentId }).ToListAsync();
+            var SelectedPermissions =await RolePermissionRepository.GetAllEntity().Where(rp => rp.RolesId == roleId).Include(rp => rp.Permission).Select(p => new ResGetAllPermissions {IsCheck=true, PermissionId = p.Permission.Id, PermissionName = p.Permission.PermissionName, PermissionTitle = p.Permission.PermissionTitle, ParentId = p.Permission.ParentId }).ToListAsync();
             var allPermissions =await PermissionRepository.GetAllEntity().ToListAsync();
             foreach (var item in allPermissions)
             {
@@ -284,7 +329,7 @@ namespace OurSite.Core.Services.Repositories
             if(request.PermissionsId is not null)
             {
                 // delete all before permissions
-                var allExistRolePermission = await RolePermissionRepository.GetAllEntity().Where(r => r.RoleId == request.RoleId).ToListAsync();
+                var allExistRolePermission = await RolePermissionRepository.GetAllEntity().Where(r => r.RolesId == request.RoleId).ToListAsync();
                 foreach (var item in allExistRolePermission)
                 {
                     await RolePermissionRepository.RealDeleteEntity(item.Id);
@@ -298,7 +343,7 @@ namespace OurSite.Core.Services.Repositories
                         var rolePermission = new RolePermission()
                         {
                             PermissionId = permission,
-                            RoleId = request.RoleId
+                            RolesId = request.RoleId
                         };
                         await RolePermissionRepository.AddEntity(rolePermission);
                     }

@@ -5,6 +5,7 @@ using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.ContactWithUs;
 using OurSite.DataLayer.Entities.Departments;
+using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Entities.Ticketing;
 using OurSite.DataLayer.Entities.TicketMessageing;
 
@@ -32,6 +33,7 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<CheckBoxs> checkBoxes { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<SelectedProjectPlan> selectedProjectPlans { get; set; }
 
 
 

@@ -19,7 +19,6 @@ using System.Text;
 using Microsoft.Extensions.FileProviders;
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
-using OurSite.Core.Security.Authorizations;
 using OurSite.Core.Services.Repositories.Forms;
 using OurSite.Core.Services.Interfaces.Projecta;
 
@@ -125,7 +124,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(options =>
-    options.SerializeAsV2 = true); ;
+    options.SerializeAsV2 = true); 
     app.UseSwaggerUI(options=>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 }

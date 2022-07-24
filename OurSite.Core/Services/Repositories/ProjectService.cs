@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.Services.Interfaces.Projecta;
+using OurSite.Core.Utilities;
+using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
 using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
@@ -12,9 +14,13 @@ namespace OurSite.Core.Services.Repositories
     {
         #region Cons&Dis
         private IGenericReopsitories<Project> ProjectsRepository;
-        public ProjectService(IGenericReopsitories<Project> ProjectsRepository)
+        private IGenericReopsitories<CheckBoxs> CheckBoxRepository;
+        private IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository;
+        public ProjectService(IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository,IGenericReopsitories<Project> ProjectsRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository)
         {
             this.ProjectsRepository = ProjectsRepository;
+            this.CheckBoxRepository=CheckBoxRepository;
+            this.SelectedProjectRepository=SelectedProjectRepository;
         }
 
         public void Dispose()
@@ -35,8 +41,7 @@ namespace OurSite.Core.Services.Repositories
                     Type = prodto.Type,
                     Situation = situations.Pending,
                     UserId = userId,
-                    Description = prodto.Description,
-                    PlanDetails = prodto.PlanDetails,
+                    Description = prodto.Description
 
                 };
 
@@ -44,6 +49,26 @@ namespace OurSite.Core.Services.Repositories
                 {
                     await ProjectsRepository.AddEntity(newPro);
                     await ProjectsRepository.SaveEntity();
+                    if(prodto.PlanDetails is not null)
+                    {
+                        foreach (var PlanItem in prodto.PlanDetails)
+                        {
+                            //if plan is exist
+                            var plan= await CheckBoxRepository.GetEntity(PlanItem);
+                            if(plan is not null){
+                                 //add plan to selected plan
+                                SelectedProjectPlan selectedPlan= new SelectedProjectPlan(){
+                                    CheckBoxId=PlanItem,
+                                    ProjectId=newPro.Id
+                                };
+                                await SelectedProjectRepository.AddEntity(selectedPlan);
+                                
+                            }
+                           
+                        }
+                        await SelectedProjectRepository.SaveEntity();
+                    }
+                   
                     return ResProject.Success;
                 }
                 catch (Exception ex)
@@ -125,7 +150,7 @@ namespace OurSite.Core.Services.Repositories
                 if (prodto.Situation is not null)
                     pro.Situation = (situations)prodto.Situation;
                 if (!string.IsNullOrWhiteSpace(prodto.PlanDetails))
-                    pro.PlanDetails = prodto.PlanDetails;
+                    //add selected project plan to database
                 if (prodto.AdminId is null)
                     pro.AdminId = prodto.AdminId;
                 if (!string.IsNullOrWhiteSpace(prodto.ContractFileName))
@@ -179,9 +204,46 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
 
-        public Task<bool> UploadContract(ReqUploadContractDto profiledto)
+        public async Task<resUploadContract> UploadContract(ReqUploadContractDto reqUploadContract)
         {
-            throw new NotImplementedException();
+            // check if project exist
+            var Project =await ProjectsRepository.GetEntity(reqUploadContract.ProjectId);
+            if(Project is null)
+                return resUploadContract.projectNotFound;
+            //if file not null
+            if(reqUploadContract.ContractFile is null)
+                return resUploadContract.FileNotFound;
+            //upload file and save file name in database
+            var resUpload =await FileUploader.UploadFile(PathTools.ContractUploadPath,reqUploadContract.ContractFile,10);
+            switch (resUpload.Status)
+            {
+                case resFileUploader.Success:
+                    //save filename in database
+                    Project.ContractFileName=resUpload.FileName;
+                    try
+                    {
+                        ProjectsRepository.UpDateEntity(Project);
+                    await ProjectsRepository.SaveEntity();
+                    return resUploadContract.Success;
+                    }
+                    catch (System.Exception)
+                    {
+                        
+                        return resUploadContract.Error;
+                    }
+                    
+                    
+                case resFileUploader.NoContent:
+                    return resUploadContract.FileNotFound;
+                case resFileUploader.ToBig:
+                    return resUploadContract.TooBig;
+                case resFileUploader.InvalidExtention:
+                    return resUploadContract.FileExtentionError;
+                case resFileUploader.Failure:
+                    return resUploadContract.Error;
+                default:
+                    return resUploadContract.Error;
+            }
         }
     }
 }

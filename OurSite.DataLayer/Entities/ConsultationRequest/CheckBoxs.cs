@@ -1,4 +1,5 @@
 ﻿using OurSite.DataLayer.Entities.BaseEntities;
+using OurSite.DataLayer.Entities.Projects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,15 @@ namespace OurSite.DataLayer.Entities.ConsultationRequest
 {
     public class CheckBoxs : BaseEntity
     {
+        #region Properties
         public string CheckBoxName { get; set; }
         public section sectionName { get; set; }
+        #endregion
+
 
         #region Realation
         public ICollection<ItemSelected> ItemSelecteds { get; set; }
+        public ICollection<SelectedProjectPlan> selectedProjectPlans{get;set;}
         #endregion
     }
     public enum section

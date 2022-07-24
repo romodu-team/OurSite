@@ -71,7 +71,7 @@ namespace OurSite.Core.Utilities
 
             var claims= new List<Claim>()
             {
-                    new Claim("Id",admin.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier,admin.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub,admin.Email),
                     new Claim(JwtRegisteredClaimNames.Email,admin.Email),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
@@ -84,10 +84,11 @@ namespace OurSite.Core.Utilities
                var userRoles = await _roleService.GetAdminRole(admin.Id);
 
             
-                claims.Add(new Claim(ClaimTypes.Role, userRoles.Name));
+              
                 
                 if (userRoles != null)
                 {
+                      claims.Add(new Claim(ClaimTypes.Role, userRoles.Name));
                     var roleClaim = await _roleService.GetSelectedPermissionOfRole(userRoles.Id);
                     foreach (var RoleClaim in roleClaim)
                     {
