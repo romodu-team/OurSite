@@ -74,6 +74,22 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         }
         #endregion
 
+        #region View project
+        /// <summary>
+        /// Api for get one project by user {Get request from route}
+        /// </summary>
+        /// <param name="ProjectId"></param>
+        /// <returns></returns>
+        [HttpGet("view-project-by-user/{ProjectId}")]
+        public async Task<IActionResult> GetProject([FromRoute] long ProjectId)
+        {
+            var res = await projectservice.GetProject(ProjectId);
+            if (res is not null)
+                return JsonStatusResponse.Success(ReturnData: res, message: "Project find successfully");
+
+            return JsonStatusResponse.Error("Project Not found");
+        }
+        #endregion
 
     }
 }

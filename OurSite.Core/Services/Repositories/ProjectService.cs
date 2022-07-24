@@ -154,6 +154,7 @@ namespace OurSite.Core.Services.Repositories
             throw new NotImplementedException();
         }
 
+        #region Get project
         public async Task<GetProjectDto> GetProject(long ProjectId)
         {
             var project = await ProjectsRepository.GetEntity(ProjectId);
@@ -175,6 +176,8 @@ namespace OurSite.Core.Services.Repositories
             }
             return null;
         }
+        #endregion
+
 
         public Task<bool> UploadContract(ReqUploadContractDto profiledto)
         {
