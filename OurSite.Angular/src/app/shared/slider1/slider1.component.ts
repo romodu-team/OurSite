@@ -34,6 +34,11 @@ export class Slider1Component implements OnInit {
       id:4,
       url: '../../../assets/imgs/Shot 0088.png'
     },
+    {
+      id:4,
+      url: '../../../assets/imgs/Shot 0088.png'
+    },
+
   ]
 
   selectedPhoto(id:number){
