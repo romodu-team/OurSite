@@ -2,12 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
+using OurSite.DataLayer.Entities.Comments;
 using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.ContactWithUs;
 using OurSite.DataLayer.Entities.Departments;
+using OurSite.DataLayer.Entities.ImageGalleries;
 using OurSite.DataLayer.Entities.Projects;
+using OurSite.DataLayer.Entities.RatingModel;
 using OurSite.DataLayer.Entities.Ticketing;
 using OurSite.DataLayer.Entities.TicketMessageing;
+using OurSite.DataLayer.Entities.WorkSamples;
 
 namespace OurSite.DataLayer.Contexts
 {
@@ -34,6 +38,12 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<SelectedProjectPlan> selectedProjectPlans { get; set; }
+        public DbSet<WorkSample> WorkSamples { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<ImageGallery> ImageGallery { get; set; }
+        public DbSet<ProjectFeatures> ProjectFeatures { get; set; }
+
 
 
 
