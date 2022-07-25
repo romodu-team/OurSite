@@ -1,9 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities;
+using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
@@ -175,7 +177,7 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region list project
-        public Task<ResFilterProjectDto> GetAllProject(ReqFilterProjectDto filter)
+        public async Task<ResFilterProjectDto> GetAllProject(ReqFilterProjectDto filter)
         {
             var ProjectsQuery = ProjectsRepository.GetAllEntity().AsQueryable();
             switch (filter.CreatDateOrderBy)
@@ -193,19 +195,19 @@ namespace OurSite.Core.Services.Repositories
             switch (filter.TypeOrderBy)
             {
                 case ProType.WebDesign:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Type == ProType.WebDesign);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Type == ProType.WebDesign);
                     break;
                 case ProType.seo:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Type == ProType.seo);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Type == ProType.seo);
                     break;
                 case ProType.Graphic:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Type == ProType.Graphic);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Type == ProType.Graphic);
                     break;
                 case ProType.Cms:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Type == ProType.Cms);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Type == ProType.Cms);
                     break;
                 case ProType.Appliction:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Type == ProType.Appliction);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Type == ProType.Appliction);
                     break;
                 case ProType.All:
                     ProjectsQuery = ProjectsRepository.GetAllEntity();
@@ -231,19 +233,19 @@ namespace OurSite.Core.Services.Repositories
             switch (filter.SituationsFilter)
             {
                 case situations.Cancel:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Situation == situations.Cancel);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Situation == situations.Cancel);
                     break;
                 case situations.Doing:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Situation == situations.Doing);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Situation == situations.Doing);
                     break;
                 case situations.AwatingPayment:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Situation == situations.AwatingPayment);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Situation == situations.AwatingPayment);
                     break;
                 case situations.Pending:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Situation == situations.Pending);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Situation == situations.Pending);
                     break;
                 case situations.End:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity().Where(x => x.Situation == situations.End);
+                    ProjectsQuery = ProjectsQuery.Where(x => x.Situation == situations.End);
                     break;
                 case situations.All:
                     ProjectsQuery = ProjectsRepository.GetAllEntity();
@@ -252,14 +254,17 @@ namespace OurSite.Core.Services.Repositories
                     break;
             }
 
-            if(!string.IsNullOrWhiteSpace())
+            if (!string.IsNullOrWhiteSpace(filter.UserName))
+                ProjectsQuery = ProjectsQuery.Include(x => x.User).Where(x => x.User.UserName.Contains(filter.UserName));
+
+            var count = (int)Math.Ceiling(ProjectsQuery.Count() / (double)filter.TakeEntity);
+            var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
+            var list = await ProjectsQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllProjectDto { CreatDate = x.CreateDate, ProjectId = x.Id, Situations = x.Situation, Type = x.Type, UserName = x.User.UserName }).ToListAsync();
 
 
-
-
-
-
-
+            var result = new ResFilterProjectDto();
+            result.SetPaging(pager);
+            return result.SetProject(list);
 
         }
         #endregion

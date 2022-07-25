@@ -7,8 +7,7 @@ namespace OurSite.Core.DTOs.ProjectDtos
     {
         public int PageId { get; set; }
         public int TakeEntity { get; set; }
-        public string? EmailSearchKey { get; set; }
-        public string? UserNameSearchKey { get; set; }
+        public string? UserName { get; set; }
         public ProjectsCreatDateOrderBy? CreatDateOrderBy { get; set; }
         public ProType? TypeOrderBy { get; set; }
         public ProjectRemoveFilter? RemoveFilter { get; set; }

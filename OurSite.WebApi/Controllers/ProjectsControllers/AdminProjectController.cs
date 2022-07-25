@@ -116,10 +116,18 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
             return JsonStatusResponse.Error("Project Not found");
         }
+        #endregion
+
+
         #region Upload contract File
+        /// <summary>
+        /// Api for Upload contract in projrct order {get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Upload-Contract")]
-        public async Task<IActionResult> UploadContract(ReqUploadContractDto request)
+        public async Task<IActionResult> UploadContract([FromBody]ReqUploadContractDto request)
         {
             var res = await projectservice.UploadContract(request);
             switch (res)
@@ -141,8 +149,27 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                     return JsonStatusResponse.Error("server error");
             }
         }
-            
+
         #endregion
+
+        #region Project list
+        /// <summary>
+        /// Api for get projects list by admin{get request from query}
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("project-list")]
+        public async Task<IActionResult> GetAllProject([FromQuery] ReqFilterProjectDto filter)
+        {
+            var projects = await projectservice.GetAllProject(filter);
+            if (projects.Projects.Any())
+            {
+                return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: projects);
+            }
+            return JsonStatusResponse.NotFound(message: "nist ke bekhorishi");
+        }
+        #endregion
+
     }
 }
 

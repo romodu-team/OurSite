@@ -17,7 +17,7 @@ namespace OurSite.Core.DTOs.ProjectDtos
             this.ActivePage = paging.ActivePage;
             return this;
         }
-        public ResFilterProjectDto SetUsers(List<GetAllProjectDto> projects)
+        public ResFilterProjectDto SetProject(List<GetAllProjectDto> projects)
         {
             this.Projects = projects;
             return this;

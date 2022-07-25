@@ -93,8 +93,22 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
 
 
-        #region Get project by admin
-        public async Task<IActionResult> Get
+        #region Get project by user
+        /// <summary>
+        /// Api for get projects list by user {get request from query}
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("project-list")]
+        public async Task<IActionResult> GetAllProject([FromQuery] ReqFilterProjectDto filter)
+        {
+            var projects = await projectservice.GetAllProject(filter);
+            if (projects.Projects.Any())
+            {
+                return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: projects);
+            }
+            return JsonStatusResponse.NotFound(message: "nist ke bekhorishi");
+        }
         #endregion
 
     }
