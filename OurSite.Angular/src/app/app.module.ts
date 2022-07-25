@@ -15,6 +15,8 @@ import { Card2Component } from './shared/card2/card2.component';
 import { Card3Component } from './shared/card3/card3.component';
 import { FeatureComponent } from './pages/feature/feature.component';
 import { Card6Component } from './shared/card6/card6.component';
+import { Card7Component } from './shared/card7/card7.component';
+import { AboutUsComponent } from './pages/about-us/about-us.component';
 
 
 @NgModule({
@@ -31,6 +33,8 @@ import { Card6Component } from './shared/card6/card6.component';
     Card3Component,
     FeatureComponent,
     Card6Component,
+    Card7Component,
+    AboutUsComponent,
 
   ],
   imports: [
