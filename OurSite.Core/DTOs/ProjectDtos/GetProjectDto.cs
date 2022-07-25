@@ -1,4 +1,5 @@
 ﻿using System;
+using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.Projects;
 
 namespace OurSite.Core.DTOs.ProjectDtos
@@ -13,7 +14,7 @@ namespace OurSite.Core.DTOs.ProjectDtos
         public float? Price { get; set; }
         public string Description { get; set; }
         public situations Situation { get; set; }
-        public string? PlanDetails { get; set; }
+        public List<CheckBoxs>? PlanDetails { get; set; }
         public string? ContractFileName { get; set; }
     }
 }

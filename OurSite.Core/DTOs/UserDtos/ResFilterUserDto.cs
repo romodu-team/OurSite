@@ -1,4 +1,5 @@
 ﻿using OurSite.Core.DTOs.Paging;
+using OurSite.Core.DTOs.ProjectDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

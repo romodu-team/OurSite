@@ -91,6 +91,12 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         }
         #endregion
 
+
+
+        #region Get project by admin
+        public async Task<IActionResult> Get
+        #endregion
+
     }
 }
 

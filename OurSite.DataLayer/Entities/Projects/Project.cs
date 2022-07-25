@@ -33,7 +33,8 @@ namespace OurSite.DataLayer.Entities.Projects
         Cms,
         Graphic,
         Appliction,
-        seo
+        seo,
+        All
     }
 
     public enum situations
@@ -42,7 +43,8 @@ namespace OurSite.DataLayer.Entities.Projects
         Doing,
         AwatingPayment,
         Pending,
-        End
+        End,
+        All
     }
 
 }
