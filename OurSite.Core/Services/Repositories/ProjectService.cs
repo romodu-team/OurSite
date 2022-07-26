@@ -84,8 +84,9 @@ namespace OurSite.Core.Services.Repositories
                         return ResProject.Faild; //error in save
                     }
                 }
+                return ResProject.InvalidInput;
             }
-            return ResProject.InvalidInput;
+            return ResProject.NotFound;
         }
         #endregion
 
@@ -261,7 +262,7 @@ namespace OurSite.Core.Services.Repositories
             }
 
             if (!string.IsNullOrWhiteSpace(filter.UserName))
-                ProjectsQuery = ProjectsQuery.Include(x => x.User).Where(x => x.User.UserName.Contains(filter.UserName));
+                ProjectsQuery = ProjectsQuery.Include(x => x.User).Where(x => x.User.UserName.Contains(filter.UserName.ToLower()));
 
             var count = (int)Math.Ceiling(ProjectsQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
