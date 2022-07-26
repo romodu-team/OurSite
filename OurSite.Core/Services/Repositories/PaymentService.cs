@@ -1,8 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.Payment;
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.Services.Interfaces.Projecta;
+using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.DataLayer.Entities.Payments;
 using OurSite.DataLayer.Interfaces;
 using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
@@ -56,16 +58,93 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-
-        public Task<ResFilterPayDto> GetAllProject(ReqFilterPayDto filter)
+        #region Get all project
+        public async Task<ResFilterPayDto> GetAllProject(ReqFilterPayDto filter)
         {
-            throw new NotImplementedException();
+            var PayQuery = PaymentRepositories.GetAllEntity().AsQueryable();
+            switch (filter.CreatDateOrderBy)
+            {
+                case PayDateOrderBy.CreateDateAsc:
+                    PayQuery = PayQuery.OrderBy(x => x.CreateDate);
+                    break;
+                case PayDateOrderBy.CreateDateDec:
+                    PayQuery = PayQuery.OrderByDescending(x => x.CreateDate);
+                    break;
+                case PayDateOrderBy.DatePayAsc:
+                    PayQuery = PayQuery.OrderBy(x => x.DatePay);
+                    break;
+                case PayDateOrderBy.DatePayDec:
+                    PayQuery = PayQuery.OrderByDescending(x => x.DatePay);
+                    break;
+                default:
+                    break;
+            }
+
+            switch (filter.StatusPay)
+            {
+                case StatusPay.Success:
+                    PayQuery = PayQuery.Where(x => x.status == StatusPay.Success);
+                    break;
+                case StatusPay.Faild:
+                    PayQuery = PayQuery.Where(x => x.status == StatusPay.Faild);
+                    break;
+                case StatusPay.Pending:
+                    PayQuery = PayQuery.Where(x => x.status == StatusPay.Pending);
+                    break;
+                default:
+                    break;
+            }
+
+            switch (filter.RemoveFilter)
+            {
+                case PayRemoveFilter.Deleted:
+                    PayQuery = PayQuery.Where(x => x.IsRemove == true);
+                    break;
+                case PayRemoveFilter.NotDeleted:
+                    PayQuery = PayQuery.Where(x => x.IsRemove == false);
+                    break;
+                case PayRemoveFilter.All:
+                    PayQuery = PaymentRepositories.GetAllEntity();
+                    break;
+                default:
+                    break;
+
+            }
+            if (!string.IsNullOrWhiteSpace(filter.UserName))
+                PayQuery = PayQuery.Include(x => x.User).Where(x => x.User.UserName.Contains(filter.UserName.ToLower()));
+
+            var count = (int)Math.Ceiling(PayQuery.Count() / (double)filter.TakeEntity);
+            var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
+            var list = await PayQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllPayDto { DatePay = (DateTime)x.DatePay, Id = x.Id, status = (StatusPay)x.status, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
+
+            var result = new ResFilterPayDto();
+            result.SetPaging(pager);
+            return result.SetPay(list);
+
         }
 
-        public Task<GetPayment> GetPayment(long PayId)
+        #endregion
+
+        #region View payment
+        public async Task<GetPayment> GetPayment(long PayId)
         {
-            throw new NotImplementedException();
+            var payment = await PaymentRepositories.GetEntity(PayId);
+            if (payment is not null)
+            {
+                GetPayment getPayment = new GetPayment()
+                {
+                    Titel = payment.Titel,
+                    status = (StatusPay)payment.status,
+                    Description = payment.Description,
+                    Price = payment.Price,
+                    ProId = payment.ProId,
+                    UserId = payment.UserId
+                };
+                return getPayment;
+            }
+            return null;
         }
+        #endregion
 
         #region creat payment by admin (use in admin payment controller)
         public async Task<ResProject> CreatePayment(CreatePaymentDto paydto, long AdminId)

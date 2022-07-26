@@ -8,16 +8,17 @@ namespace OurSite.Core.DTOs.Payment
         public int PageId { get; set; }
         public int TakeEntity { get; set; }
         public string? UserName { get; set; }
-        public PayCreatDateOrderBy? CreatDateOrderBy { get; set; }
+        public PayDateOrderBy? CreatDateOrderBy { get; set; }
         public StatusPay? StatusPay { get; set; }
         public PayRemoveFilter? RemoveFilter { get; set; }
-        public DateTime DatePay { get; set; }
 
     }
-    public enum PayCreatDateOrderBy
+    public enum PayDateOrderBy
     {
         CreateDateAsc,
-        CreateDateDec
+        CreateDateDec,
+        DatePayAsc,
+        DatePayDec
     }
 
     public enum PayRemoveFilter
