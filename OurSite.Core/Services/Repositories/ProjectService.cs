@@ -35,48 +35,54 @@ namespace OurSite.Core.Services.Repositories
         #region Creat project
         public async Task<ResProject> CreateProject(CreatProjectDto prodto, long userId)
         {
-            if (!string.IsNullOrWhiteSpace(prodto.Name) && !string.IsNullOrWhiteSpace(prodto.Description))
+            var user = await ProjectsRepository.GetAllEntity().AnyAsync(x => x.UserId == userId);
+            if (user is true)
             {
-                Project newPro = new Project()
+                if (!string.IsNullOrWhiteSpace(prodto.Name) && !string.IsNullOrWhiteSpace(prodto.Description))
                 {
-                    IsRemove = false,
-                    Name = prodto.Name,
-                    Type = prodto.Type,
-                    Situation = situations.Pending,
-                    UserId = userId,
-                    Description = prodto.Description
-
-                };
-
-                try
-                {
-                    await ProjectsRepository.AddEntity(newPro);
-                    await ProjectsRepository.SaveEntity();
-                    if(prodto.PlanDetails is not null)
+                    Project newPro = new Project()
                     {
-                        foreach (var PlanItem in prodto.PlanDetails)
+                        IsRemove = false,
+                        Name = prodto.Name,
+                        Type = prodto.Type,
+                        Situation = situations.Pending,
+                        UserId = userId,
+                        Description = prodto.Description
+
+                    };
+
+                    try
+                    {
+                        await ProjectsRepository.AddEntity(newPro);
+                        await ProjectsRepository.SaveEntity();
+                        if (prodto.PlanDetails is not null)
                         {
-                            //if plan is exist
-                            var plan= await CheckBoxRepository.GetEntity(PlanItem);
-                            if(plan is not null){
-                                 //add plan to selected plan
-                                SelectedProjectPlan selectedPlan= new SelectedProjectPlan(){
-                                    CheckBoxId=PlanItem,
-                                    ProjectId=newPro.Id
-                                };
-                                await SelectedProjectRepository.AddEntity(selectedPlan);
-                                
+                            foreach (var PlanItem in prodto.PlanDetails)
+                            {
+                                //if plan is exist
+                                var plan = await CheckBoxRepository.GetEntity(PlanItem);
+                                if (plan is not null)
+                                {
+                                    //add plan to selected plan
+                                    SelectedProjectPlan selectedPlan = new SelectedProjectPlan()
+                                    {
+                                        CheckBoxId = PlanItem,
+                                        ProjectId = newPro.Id
+                                    };
+                                    await SelectedProjectRepository.AddEntity(selectedPlan);
+
+                                }
+
                             }
-                           
+                            await SelectedProjectRepository.SaveEntity();
                         }
-                        await SelectedProjectRepository.SaveEntity();
+
+                        return ResProject.Success;
                     }
-                   
-                    return ResProject.Success;
-                }
-                catch (Exception ex)
-                {
-                    return ResProject.Faild; //error in save
+                    catch (Exception ex)
+                    {
+                        return ResProject.Faild; //error in save
+                    }
                 }
             }
             return ResProject.InvalidInput;
