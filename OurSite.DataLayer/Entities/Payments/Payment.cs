@@ -9,7 +9,7 @@ namespace OurSite.DataLayer.Entities.Payments
     {
         #region Property
         public string Titel { get; set; }
-        public StatusPay status { get; set; }
+        public StatusPay? status { get; set; }
         public long UserId { get; set; }
         public long AdminId { get; set; }
         public string Price { get; set; }

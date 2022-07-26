@@ -22,18 +22,40 @@ namespace OurSite.Core.Services.Repositories
         {
             throw new NotImplementedException();
         }
+        #endregion
 
-        public Task<CreatProjectDto.ResProject> EditPay(EditPayDto Paydto)
+        #region Edit
+        public async Task<ResProject> EditPay(EditPayDto Paydto)
         {
-            throw new NotImplementedException();
+            var res = await PaymentRepositories.GetAllEntity().AnyAsync(x => x.Id == Paydto.ProId);
+            if (res is true)
+            {
+                var pay = await PaymentRepositories.GetEntity(Paydto.ProId);
+                if (!string.IsNullOrWhiteSpace(Paydto.Titel))
+                    pay.Titel = Paydto.Titel;
+                if (Paydto.status is not null)
+                    pay.status = Paydto.status;
+                if (!string.IsNullOrWhiteSpace(Paydto.Price))
+                    pay.Price = Paydto.Price;
+                if (!string.IsNullOrWhiteSpace(Paydto.Description))
+                    pay.Description = Paydto.Description;
+
+
+                try
+                {
+                    PaymentRepositories.UpDateEntity(pay);
+                    PaymentRepositories.SaveEntity();
+                    return ResProject.Success;
+                }
+                catch (Exception ex)
+                {
+                    return ResProject.Faild;
+                }
+            }
+            return ResProject.NotFound;
         }
         #endregion
 
-
-        public Task<CreatProjectDto.ResProject> EditProject(EditPayDto Paydto)
-        {
-            throw new NotImplementedException();
-        }
 
         public Task<ResFilterPayDto> GetAllProject(ReqFilterPayDto filter)
         {
