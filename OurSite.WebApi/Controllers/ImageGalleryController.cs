@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using OurSite.Core.DTOs.ImageGallery;
+using OurSite.Core.DTOs.ImageGalleryDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.ImageGalleries;
@@ -16,9 +16,9 @@ public class ImageGalleryController:Controller
         this.imageGalleryService=imageGalleryService;
     }
     [HttpPost("add-image-gallery")]
-    public async Task<IActionResult> AddImageToGallery([FromBody]SiteSections SiteSection,[FromBody] long WorkSampleId,[FromBody] IFormFile Image)
+    public async Task<IActionResult> AddImageToGallery([FromForm] ReqAddImageToGallery request)
     {
-        var result = await imageGalleryService.AddImageToGallery(SiteSection,WorkSampleId,Image);
+        var result = await imageGalleryService.AddImageToGallery(request.SiteSection,request.WorkSampleId,request.Image,request.ImageAlt);
         switch (result)
         {
             case ResAddImageToGallery.Success:
@@ -33,13 +33,15 @@ public class ImageGalleryController:Controller
                 return JsonStatusResponse.Error("image file not found");
             case ResAddImageToGallery.worksampleNotFound:
                 return JsonStatusResponse.Error("worksample not found");
+            case ResAddImageToGallery.SiteSectionNotValid:
+                return JsonStatusResponse.Error("Site Section is Not Valid");
 
             default:
                 return JsonStatusResponse.Error("server error");
         }
     }
     [HttpDelete("Delete-image-from-gallery")]
-    public async Task<IActionResult> DeleteImageFromGallery([FromBody]long ImageId)
+    public async Task<IActionResult> DeleteImageFromGallery(long ImageId)
     {
         var result = await imageGalleryService.DeleteImageFromGallery(ImageId);
         switch (result)
@@ -56,5 +58,18 @@ public class ImageGalleryController:Controller
             default:
                 return JsonStatusResponse.Error("server error");
         }
+    }
+
+    [HttpGet("get-gallery")]
+    public async Task<IActionResult> GetImageGallery(SiteSections section,long SectionId)
+    {
+        if(section==SiteSections.WorkSamples){
+            var result = await imageGalleryService.GetActiveGalleryByWorkSampleId(SectionId);
+            if(result.Any())
+                return JsonStatusResponse.Success(result,"successfull");
+            else
+                return JsonStatusResponse.Error("there is no image");
+        }
+        return JsonStatusResponse.Error("site section invalid");
     }
 }

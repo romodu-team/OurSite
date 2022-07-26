@@ -1,4 +1,4 @@
-namespace OurSite.Core.DTOs.ImageGallery;
+namespace OurSite.Core.DTOs.ImageGalleryDtos;
 
 public class GetGalleryDto
 {
@@ -19,5 +19,6 @@ public enum ResAddImageToGallery{
     ToBig,
     NoContent,
     InvalidExtention,
-    worksampleNotFound
+    worksampleNotFound,
+    SiteSectionNotValid
 }

@@ -1,7 +1,7 @@
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using OurSite.Core.DTOs.ImageGallery;
+using OurSite.Core.DTOs.ImageGalleryDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.ImageGalleries;
@@ -20,8 +20,11 @@ public class ImageGalleryService : IimageGalleryService
         this.WorkSampleRepository=WorkSampleRepository;
     }
 
-    public async Task<ResAddImageToGallery> AddImageToGallery(SiteSections SiteSection, long WorkSampleId, IFormFile Image)
-    {   //check if workspace is exist
+    public async Task<ResAddImageToGallery> AddImageToGallery(SiteSections SiteSection, long WorkSampleId, IFormFile Image,string? alt)
+    {   //check if siteSection is valid
+       if(!SiteSections.IsDefined(SiteSection))
+            return ResAddImageToGallery.SiteSectionNotValid;
+        //check if workspace is exist
         var workspace= await WorkSampleRepository.GetEntity(WorkSampleId);
         if(workspace is null)
             return ResAddImageToGallery.worksampleNotFound;
@@ -41,7 +44,15 @@ public class ImageGalleryService : IimageGalleryService
                 case resFileUploader.Success:
                     //add imageGallery record to database
 
-                    var imageGallery= new ImageGallery(){ImageName=result.FileName,IsRemove=false,SiteSection=SiteSection,SectionId=WorkSampleId,ImagePath=PathTools.GetImageGallery+result.FileName};
+                    var imageGallery= new ImageGallery()
+                    {
+                        ImageName=result.FileName,
+                    IsRemove=false,
+                    SiteSection=SiteSection,
+                    SectionId=WorkSampleId,
+                    ImagePath=PathTools.GetImageGallery+result.FileName,
+                    ImageAlt=alt
+                    };
                     try
                     {
                          await ImageGalleryRepository.AddEntity(imageGallery);
@@ -66,7 +77,7 @@ public class ImageGalleryService : IimageGalleryService
     {
         //check if image is exist
         var image = await ImageGalleryRepository.GetEntity(ImageId);
-        if(image is not null)
+        if(image is null)
             return ResDeleteImage.NotFound;
         //check if image successfully deleted
         bool res = await ImageGalleryRepository.DeleteEntity(image.Id);
@@ -79,7 +90,7 @@ public class ImageGalleryService : IimageGalleryService
 
     public async Task<List<GetGalleryDto>> GetActiveGalleryByWorkSampleId(long WorkSampleId)
     {
-       var gallery =await ImageGalleryRepository.GetAllEntity().Where(g=>g.SiteSection==SiteSections.WorkSamples && g.SectionId==WorkSampleId).ToListAsync();
+       var gallery =await ImageGalleryRepository.GetAllEntity().Where(g=>g.SiteSection==SiteSections.WorkSamples && g.SectionId==WorkSampleId && g.IsRemove==false).ToListAsync();
        List<GetGalleryDto> imagePaths= new List<GetGalleryDto>();
        foreach (var image in gallery)
        {

@@ -8,6 +8,7 @@ public class ImageGallery:BaseEntity
     public string ImagePath { get; set; }
     public SiteSections SiteSection { get; set; }
     public long? SectionId { get; set; }
+    public string? ImageAlt {get;set;}
 }
 public enum SiteSections{
     WorkSamples,
