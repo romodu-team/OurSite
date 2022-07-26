@@ -9,12 +9,7 @@ namespace OurSite.Core.Services.Interfaces.Projecta
         Task<ResProject> CreatePayment(CreatePaymentDto paydto, long AdminId);
         Task<GetPayment> GetPayment(long PayId);
         Task<ResFilterPayDto> GetAllProject(ReqFilterPayDto filter);
-        Task<ResProject> EditProject(EditPayDto Paydto);
-
-
-
-
-
+        Task<ResProject> EditPay(EditPayDto Paydto);
 
     }
 }
