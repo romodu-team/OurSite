@@ -19,6 +19,13 @@ import { Card7Component } from './shared/card7/card7.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
 
 
+import { DemoMainComponent } from './pages/demo/demo-main/demo-main.component';
+import { Card4Component } from './shared/card4/card4.component';
+
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatExpansionModule} from '@angular/material/expansion';
+import { Slider1Component } from './shared/slider1/slider1.component';
 
 @NgModule({
   declarations: [
@@ -38,11 +45,17 @@ import { AboutUsComponent } from './pages/about-us/about-us.component';
     AboutUsComponent,
     Card7Component,
 
+    DemoMainComponent,
+    Card4Component,
+    Slider1Component
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatSlideToggleModule,
+    MatExpansionModule
   ],
   providers: [],
   bootstrap: [AppComponent]
