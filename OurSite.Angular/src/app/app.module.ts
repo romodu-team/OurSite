@@ -19,6 +19,7 @@ import { Card7Component } from './shared/card7/card7.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,6 +36,7 @@ import { AboutUsComponent } from './pages/about-us/about-us.component';
     Card6Component,
     Card7Component,
     AboutUsComponent,
+    Card7Component,
 
   ],
   imports: [
