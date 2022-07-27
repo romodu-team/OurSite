@@ -6,7 +6,6 @@ namespace OurSite.DataLayer.Entities.Comments;
 
 public class Comment:BaseEntity
 {
-    public long WorkSampleId { get; set; }
     public string Text { get; set; }
     public string FullName { get; set; }
     public string Title { get; set; }
@@ -14,6 +13,4 @@ public class Comment:BaseEntity
     public long ParentCommentId { get; set; }
     [ForeignKey("ParentCommentId")]
     public Comment ParentComment { get; set; }
-    [ForeignKey("WorkSampleId")]
-    public WorkSample WorkSample { get; set; }
 }
