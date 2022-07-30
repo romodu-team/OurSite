@@ -28,7 +28,19 @@ public class WorkSampleService : IWorkSampleService
 
         };
         try
-        {
+        {    if(request.HeaderImage is not null){
+               var res= await FileUploader.UploadFile(PathTools.WorkSampleImages,request.HeaderImage,10);
+               if(res.Status!=resFileUploader.Success)
+                    return new ResCreateWorkSampleDto{WorkSampleID=-1,resCreateWorkSample=res.Status};
+                worksample.HeaderImageName=res.FileName;
+            }
+             if(request.LogoImage is not null){
+               var res= await FileUploader.UploadFile(PathTools.WorkSampleImages,request.LogoImage,10);
+               if(res.Status!=resFileUploader.Success)
+                    return new ResCreateWorkSampleDto{WorkSampleID=-1,resCreateWorkSample=res.Status};
+               worksample.LogoImageName=res.FileName;
+            }
+            
             await _WorkSampleRepository.AddEntity(worksample);
             await _WorkSampleRepository.SaveEntity();
 
@@ -59,15 +71,14 @@ public class WorkSampleService : IWorkSampleService
                 await _ProjectFeatureRepository.SaveEntity();
             }
 
-            if(request.HeaderImageName is not null){
-                
-            }
-           // return worksample.Id; not correct
+           
+        
+            return new ResCreateWorkSampleDto{WorkSampleID=worksample.Id,resCreateWorkSample=resFileUploader.Success};
         }
         catch (System.Exception)
         {
             
-            return -1;
+            return new ResCreateWorkSampleDto{WorkSampleID=-1,resCreateWorkSample=resFileUploader.Failure};
         }
     }   
 

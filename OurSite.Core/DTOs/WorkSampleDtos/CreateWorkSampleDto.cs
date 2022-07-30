@@ -10,8 +10,8 @@ public class CreateWorkSampleDto
     public string? CustomUrl { get; set; }
     [AllowHtml]
     public string? ShortDescription { get; set; }
-    public IFormFile? LogoImageName { get; set; }
-    public IFormFile? HeaderImageName { get; set; }
+    public IFormFile? LogoImage { get; set; }
+    public IFormFile? HeaderImage { get; set; }
     [AllowHtml]
     public string? Content { get; set; }
     public List<string>? ProjectFeatures { get; set; }

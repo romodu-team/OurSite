@@ -18,7 +18,8 @@ namespace OurSite.Core.Utilities
         
         public static string ImageGallery = Path.Combine(Directory.GetCurrentDirectory(), "upload\\images\\Gallery");
         public static string GetImageGallery = "/upload/images/Gallery/";
-
+        public static string WorkSampleImages = Path.Combine(Directory.GetCurrentDirectory(), "upload\\images\\WorkSample");
+        public static string GetWorkSampleImages = "/upload/images/WorkSample/";
         public static string FileUploadPath =Path.Combine(Directory.GetCurrentDirectory() ,"upload\\File");
         public static string ContractUploadPath =Path.Combine(Directory.GetCurrentDirectory() ,"upload\\File\\Contracts");
     }
