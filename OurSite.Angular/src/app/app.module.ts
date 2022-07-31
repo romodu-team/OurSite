@@ -26,6 +26,10 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { Slider1Component } from './shared/slider1/slider1.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import { ContactUsComponent } from './pages/contact-us/contact-us.component';
+import { Dialog1Component } from './pages/contact-us/dialog1/dialog1.component';
+import { Dialog2Component } from './pages/contact-us/dialog2/dialog2.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +51,10 @@ import { Slider1Component } from './shared/slider1/slider1.component';
 
     DemoMainComponent,
     Card4Component,
-    Slider1Component
+    Slider1Component,
+    ContactUsComponent,
+    Dialog1Component,
+    Dialog2Component
   ],
   imports: [
     BrowserModule,
@@ -55,7 +62,8 @@ import { Slider1Component } from './shared/slider1/slider1.component';
     HttpClientModule,
     BrowserAnimationsModule,
     MatSlideToggleModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]
