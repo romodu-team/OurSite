@@ -85,18 +85,23 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         [HttpDelete("admin-delete-project")]
         public async Task<IActionResult> DeleteProject([FromBody]DeleteProjectDto ReqDeleteProject)
         {
-            var remove = await projectservice.DeleteProject(ReqDeleteProject);
-            switch (remove)
+            if (User.Identity.IsAuthenticated)
             {
-                case ResProject.Success:
-                    return JsonStatusResponse.Success("The project has been deleted successfully");
-                case ResProject.Error:
-                    return JsonStatusResponse.Error("Project delete failed. Try again later.");
-                case ResProject.NotFound:
-                    return JsonStatusResponse.NotFound("Project not Found");
-                default:
-                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                var remove = await projectservice.DeleteProject(ReqDeleteProject,true);
+                switch (remove)
+                {
+                    case ResProject.Success:
+                        return JsonStatusResponse.Success("The project has been deleted successfully");
+                    case ResProject.Error:
+                        return JsonStatusResponse.Error("Project delete failed. Try again later.");
+                    case ResProject.NotFound:
+                        return JsonStatusResponse.NotFound("Project not Found");
+                    default:
+                        return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                }
             }
+            return JsonStatusResponse.Error("u didnt login. please login first");
+
         }
         #endregion
 
