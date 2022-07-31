@@ -1,6 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.WorkSampleDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
+using OurSite.Core.Utilities.Extentions.Paging;
+using OurSite.DataLayer.Entities.RatingModel;
 using OurSite.DataLayer.Entities.WorkSamples;
 using OurSite.DataLayer.Interfaces;
 
@@ -10,10 +14,15 @@ public class WorkSampleService : IWorkSampleService
 {
     private IGenericReopsitories<WorkSample> _WorkSampleRepository;
     private IGenericReopsitories<ProjectFeatures> _ProjectFeatureRepository;
-    public WorkSampleService(IGenericReopsitories<WorkSample> WorkSampleRepository,IGenericReopsitories<ProjectFeatures> ProjectFeatureRepository)
+    private IGenericReopsitories<Like> _LikeRepository;
+    private IimageGalleryService _ImageGalleryService;
+
+    public WorkSampleService(IGenericReopsitories<WorkSample> WorkSampleRepository,IGenericReopsitories<ProjectFeatures> ProjectFeatureRepository,IGenericReopsitories<Like> LikeRepository,IimageGalleryService ImageGalleryService)
     {
         _ProjectFeatureRepository=ProjectFeatureRepository;
         _WorkSampleRepository=WorkSampleRepository;
+        _LikeRepository=LikeRepository;
+        _ImageGalleryService=ImageGalleryService;
     }
     
     public async Task<ResCreateWorkSampleDto> CreateWorkSample(CreateWorkSampleDto request)
@@ -92,13 +101,105 @@ public class WorkSampleService : IWorkSampleService
         throw new NotImplementedException();
     }
 
-    public Task<List<WorkSampleDto>> GetAllWorkSamples()
+    public async Task<ResFilterWorkSampleDto> GetAllWorkSamples(ReqFilterWorkSampleDto request)
     {
-        throw new NotImplementedException();
+        var WorkSampleQuery= _WorkSampleRepository.GetAllEntity().Where(w=>w.IsRemove==false).AsQueryable();
+
+        //orderby
+        if(request.OrderBy is not null){
+            switch (request.OrderBy)
+            {
+                case WorkSampleOrderBy.DateAsc:
+                    WorkSampleQuery=WorkSampleQuery.OrderBy(w=>w.CreateDate);
+                    break;
+                case WorkSampleOrderBy.DateDec:
+                    WorkSampleQuery=WorkSampleQuery.OrderByDescending(w=>w.CreateDate);
+                    break;
+                case WorkSampleOrderBy.LikeAsc://check if likes is null for errors
+                    WorkSampleQuery=WorkSampleQuery.Include(w=>w.Likes).OrderBy(w=>w.Likes.Count());
+                    break;
+                case WorkSampleOrderBy.LikeDec:
+                    WorkSampleQuery=WorkSampleQuery.Include(w=>w.Likes).OrderByDescending(w=>w.Likes.Count());
+                    break;
+                default:
+                    break;
+            }
+        }
+        //category
+
+            //بدست اوردن ای دی نمونه کار هایی که تو اون دسته بندی ها هستن
+            //گرفتن نمونه کار هایی که ای دی شون تو لیست بالاییه
+            if(request.CategoriesId is not null){
+                WorkSampleQuery= WorkSampleQuery.Include(w=>w.workSampleInCategories).SelectMany(x=>x.workSampleInCategories.Where(c=>request.CategoriesId.Contains(c.WorkSampleCategoryId)));
+            }
+           
+        //pagination
+
+        var count = (int)Math.Ceiling(WorkSampleQuery.Count() / (double)request.TakeEntity);
+            var pager = Pager.Build(count, request.PageId, request.TakeEntity);
+
+            var list =await WorkSampleQuery.Include(u=>u.ProjectFeatures.Where
+            (p=>p.FeatureType==WorkSampleFeatureType.ProjectFeatured))
+            .Paging(pager).Select(u=> new GetAllWorkSampleDto {CoustomUrl=u.CustomUrl,LogoPath=PathTools.GetWorkSampleImages+u.LogoImageName,ProjectName=u.ProjectName,Like=u.Likes.Count(),FeaturesList=u.ProjectFeatures.Select(o=>o.Title).Take(4).ToList()}).ToListAsync();
+            
+            var result = new ResFilterWorkSampleDto();
+            result.SetPaging(pager);
+            return result.SetWorkSamples(list);
     }
 
-    public Task<WorkSampleDto> GetWorkSample(long ProjectId)
+    public async Task<WorkSampleDto> GetWorkSample(long WorkSampleId)
     {
-        throw new NotImplementedException();
+        //get worksample
+        var WorkSample=await _WorkSampleRepository.GetEntity(WorkSampleId);
+        if(WorkSample is not null)
+        {   var worksampleDto= new WorkSampleDto(){
+            Content=WorkSample.Content,
+            CustomUrl=WorkSample.CustomUrl,
+            EmployerName=WorkSample.EmployerName,
+            HeaderImagePath=PathTools.GetWorkSampleImages+WorkSample.HeaderImageName,
+            LogoImagePath=PathTools.GetWorkSampleImages+WorkSample.LogoImageName,
+            ProjectName=WorkSample.ProjectName,
+            ShortDescription=WorkSample.ShortDescription,
+            ProjectFeatures=new List<string>(),
+            DesignedPages=new List<string>(),
+            ImageGalleryPaths=new List<string>()
+        };
+            //get imageGallery
+            var ImageGallary=await _ImageGalleryService.GetActiveGalleryByWorkSampleId(WorkSampleId);
+            if(ImageGallary.Any())
+            {
+                foreach (var Image in ImageGallary)
+                {
+                    worksampleDto.ImageGalleryPaths.Add(Image.ImagePath);
+                }
+            }
+            //get likes
+            int Like= _LikeRepository.GetAllEntity().Count(l=>l.WorkSampleId==WorkSampleId&&l.IsRemove==false);
+            worksampleDto.Likes=Like>0?Like:0;
+            //get project features
+            var ProjectFeatures=await _ProjectFeatureRepository.GetAllEntity().Where(p=>p.FeatureType==WorkSampleFeatureType.ProjectFeatured && p.WorkSampleId==WorkSampleId && p.IsRemove==false).ToListAsync();
+
+            if(ProjectFeatures.Any())
+            {
+                foreach (var Feature in ProjectFeatures)
+                {
+                    worksampleDto.ProjectFeatures.Add(Feature.Title);
+                }
+            }
+            //get Designed pages
+            var DesignedPages=await _ProjectFeatureRepository.GetAllEntity().Where(p=>p.FeatureType==WorkSampleFeatureType.DesignedPages && p.WorkSampleId==WorkSampleId && p.IsRemove==false).ToListAsync();
+
+            if(DesignedPages.Any())
+            {
+                foreach (var Pages in DesignedPages)
+                {
+                    worksampleDto.DesignedPages.Add(Pages.Title);
+                }
+            }
+
+            return worksampleDto;
+        }
+        return null;
+        
     }
 }

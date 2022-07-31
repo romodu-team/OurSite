@@ -10,8 +10,8 @@ namespace OurSite.Core.Services.Interfaces
     public interface IWorkSampleService
     {
         Task<ResCreateWorkSampleDto> CreateWorkSample(CreateWorkSampleDto request);
-        Task<List<WorkSampleDto>> GetAllWorkSamples();
-        Task<WorkSampleDto> GetWorkSample(long ProjectId);
+        Task<ResFilterWorkSampleDto> GetAllWorkSamples(ReqFilterWorkSampleDto request);
+        Task<WorkSampleDto> GetWorkSample(long WorkSampleId);
         Task<ResWorkSample> DeleteWorkSample(DeleteWorkSampleDto  request);
 
         Task<ResWorkSample> EditWorkSample(EditWorkSampleDto  request);
