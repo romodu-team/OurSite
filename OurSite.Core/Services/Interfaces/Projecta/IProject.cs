@@ -11,7 +11,7 @@ namespace OurSite.Core.Services.Interfaces.Projecta
         Task<ResFilterProjectDto> GetAllProject(ReqFilterProjectDto filter);
         Task<GetProjectDto> GetProject(long ProjectId);
         Task<ResProject> CreateProject(CreatProjectDto prodto, long userId);
-        Task<ResProject> DeleteProject(DeleteProjectDto ReqDeleteProject);
+        Task<ResProject> DeleteProject(DeleteProjectDto ReqDeleteProject,bool IsAdmin);
 
         #region Admin
         Task<ResProject> EditProject(EditProjectDto prodto);

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.DTOs.UserDtos;
+using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities;
 using OurSite.Core.Utilities.Extentions.Paging;
@@ -19,11 +20,13 @@ namespace OurSite.Core.Services.Repositories
         private IGenericReopsitories<Project> ProjectsRepository;
         private IGenericReopsitories<CheckBoxs> CheckBoxRepository;
         private IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository;
-        public ProjectService(IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository,IGenericReopsitories<Project> ProjectsRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository)
+        private IUserService UserService;
+        public ProjectService(IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository,IGenericReopsitories<Project> ProjectsRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository, IUserService userService)
         {
             this.ProjectsRepository = ProjectsRepository;
             this.CheckBoxRepository=CheckBoxRepository;
             this.SelectedProjectRepository=SelectedProjectRepository;
+            this.UserService = userService;
         }
 
         public void Dispose()
@@ -35,8 +38,8 @@ namespace OurSite.Core.Services.Repositories
         #region Creat project
         public async Task<ResProject> CreateProject(CreatProjectDto prodto, long userId)
         {
-            var user = await ProjectsRepository.GetAllEntity().AnyAsync(x => x.UserId == userId);
-            if (user is true)
+            var user = await UserService.ViewUser(userId);
+            if (user is not null)
             {
                 if (!string.IsNullOrWhiteSpace(prodto.Name) && !string.IsNullOrWhiteSpace(prodto.Description))
                 {
@@ -91,12 +94,13 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Delete project
-        public async Task<ResProject> DeleteProject(DeleteProjectDto ReqDeleteProject)
+        public async Task<ResProject> DeleteProject(DeleteProjectDto ReqDeleteProject,bool IsAdmin)
         {
             var project = await ProjectsRepository.GetEntity(ReqDeleteProject.ProId);
+
             if(project is not null)
             {
-                if(ReqDeleteProject.AdminId is not null && ReqDeleteProject.UserId is null)
+                if(IsAdmin)
                 {
                     var IsRemove = await ProjectsRepository.DeleteEntity(project.Id);
                     if (IsRemove is true)
