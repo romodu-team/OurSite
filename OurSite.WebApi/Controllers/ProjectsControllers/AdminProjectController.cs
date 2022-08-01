@@ -159,7 +159,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Project list
         /// <summary>
-        /// Api for get projects list by admin{get request from query}
+        /// Api for get projects list{get request from query}
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
