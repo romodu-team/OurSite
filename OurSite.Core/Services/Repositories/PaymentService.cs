@@ -59,7 +59,7 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Get all project
-        public async Task<ResFilterPayDto> GetAllProject(ReqFilterPayDto filter)
+        public async Task<ResFilterPayDto> GetAllPayments(ReqFilterPayDto filter)
         {
             var PayQuery = PaymentRepositories.GetAllEntity().AsQueryable();
             switch (filter.CreatDateOrderBy)

@@ -114,7 +114,7 @@ namespace OurSite.WebApi.Controllers
 
 
 
-        #region View payment
+        #region get payment
         /// <summary>
         /// Api for show one payment to user {get request from route}
         /// </summary>
@@ -129,6 +129,50 @@ namespace OurSite.WebApi.Controllers
                 return JsonStatusResponse.Success("success");
             }
             return JsonStatusResponse.NotFound("payment not founf");
+        }
+        #endregion
+
+
+        #region get all payments
+        /// <summary>
+        /// Api for get pay list {get request from query}
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("payments-list")]
+        public async Task<IActionResult> GetAllPayments([FromQuery] ReqFilterPayDto filter)
+        {
+            var Pay = await Paymentservice.GetAllPayments(filter);
+            if (Pay.Pay.Any())
+            {
+                return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: Pay);
+            }
+            return JsonStatusResponse.NotFound(message: "nist ke bekhorishi");
+        }
+        #endregion
+
+
+        #region Edit pay
+        /// <summary>
+        /// Api for edit payments details by admin {get request from body}
+        /// </summary>
+        /// <param name="prodto"></param>
+        /// <returns></returns>
+        [HttpPut("edit-payment")]
+        public async Task<IActionResult> EditPay([FromBody] EditPayDto Paydto)
+        {
+            var res = await Paymentservice.EditPay(Paydto);
+            switch (res)
+            {
+                case ResProject.Success:
+                    return JsonStatusResponse.Success("The payment has been updated successfully");
+                case ResProject.Faild:
+                    return JsonStatusResponse.Error("payment update failed. Try again ‌later.");
+                case ResProject.NotFound:
+                    return JsonStatusResponse.Error("Invalid input");
+                default:
+                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+            }
         }
         #endregion
 
