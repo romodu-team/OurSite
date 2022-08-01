@@ -16,9 +16,10 @@ public class WorkSampleService : IWorkSampleService
     private IGenericReopsitories<ProjectFeatures> _ProjectFeatureRepository;
     private IGenericReopsitories<Like> _LikeRepository;
     private IimageGalleryService _ImageGalleryService;
-
-    public WorkSampleService(IGenericReopsitories<WorkSample> WorkSampleRepository,IGenericReopsitories<ProjectFeatures> ProjectFeatureRepository,IGenericReopsitories<Like> LikeRepository,IimageGalleryService ImageGalleryService)
+    private IWorkSampleCategoryService _IworkSampleCategoryService;
+    public WorkSampleService(IGenericReopsitories<WorkSample> WorkSampleRepository,IGenericReopsitories<ProjectFeatures> ProjectFeatureRepository,IGenericReopsitories<Like> LikeRepository,IimageGalleryService ImageGalleryService,IWorkSampleCategoryService IworkSampleCategoryService)
     {
+        _IworkSampleCategoryService=IworkSampleCategoryService;
         _ProjectFeatureRepository=ProjectFeatureRepository;
         _WorkSampleRepository=WorkSampleRepository;
         _LikeRepository=LikeRepository;
@@ -91,14 +92,151 @@ public class WorkSampleService : IWorkSampleService
         }
     }   
 
-    public Task<ResWorkSample> DeleteWorkSample(DeleteWorkSampleDto request)
+    public async Task<ResWorkSample> DeleteWorkSample(long WorkSampleId)
     {
-        throw new NotImplementedException();
+       
+        try
+        {
+             //delete worksample
+            var resDelWorkSample= await _WorkSampleRepository.DeleteEntity(WorkSampleId);
+            if(!resDelWorkSample)
+                return ResWorkSample.Faild;
+            //delete worksample image gallery
+            var ImageGalleries = await _ImageGalleryService.GetActiveGalleryByWorkSampleId(WorkSampleId);
+            if(ImageGalleries.Any())
+            {
+                foreach (var Image in ImageGalleries)
+                {
+                    await _ImageGalleryService.DeleteImageFromGallery(Image.Id);
+                }
+            }
+            //delete worksample like
+           var likes= await _LikeRepository.GetAllEntity().Where(l=>l.WorkSampleId==WorkSampleId).ToListAsync();
+           if(likes.Any()){
+            foreach (var like in likes)
+            {
+                await _LikeRepository.DeleteEntity(like.Id);
+            }
+           }
+            //delete worksample in category
+            var res = await _IworkSampleCategoryService.DeleteWorkSampleFromCategories(WorkSampleId);
+            if(!res)
+                return ResWorkSample.Faild;
+            //delete project features
+            var ProjectFeatures = await _ProjectFeatureRepository.GetAllEntity().Where(p=>p.WorkSampleId==WorkSampleId).ToListAsync();
+            if(ProjectFeatures.Any()){
+                foreach (var feature in ProjectFeatures)
+                {
+                    await _ProjectFeatureRepository.DeleteEntity(feature.Id);
+                }
+            }
+
+           await _LikeRepository.SaveEntity();
+           await _ProjectFeatureRepository.SaveEntity();
+           await _WorkSampleRepository.SaveEntity();
+            return ResWorkSample.Success;
+        }
+        catch (System.Exception)
+        {
+            
+            return ResWorkSample.Faild;
+        }
+        
+
+        
     }
 
-    public Task<ResWorkSample> EditWorkSample(EditWorkSampleDto request)
+    public async Task<ResWorkSample> EditWorkSample(long worksampleId,EditWorkSampleDto request)
     {
-        throw new NotImplementedException();
+        //find work sample 
+        var worksample = await _WorkSampleRepository.GetEntity(worksampleId);
+        if(worksample is not null)
+        {
+        
+            try
+            {    
+                if(request.HeaderImage is not null){
+                    var res= await FileUploader.UploadFile(PathTools.WorkSampleImages,request.HeaderImage,10);
+                if(res.Status!=resFileUploader.Success)
+                    return ResWorkSample.Faild;
+                worksample.HeaderImageName=res.FileName;
+                }
+                if(request.LogoImage is not null)
+                {
+                    var res= await FileUploader.UploadFile(PathTools.WorkSampleImages,request.LogoImage,10);
+                     if(res.Status!=resFileUploader.Success)
+                         return ResWorkSample.Faild;
+                  worksample.LogoImageName=res.FileName;
+                }
+            
+             if(!string.IsNullOrWhiteSpace(request.Content))
+                 worksample.Content=request.Content;
+              if(!string.IsNullOrWhiteSpace(request.CustomUrl))
+                worksample.CustomUrl=request.CustomUrl;
+             if(!string.IsNullOrWhiteSpace(request.EmployerName))
+                worksample.EmployerName=request.EmployerName;
+             if(!string.IsNullOrWhiteSpace(request.ProjectName))
+                worksample.ProjectName=request.ProjectName;
+             if(!string.IsNullOrWhiteSpace(request.ShortDescription))
+                worksample.ShortDescription=request.ShortDescription;
+            
+              _WorkSampleRepository.UpDateEntity(worksample);
+             await _WorkSampleRepository.SaveEntity();
+
+            if(request.ProjectFeatures is not null)
+            {
+                //delete all exist project features
+                var ExitedProjectFeatures = await _ProjectFeatureRepository.GetAllEntity().Where(p=>p.WorkSampleId==worksample.Id && p.FeatureType==WorkSampleFeatureType.ProjectFeatured).Select(p=>p.Id).ToListAsync();
+                foreach (var featureId in ExitedProjectFeatures)
+                {
+                    await _ProjectFeatureRepository.RealDeleteEntity(featureId);
+                }
+                //add new project features
+                foreach (var item in request.ProjectFeatures)
+                {
+                    ProjectFeatures features = new ProjectFeatures(){
+                        FeatureType=WorkSampleFeatureType.ProjectFeatured,
+                        Title=item,
+                        WorkSampleId=worksample.Id
+                    };
+                  await  _ProjectFeatureRepository.AddEntity(features);
+                }
+                await _ProjectFeatureRepository.SaveEntity();
+            }
+            if(request.DesignedPages is not null)
+            {
+                 //delete all exist Designed Pages
+                var ExitedDesignedPages = await _ProjectFeatureRepository.GetAllEntity().Where(p=>p.WorkSampleId==worksample.Id && p.FeatureType==WorkSampleFeatureType.DesignedPages).Select(p=>p.Id).ToListAsync();
+                foreach (var DesignedPageId in ExitedDesignedPages)
+                {
+                    await _ProjectFeatureRepository.RealDeleteEntity(DesignedPageId);
+                }
+                //add new Designed Pages
+                foreach (var item in request.DesignedPages)
+                {
+                    ProjectFeatures features = new ProjectFeatures(){
+                        FeatureType=WorkSampleFeatureType.DesignedPages,
+                        Title=item,
+                        WorkSampleId=worksample.Id
+                    };
+                  await  _ProjectFeatureRepository.AddEntity(features);
+                }
+                await _ProjectFeatureRepository.SaveEntity();
+
+            }
+
+           
+        
+            return ResWorkSample.Success;
+        }
+        catch (System.Exception)
+        {
+            
+            return ResWorkSample.Faild;
+        }
+        }
+        return ResWorkSample.NotFound;
+       
     }
 
     public async Task<ResFilterWorkSampleDto> GetAllWorkSamples(ReqFilterWorkSampleDto request)
@@ -127,10 +265,11 @@ public class WorkSampleService : IWorkSampleService
         }
         //category
 
-            //بدست اوردن ای دی نمونه کار هایی که تو اون دسته بندی ها هستن
-            //گرفتن نمونه کار هایی که ای دی شون تو لیست بالاییه
             if(request.CategoriesId is not null){
-                WorkSampleQuery= WorkSampleQuery.Include(w=>w.workSampleInCategories).SelectMany(x=>x.workSampleInCategories.Where(c=>request.CategoriesId.Contains(c.WorkSampleCategoryId)));
+                   //بدست اوردن ای دی نمونه کار هایی که تو اون دسته بندی ها هستن
+                var ListOfWorkSamplesId= await _IworkSampleCategoryService.GetWorkSamplesIdByCategory(request.CategoriesId);
+                    //گرفتن نمونه کار هایی که ای دی شون تو لیست بالاییه
+                WorkSampleQuery= WorkSampleQuery.Where(w=>ListOfWorkSamplesId.Contains(w.Id));
             }
            
         //pagination

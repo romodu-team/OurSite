@@ -17,8 +17,10 @@ public class CreateWorkSampleDto
     public List<string>? ProjectFeatures { get; set; }
     public List<string>? DesignedPages { get; set; }
 
+    
 }
 public enum ResWorkSample{
     Success,
-    Faild
+    Faild,
+    NotFound
 }

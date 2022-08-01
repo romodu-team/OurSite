@@ -48,6 +48,10 @@ public class WorkSampleCategoryService : IWorkSampleCategoryService
 
     public async Task<bool> AddCategory(string Title, string Name)
     {
+        if(string.IsNullOrWhiteSpace(Title))
+            return false;
+        if(string.IsNullOrWhiteSpace(Name))
+            return false;
         var category = new WorkSampleCategory(){
             Name=Name,
             Title=Title
@@ -79,6 +83,27 @@ public class WorkSampleCategoryService : IWorkSampleCategoryService
             
             return false;
         }
+    }
+
+    public async Task<bool> DeleteWorkSampleFromCategories(long WorkSampleId)
+    {
+        var list =await _WorkSampleInCategoryReopsitory.GetAllEntity().Where(w=>w.WorkSampleId==WorkSampleId).ToListAsync();
+
+        foreach (var item in list)
+        {
+            await _WorkSampleInCategoryReopsitory.DeleteEntity(item.Id);
+        }
+        try
+        {
+            await _WorkSampleInCategoryReopsitory.SaveEntity();
+            return true;
+        }
+        catch (System.Exception)
+        {
+            
+            return false;
+        }
+        
     }
 
     public async Task<bool> Editcategory(long categoryId, string? Title, string? Name)
@@ -120,5 +145,11 @@ public class WorkSampleCategoryService : IWorkSampleCategoryService
             return new GetWorkSampleCategoryDto(){CategoryId=category.Id,Name=category.Name,Title=category.Title};
         }
         return null;
+    }
+
+    public async Task<List<long>> GetWorkSamplesIdByCategory(List<long> categoriesId)
+    {
+        var WorkSamplesIdList = await _WorkSampleInCategoryReopsitory.GetAllEntity().Where(c=>categoriesId.Contains(c.WorkSampleCategoryId)).Select(c=>c.WorkSampleId).ToListAsync();
+        return WorkSamplesIdList;
     }
 }

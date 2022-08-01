@@ -12,6 +12,7 @@ using OurSite.DataLayer.Entities.RatingModel;
 using OurSite.DataLayer.Entities.Ticketing;
 using OurSite.DataLayer.Entities.TicketMessageing;
 using OurSite.DataLayer.Entities.WorkSamples;
+using OurSite.OurSite.DataLayer.Entities.WorkSamples;
 
 namespace OurSite.DataLayer.Contexts
 {
@@ -43,6 +44,9 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ImageGallery> ImageGallery { get; set; }
         public DbSet<ProjectFeatures> ProjectFeatures { get; set; }
+        public DbSet<WorkSampleCategory> WorkSampleCategories { get; set; }
+        public DbSet<WorkSampleInCategory> WorkSampleInCategories { get; set; }
+        
 
 
 

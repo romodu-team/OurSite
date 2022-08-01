@@ -9,4 +9,6 @@ public interface IWorkSampleCategoryService
     Task<List<GetWorkSampleCategoryDto>> GetAllCategories();
     Task<GetWorkSampleCategoryDto> GetCategory(long categoryId);
     Task<bool> AddCategoriesToWorkSample(long worksampleId,List<long> CategoriesId);
+    Task<List<long>> GetWorkSamplesIdByCategory(List<long> categoriesId);
+    Task<bool> DeleteWorkSampleFromCategories(long WorkSampleId);
 }

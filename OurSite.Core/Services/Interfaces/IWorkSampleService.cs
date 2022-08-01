@@ -12,8 +12,8 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResCreateWorkSampleDto> CreateWorkSample(CreateWorkSampleDto request);
         Task<ResFilterWorkSampleDto> GetAllWorkSamples(ReqFilterWorkSampleDto request);
         Task<WorkSampleDto> GetWorkSample(long WorkSampleId);
-        Task<ResWorkSample> DeleteWorkSample(DeleteWorkSampleDto  request);
+        Task<ResWorkSample> DeleteWorkSample(long WorkSampleId);
 
-        Task<ResWorkSample> EditWorkSample(EditWorkSampleDto  request);
+        Task<ResWorkSample> EditWorkSample(long worksampleId,EditWorkSampleDto  request);
     }
 }
