@@ -31,7 +31,7 @@ namespace OurSite.WebApi.Controllers.Forms
         /// <param name="sendConsultationFormWithFile"></param>
         /// <returns></returns>
         [HttpPost("send-form-with-file")]
-        public async Task<IActionResult> SendConsultationForm([FromBody] ConsultationRequestDto sendConsultationFormWithFile)
+        public async Task<IActionResult> SendConsultationForm([FromForm] ConsultationRequestDto sendConsultationFormWithFile)
         {
 
             if (sendConsultationFormWithFile.SubmittedFile != null)
@@ -77,6 +77,18 @@ namespace OurSite.WebApi.Controllers.Forms
 
         }
         #endregion
+        
+        #region Get Consulation Form
+        [HttpGet("get-consulationFtom/{ConsultationFormId}")]
+        public async Task<IActionResult> GetConsulationForm([FromRoute]long ConsultationFormId)
+        {
+            var res = await consultationRequestService.GetConsulationForm(ConsultationFormId);
+            if(res is not null)
+                return JsonStatusResponse.Success(res,"success");
+            return JsonStatusResponse.NotFound("Consulation form not found");
+        }
+        #endregion
+        
         #endregion
     }
 }

@@ -35,6 +35,6 @@ namespace OurSite.Core.DTOs.ConsultationRequestDtos
         [DisplayName("فایل ارسالی")]
         public IFormFile? SubmittedFile { get; set; }
 
-        public ICollection<ItemSelectedDto> ItemSelecteds { get; set; }
+        public List<string>? ItemSelectedsId { get; set; }
     }
 }

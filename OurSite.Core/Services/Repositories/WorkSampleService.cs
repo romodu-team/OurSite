@@ -54,9 +54,10 @@ public class WorkSampleService : IWorkSampleService
             await _WorkSampleRepository.AddEntity(worksample);
             await _WorkSampleRepository.SaveEntity();
 
-            if(request.ProjectFeatures is not null)
+            if(request.ProjectFeatures.Any())
             {
-                foreach (var item in request.ProjectFeatures)
+                var list = request.ProjectFeatures[0].Split(",");
+                foreach (var item in list)
                 {
                     ProjectFeatures features = new ProjectFeatures(){
                         FeatureType=WorkSampleFeatureType.ProjectFeatured,
@@ -67,9 +68,10 @@ public class WorkSampleService : IWorkSampleService
                 }
                 await _ProjectFeatureRepository.SaveEntity();
             }
-            if(request.DesignedPages is not null)
+            if(request.DesignedPages.Any())
             {
-                foreach (var item in request.DesignedPages)
+                var list = request.DesignedPages[0].Split(",");
+                foreach (var item in list)
                 {
                     ProjectFeatures features = new ProjectFeatures(){
                         FeatureType=WorkSampleFeatureType.DesignedPages,
@@ -183,7 +185,7 @@ public class WorkSampleService : IWorkSampleService
               _WorkSampleRepository.UpDateEntity(worksample);
              await _WorkSampleRepository.SaveEntity();
 
-            if(request.ProjectFeatures is not null)
+            if(request.ProjectFeatures.Any())
             {
                 //delete all exist project features
                 var ExitedProjectFeatures = await _ProjectFeatureRepository.GetAllEntity().Where(p=>p.WorkSampleId==worksample.Id && p.FeatureType==WorkSampleFeatureType.ProjectFeatured).Select(p=>p.Id).ToListAsync();
@@ -192,7 +194,9 @@ public class WorkSampleService : IWorkSampleService
                     await _ProjectFeatureRepository.RealDeleteEntity(featureId);
                 }
                 //add new project features
-                foreach (var item in request.ProjectFeatures)
+                var list = request.ProjectFeatures[0].Split(",");
+
+                foreach (var item in list)
                 {
                     ProjectFeatures features = new ProjectFeatures(){
                         FeatureType=WorkSampleFeatureType.ProjectFeatured,
@@ -212,7 +216,8 @@ public class WorkSampleService : IWorkSampleService
                     await _ProjectFeatureRepository.RealDeleteEntity(DesignedPageId);
                 }
                 //add new Designed Pages
-                foreach (var item in request.DesignedPages)
+                var list = request.DesignedPages[0].Split(",");
+                foreach (var item in list)
                 {
                     ProjectFeatures features = new ProjectFeatures(){
                         FeatureType=WorkSampleFeatureType.DesignedPages,
@@ -279,7 +284,7 @@ public class WorkSampleService : IWorkSampleService
 
             var list =await WorkSampleQuery.Include(u=>u.ProjectFeatures.Where
             (p=>p.FeatureType==WorkSampleFeatureType.ProjectFeatured))
-            .Paging(pager).Select(u=> new GetAllWorkSampleDto {CoustomUrl=u.CustomUrl,LogoPath=PathTools.GetWorkSampleImages+u.LogoImageName,ProjectName=u.ProjectName,Like=u.Likes.Count(),FeaturesList=u.ProjectFeatures.Select(o=>o.Title).Take(4).ToList()}).ToListAsync();
+            .Paging(pager).Select(u=> new GetAllWorkSampleDto {Id=u.Id,CoustomUrl=u.CustomUrl,LogoPath=PathTools.GetWorkSampleImages+u.LogoImageName,ProjectName=u.ProjectName,Like=u.Likes.Count(),FeaturesList=u.ProjectFeatures.Select(o=>o.Title).Take(4).ToList()}).ToListAsync();
             
             var result = new ResFilterWorkSampleDto();
             result.SetPaging(pager);
