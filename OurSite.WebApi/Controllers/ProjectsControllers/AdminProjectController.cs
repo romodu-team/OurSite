@@ -24,7 +24,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Creat Project
         /// <summary>
-        /// Create project by admin for user {get request from body}
+        /// Api for Create project by admin for user {get request from body}
         /// </summary>
         /// <param name="prodto"></param>
         /// <param name="userId"></param>
@@ -52,7 +52,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Edit Project
         /// <summary>
-        /// edit project details by admin {get request from body}
+        /// Api for edit project details by admin {get request from body}
         /// </summary>
         /// <param name="prodto"></param>
         /// <returns></returns>
@@ -85,25 +85,54 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         [HttpDelete("admin-delete-project")]
         public async Task<IActionResult> DeleteProject([FromBody]DeleteProjectDto ReqDeleteProject)
         {
-            var remove = await projectservice.DeleteProject(ReqDeleteProject);
-            switch (remove)
+            if (User.Identity.IsAuthenticated)
             {
-                case ResProject.Success:
-                    return JsonStatusResponse.Success("The project has been deleted successfully");
-                case ResProject.Error:
-                    return JsonStatusResponse.Error("Project delete failed. Try again later.");
-                case ResProject.NotFound:
-                    return JsonStatusResponse.NotFound("Project not Found");
-                default:
-                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                var remove = await projectservice.DeleteProject(ReqDeleteProject,true);
+                switch (remove)
+                {
+                    case ResProject.Success:
+                        return JsonStatusResponse.Success("The project has been deleted successfully");
+                    case ResProject.Error:
+                        return JsonStatusResponse.Error("Project delete failed. Try again later.");
+                    case ResProject.NotFound:
+                        return JsonStatusResponse.NotFound("Project not Found");
+                    default:
+                        return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                }
             }
+            return JsonStatusResponse.Error("u didnt login. please login first");
+
         }
         #endregion
 
+
+        #region View project
+        /// <summary>
+        /// Api for get one project by admin {Get request from route}
+        /// </summary>
+        /// <param name="ProjectId"></param>
+        /// <returns></returns>
+        [HttpGet("view-project-by-admin/{ProjectId}")]
+        public async Task<IActionResult> GetProject([FromRoute]long ProjectId)
+        {
+            var res = await projectservice.GetProject(ProjectId);
+            if (res is not null)
+                return JsonStatusResponse.Success(ReturnData: res,message: "Project find successfully");
+
+            return JsonStatusResponse.Error("Project Not found");
+        }
+        #endregion
+
+
         #region Upload contract File
+        /// <summary>
+        /// Api for Upload contract in projrct order {get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Upload-Contract")]
-        public async Task<IActionResult> UploadContract(ReqUploadContractDto request)
+        public async Task<IActionResult> UploadContract([FromBody]ReqUploadContractDto request)
         {
             var res = await projectservice.UploadContract(request);
             switch (res)
@@ -125,8 +154,27 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                     return JsonStatusResponse.Error("server error");
             }
         }
-            
+
         #endregion
+
+        #region Project list
+        /// <summary>
+        /// Api for get projects list{get request from query}
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("project-list")]
+        public async Task<IActionResult> GetAllProject([FromQuery] ReqFilterProjectDto filter)
+        {
+            var projects = await projectservice.GetAllProject(filter);
+            if (projects.Projects.Any())
+            {
+                return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: projects);
+            }
+            return JsonStatusResponse.NotFound(message: "nist ke bekhorishi");
+        }
+        #endregion
+
     }
 }
 

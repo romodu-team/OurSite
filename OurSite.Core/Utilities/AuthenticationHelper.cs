@@ -24,7 +24,7 @@ namespace OurSite.Core.Utilities
         }
         public  string GenerateUserToken(User user,int Expire)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sajjadhaniehfaezeherfanmobinsinamehdi"));
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Wx7Xl6rPABrWvLbLaXoBcaLQ8nQJg7L1Dce3zfE0"));
             var signInCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
             var tokenOption = new JwtSecurityToken(
                 issuer: PathTools.Domain,

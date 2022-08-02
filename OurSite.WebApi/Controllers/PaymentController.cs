@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OurSite.Core.DTOs.Payment;
+using OurSite.Core.Services.Interfaces.Projecta;
+using OurSite.Core.Utilities;
+using System.Security.Claims;
 using System.Text;
+using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
 
 namespace OurSite.WebApi.Controllers
 {
@@ -11,9 +16,16 @@ namespace OurSite.WebApi.Controllers
     public class PaymentController : ControllerBase
     {
         private static readonly HttpClient client = new HttpClient();
+        private IPayment Paymentservice;
+        public PaymentController(IPayment paymentservice)
+        {
+            this.Paymentservice = paymentservice;
+        }
 
+
+        #region Req Payment
         [HttpPost]
-        public async Task<IActionResult> RequestPayment([FromBody]PaymentRequestDto paymentRequestDto)
+        public async Task<IActionResult> RequestPayment([FromBody] PaymentRequestDto paymentRequestDto)
         {
             var _url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRequest.json";
 
@@ -40,7 +52,9 @@ namespace OurSite.WebApi.Controllers
             return Ok(finalUrl);
 
         }
-        
+        #endregion
+
+        #region Verify
         [HttpGet("VerifyPayment")]
         public async Task<IActionResult> VerifyPayment(string Authority, string amount)
         {
@@ -66,5 +80,101 @@ namespace OurSite.WebApi.Controllers
 
             return Ok(_zarinPalResponseModel);
         }
+        #endregion
+
+        #region Creat Payment  by admin
+        /// <summary>
+        /// Api for creat payment by admin {Get request from body}
+        /// </summary>
+        /// <param name="paydto"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("creat-payment-by-admin")]
+         public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto prodto, long AdminId)
+         {
+                var res = await Paymentservice.CreatePayment(prodto, AdminId);
+                switch (res)
+                {
+                    case ResProject.Success:
+                        return JsonStatusResponse.Success("پروژه با موفقیت ایجاد شد.");
+                    case ResProject.Faild:
+                        return JsonStatusResponse.Error("ایجاد پروژه با خطا مواجه شد.");
+                    case ResProject.InvalidInput:
+                        return JsonStatusResponse.Error("فیلد‌های ثبت پروژه نمی‌تواند خالی باشد.");
+                    default:
+                        return JsonStatusResponse.Error("ثبت پروژه با خطا مواجه شد. دقایقی دیگر مجدد تلاش نمایید.");
+
+                }
+                return JsonStatusResponse.Error("U must login");
+
+         }
+
+
+        #endregion
+
+
+
+        #region get payment
+        /// <summary>
+        /// Api for show one payment to user {get request from route}
+        /// </summary>
+        /// <param name="PayId"></param>
+        /// <returns></returns>
+        [HttpGet("view-payment/{PayId}")]
+        public async Task<IActionResult> GetPayment([FromRoute]long PayId)
+        {
+            var pay = await Paymentservice.GetPayment(PayId);
+            if(pay is not null)
+            {
+                return JsonStatusResponse.Success("success");
+            }
+            return JsonStatusResponse.NotFound("payment not founf");
+        }
+        #endregion
+
+
+        #region get all payments
+        /// <summary>
+        /// Api for get pay list {get request from query}
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("payments-list")]
+        public async Task<IActionResult> GetAllPayments([FromQuery] ReqFilterPayDto filter)
+        {
+            var Pay = await Paymentservice.GetAllPayments(filter);
+            if (Pay.Pay.Any())
+            {
+                return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: Pay);
+            }
+            return JsonStatusResponse.NotFound(message: "nist ke bekhorishi");
+        }
+        #endregion
+
+
+        #region Edit pay
+        /// <summary>
+        /// Api for edit payments details by admin {get request from body}
+        /// </summary>
+        /// <param name="prodto"></param>
+        /// <returns></returns>
+        [HttpPut("edit-payment")]
+        public async Task<IActionResult> EditPay([FromBody] EditPayDto Paydto)
+        {
+            var res = await Paymentservice.EditPay(Paydto);
+            switch (res)
+            {
+                case ResProject.Success:
+                    return JsonStatusResponse.Success("The payment has been updated successfully");
+                case ResProject.Faild:
+                    return JsonStatusResponse.Error("payment update failed. Try again ‌later.");
+                case ResProject.NotFound:
+                    return JsonStatusResponse.Error("Invalid input");
+                default:
+                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+            }
+        }
+        #endregion
+
     }
 }

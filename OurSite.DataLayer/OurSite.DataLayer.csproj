@@ -15,6 +15,7 @@
     <None Remove="Interfaces\" />
     <None Remove="Repositories\" />
     <None Remove="Entities\Projects\" />
+    <None Remove="Entities\Peyments\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HtmlSanitizer" Version="7.1.488" />
@@ -36,5 +37,6 @@
     <Folder Include="Contexts\" />
     <Folder Include="Entities\Projects\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Entities\Payments\" />
   </ItemGroup>
 </Project>
