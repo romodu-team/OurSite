@@ -13,6 +13,8 @@ namespace OurSite.DataLayer.Entities.ConsultationRequest
         #region Properties
         public string CheckBoxName { get; set; }
         public section sectionName { get; set; }
+        public string? Description { get; set; }
+        public string? IconName { get; set; }
         #endregion
 
 
