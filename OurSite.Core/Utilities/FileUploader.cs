@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using OurSite.Core.DTOs.ImageGalleryDtos;
 using OurSite.Core.DTOs.Uploader;
 using System;
 using System.Collections.Generic;
@@ -71,6 +72,16 @@ namespace OurSite.Core.Utilities
             {
                 return new ResUploadDto { Status = resFileUploader.NoContent, FileName = null };
             }
+        }
+        public static ResDeleteImage DeleteImage(string ImagePath)
+        {
+            var FullPath=Directory.GetCurrentDirectory()+ImagePath;
+            var imageExist = File.Exists(FullPath); 
+            if(imageExist){
+                File.Delete(FullPath);
+                return ResDeleteImage.Success;
+            }  
+            return ResDeleteImage.NotFound;
         }
     }
     public enum resFileUploader

@@ -13,5 +13,7 @@ namespace OurSite.Core.Services.Interfaces
 
         Task<ResFilterConsultationRequestDto> GetAllConsultationRequest(ReqFilterConsultationRequestDto filter);
 
+        Task<GetConsulationFormDto> GetConsulationForm(long ConsultationFormId);
+
     }
 }
