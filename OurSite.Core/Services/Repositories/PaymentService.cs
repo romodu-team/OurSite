@@ -35,10 +35,10 @@ namespace OurSite.Core.Services.Repositories
         #region Edit
         public async Task<ResProject> EditPay(EditPayDto Paydto)
         {
-            var res = await PaymentRepositories.GetAllEntity().AnyAsync(x => x.Id == Paydto.ProId);
+            var res = await PaymentRepositories.GetAllEntity().AnyAsync(x => x.Id == Paydto.PayId);
             if (res is true)
             {
-                var pay = await PaymentRepositories.GetEntity(Paydto.ProId);
+                var pay = await PaymentRepositories.GetEntity(Paydto.PayId);
                 if (!string.IsNullOrWhiteSpace(Paydto.Titel))
                     pay.Titel = Paydto.Titel;
                 if (Paydto.status is not null)
