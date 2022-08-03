@@ -295,7 +295,8 @@ namespace OurSite.Core.Services.Repositories
                     Price = project.Price,
                     Description = project.Description,
                     Situation = project.Situation,
-                    ContractFileName = project.ContractFileName
+                    ContractFilePath = PathTools.ContractUploadName + project.ContractFileName
+                    
                 };
                 var selectedPlans = await SelectedProjectRepository.GetAllEntity().Where(x => x.ProjectId == ProjectId).Include(x => x.CheckBox).ToListAsync();
                 foreach (var item in selectedPlans)
