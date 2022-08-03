@@ -152,7 +152,7 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region creat payment by admin (use in admin payment controller)
+        #region create payment by admin (use in admin payment controller)
         public async Task<ResProject> CreatePayment(CreatePaymentDto paydto)
         {
             var project = await ProjectRepositories.GetEntity(paydto.ProId);

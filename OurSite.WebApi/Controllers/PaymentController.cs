@@ -89,10 +89,10 @@ namespace OurSite.WebApi.Controllers
         /// <param name="paydto"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPost("creat-payment-by-admin")]
-         public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto prodto, long AdminId)
+        [HttpPost("create-payment-by-admin")]
+         public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto prodto)
          {
-                var res = await Paymentservice.CreatePayment(prodto, AdminId);
+                var res = await Paymentservice.CreatePayment(prodto);
                 switch (res)
                 {
                     case ResProject.Success:
@@ -101,6 +101,8 @@ namespace OurSite.WebApi.Controllers
                         return JsonStatusResponse.Error("ایجاد پروژه با خطا مواجه شد.");
                     case ResProject.InvalidInput:
                         return JsonStatusResponse.Error("فیلد‌های ثبت پروژه نمی‌تواند خالی باشد.");
+                case ResProject.NotFound:
+                    return JsonStatusResponse.NotFound("project to creat payment not found");
                     default:
                         return JsonStatusResponse.Error("ثبت پروژه با خطا مواجه شد. دقایقی دیگر مجدد تلاش نمایید.");
 
@@ -126,7 +128,7 @@ namespace OurSite.WebApi.Controllers
             var pay = await Paymentservice.GetPayment(PayId);
             if(pay is not null)
             {
-                return JsonStatusResponse.Success("success");
+                return JsonStatusResponse.Success(message:"success" ,ReturnData:pay );
             }
             return JsonStatusResponse.NotFound("payment not founf");
         }
