@@ -18,5 +18,6 @@ namespace OurSite.Core.Utilities
 
         public static string FileUploadPath =Path.Combine(Directory.GetCurrentDirectory() ,"upload\\File");
         public static string ContractUploadPath =Path.Combine(Directory.GetCurrentDirectory() ,"upload\\File\\Contracts");
+        public static string ContractUploadName = "/upload/file/contract/";
     }
 }
