@@ -72,6 +72,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IProject, ProjectService>();
+builder.Services.AddScoped<IPayment, PaymentService>();
 
 #endregion
 #region Autentication
