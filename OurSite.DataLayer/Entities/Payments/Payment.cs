@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Entities.BaseEntities;
 using OurSite.DataLayer.Entities.Projects;
@@ -11,7 +12,6 @@ namespace OurSite.DataLayer.Entities.Payments
         public string Titel { get; set; }
         public StatusPay? status { get; set; }
         public long UserId { get; set; }
-        public long AdminId { get; set; }
         public string Price { get; set; }
         public string Description { get; set; }
         public long ProId { get; set; }
@@ -20,6 +20,7 @@ namespace OurSite.DataLayer.Entities.Payments
 
 
         #region Realtions
+        [ForeignKey("ProId")]
         public Project Project { get; set; }
         public User User { get; set; }
         #endregion

@@ -15,7 +15,8 @@ namespace OurSite.Core.DTOs.ProjectDtos
         public string Description { get; set; }
         public situations Situation { get; set; }
         public List<CheckBoxs>? PlanDetails { get; set; }
-        public string? ContractFileName { get; set; }
+        public String? ContractFilePath { get; set; }
+
     }
 }
 

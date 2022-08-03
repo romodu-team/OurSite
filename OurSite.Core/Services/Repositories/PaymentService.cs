@@ -5,7 +5,9 @@ using OurSite.Core.DTOs.Payment;
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities.Extentions.Paging;
+using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Entities.Payments;
+using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
 using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
 
@@ -15,24 +17,28 @@ namespace OurSite.Core.Services.Repositories
     {
         #region Cus&Dis
         private IGenericReopsitories<Payment> PaymentRepositories;
-        public PaymentService(IGenericReopsitories<Payment> PaymentRepositories)
+        private IGenericReopsitories<Admin> AdminRepositories;
+        private IGenericReopsitories<Project> ProjectRepositories;
+        public PaymentService(IGenericReopsitories<Payment> PaymentRepositories, IGenericReopsitories<Admin> AdminRepositories, IGenericReopsitories<Project> ProjectRepositories)
         {
             this.PaymentRepositories = PaymentRepositories;
+            this.AdminRepositories = AdminRepositories;
+            this.ProjectRepositories = ProjectRepositories;
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            PaymentRepositories.Dispose();
         }
         #endregion
 
         #region Edit
         public async Task<ResProject> EditPay(EditPayDto Paydto)
         {
-            var res = await PaymentRepositories.GetAllEntity().AnyAsync(x => x.Id == Paydto.ProId);
+            var res = await PaymentRepositories.GetAllEntity().AnyAsync(x => x.Id == Paydto.PayId);
             if (res is true)
             {
-                var pay = await PaymentRepositories.GetEntity(Paydto.ProId);
+                var pay = await PaymentRepositories.GetEntity(Paydto.PayId);
                 if (!string.IsNullOrWhiteSpace(Paydto.Titel))
                     pay.Titel = Paydto.Titel;
                 if (Paydto.status is not null)
@@ -115,7 +121,7 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(PayQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await PayQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllPayDto { DatePay = (DateTime)x.DatePay, Id = x.Id, status = (StatusPay)x.status, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
+            var list = await PayQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllPayDto { DatePay = x.DatePay, Id = x.Id, status = (StatusPay)x.status, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
 
             var result = new ResFilterPayDto();
             result.SetPaging(pager);
@@ -146,29 +152,30 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region creat payment by admin (use in admin payment controller)
-        public async Task<ResProject> CreatePayment(CreatePaymentDto paydto, long AdminId)
+        #region create payment by admin (use in admin payment controller)
+        public async Task<ResProject> CreatePayment(CreatePaymentDto paydto)
         {
-            var admin = await PaymentRepositories.GetAllEntity().AnyAsync(x => x.AdminId == AdminId);
-            if (admin is true)
+            var project = await ProjectRepositories.GetEntity(paydto.ProId);
+            if (project is not null)
             {
                 if (!string.IsNullOrWhiteSpace(paydto.Titel) && !string.IsNullOrWhiteSpace(paydto.Price))
                 {
                     Payment pay = new Payment()
                     {
-                        CreateDate = DateTime.Now,
-                        LastUpdate = DateTime.Now,
+
                         Description = paydto.Description,
                         IsRemove = false,
                         Price = paydto.Price,
                         status = paydto.status,
                         Titel = paydto.Titel,
+                        ProId = paydto.ProId,
+                        UserId = project.UserId
                     };
 
                     try
                     {
-                        PaymentRepositories.AddEntity(pay);
-                        PaymentRepositories.SaveEntity();
+                        await PaymentRepositories.AddEntity(pay);
+                        await PaymentRepositories.SaveEntity();
                         return ResProject.Success; //pay added
 
                     }
@@ -179,8 +186,7 @@ namespace OurSite.Core.Services.Repositories
                 }
                 return ResProject.InvalidInput; //titel and price is null
             }
-            return ResProject.Error; //admin didnt find
-
+            return ResProject.NotFound;
         }
     }
     #endregion
