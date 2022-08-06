@@ -121,7 +121,7 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(PayQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await PayQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllPayDto { DatePay = x.DatePay, Id = x.Id, status = (StatusPay)x.status, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
+            var list = await PayQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllPayDto { DatePay = x.DatePay, PayId = x.Id, status = (StatusPay)x.status, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
 
             var result = new ResFilterPayDto();
             result.SetPaging(pager);
@@ -188,6 +188,13 @@ namespace OurSite.Core.Services.Repositories
             }
             return ResProject.NotFound;
         }
+    }
+    #endregion
+
+    #region Delete Payment by admin
+    public async Task<ResProject> DeletePayment(long ProId, long AdminId)
+    {
+        var pay = await payme
     }
     #endregion
 
