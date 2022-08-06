@@ -87,7 +87,7 @@ namespace OurSite.Core.Services.Repositories.Forms
             var ticketQuery = ticketRepo.GetAllEntity();
             var count = (int)Math.Ceiling(ticketQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await ticketRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllTicketDto { TicketId = x.Id, TicketTitle = x.TicketTitle, IsClosed = x.IsClosed }).ToListAsync();    //use the genric interface options and save values in variable
+            var list = await ticketRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllTicketDto { TicketId = x.Id, TicketTitle = x.TicketTitle,TicketSubject=x.TicketSubject,DepartmentName=x.Department.DepartmentTitle, IsClosed = x.IsClosed }).ToListAsync();    //use the genric interface options and save values in variable
             var result = new ResFilterTicketDto();
             result.SetPaging(pager);
             return result.SetTickets(list);
