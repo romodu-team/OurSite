@@ -6,7 +6,7 @@ namespace OurSite.Core.DTOs.Payment
 {
     public class GetAllPayDto
     {
-        public long Id { get; set; }
+        public long PayId { get; set; }
         public StatusPay status { get; set; }
         public string Username { get; set; }
         public string Price { get; set; }
