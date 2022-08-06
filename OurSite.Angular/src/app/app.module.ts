@@ -31,6 +31,7 @@ import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { Dialog1Component } from './pages/contact-us/dialog1/dialog1.component';
 import { Dialog2Component } from './pages/contact-us/dialog2/dialog2.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,7 +55,7 @@ import { Dialog2Component } from './pages/contact-us/dialog2/dialog2.component';
     Slider1Component,
     ContactUsComponent,
     Dialog1Component,
-    Dialog2Component
+    Dialog2Component,
   ],
   imports: [
     BrowserModule,

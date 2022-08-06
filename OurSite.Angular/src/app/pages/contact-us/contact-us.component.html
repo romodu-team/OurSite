@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+
 
 <section class="container my-5"  dir="rtl">
     <h1 class="text-center mb-5">با ما در ارتباط باشید </h1>
@@ -9,15 +9,15 @@
 بنابراین اگر شما هم قصد دارید کسب و کار اینترنتی خود را گسترش دهید و از یک سایت استاندارد با ظاهری زیبا و متفاوت، کاملا ریسپانسیو، بهینه شده برای موتورهای جست و جو، بر روی یک سیستم مدیریت محتوای سریع و منطبق بر اصول طراحی استاندارد بهره مند شوید، تحقیق ، تحقیق و باز هم تحقیق کنید و اگر ما یکی از انتخاب های شما بودیم از طریق راه های ارتباطی که در سایت موجود است با کارشناسان ما تماس بگیرید
     </p>
 
-    <div class="d-flex justify-content-around p-4 mt-5" (mouseenter)="cardHover()">
-        <button class="btn btn-outline-primary col-5 btn-lg " >
+    <div class="d-flex justify-content-around p-4 mt-5">
+        <button class="btn btn-outline-primary col-5 btn-lg "  (click)="openDialog1()">
             <div class="d-flex justify-content-between mt-2">
                 <p class="h4">راه های ارتباطی</p>
                 <img src="" alt="">
             </div>
         </button>
         <button class="btn btn-outline-primary col-5 btn-lg ">
-            <div class="d-flex justify-content-between mt-2">
+            <div class="d-flex justify-content-between mt-2" (click)="openDialog2()">
                 <p class="h4">حضوری</p>
                 <img src="" alt="">
             </div>

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Dialog1Component } from './dialog1/dialog1.component';
+import { Dialog2Component } from './dialog2/dialog2.component';
 
 @Component({
   selector: 'app-contact-us',
@@ -7,15 +10,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContactUsComponent implements OnInit {
 
-  constructor() { }
 
   ngOnInit(): void {
   }
 
-  buttonHover : string = 'bg-white text-black'
+  constructor(public dialog: MatDialog) {}
 
-  cardHover(){
-    this.buttonHover = 'bg-primary text-white'
+  openDialog1() {
+    const dialogRef = this.dialog.open(Dialog1Component);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
+
+  openDialog2() {
+    const dialogRef = this.dialog.open(Dialog2Component);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
 }
