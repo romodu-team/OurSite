@@ -15,6 +15,21 @@ public class ImageGalleryController:Controller
     {
         this.imageGalleryService=imageGalleryService;
     }
+
+    /// <summary>
+    /// Upload an image for a specific part of the site.
+    /// site Sections: Worksample = 0, home page = 1, about us = 2
+    /// Returns:
+    /// Success("image has been successfully added")
+    /// Error("image size is too big")
+    /// Error("server error")
+    /// Error("image extention file is invalid")
+    /// Error("image file not found")
+    /// Error("worksample not found")
+    /// Error("Site Section is Not Valid")
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("add-image-gallery")]
     public async Task<IActionResult> AddImageToGallery([FromForm] ReqAddImageToGallery request)
     {
@@ -40,6 +55,11 @@ public class ImageGalleryController:Controller
                 return JsonStatusResponse.Error("server error");
         }
     }
+    /// <summary>
+    /// Delete a image from a site section by image id(its not physical delete)
+    /// </summary>
+    /// <param name="ImageId"></param>
+    /// <returns></returns>
     [HttpDelete("Delete-image-from-gallery")]
     public async Task<IActionResult> DeleteImageFromGallery(long ImageId)
     {
@@ -59,7 +79,13 @@ public class ImageGalleryController:Controller
                 return JsonStatusResponse.Error("server error");
         }
     }
-
+    /// <summary>
+    /// Get all the active images of a section of the site by section Id
+    /// return list of images
+    /// </summary>
+    /// <param name="section"></param>
+    /// <param name="SectionId"></param>
+    /// <returns></returns>
     [HttpGet("get-gallery")]
     public async Task<IActionResult> GetImageGallery(SiteSections section,long SectionId)
     {
