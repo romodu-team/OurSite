@@ -21,6 +21,9 @@ namespace OurSite.Core.Utilities
         public static string WorkSampleImages = Path.Combine(Directory.GetCurrentDirectory(), "upload\\images\\WorkSample");
         public static string GetWorkSampleImages = "/upload/images/WorkSample/";
         public static string FileUploadPath =Path.Combine(Directory.GetCurrentDirectory() ,"upload\\File");
+        public static string ConsultationFilePath =Path.Combine(Directory.GetCurrentDirectory() , "upload\\File\\Consultation");
+        public static string GetConsultationFilePath = "/upload/file/Consultation/";
+
         public static string ContractUploadPath =Path.Combine(Directory.GetCurrentDirectory() ,"upload\\File\\Contracts");
         public static string ContractUploadName = "/upload/file/contract/";
     }
