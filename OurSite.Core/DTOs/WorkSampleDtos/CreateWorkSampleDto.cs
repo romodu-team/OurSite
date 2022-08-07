@@ -16,8 +16,8 @@ public class CreateWorkSampleDto
     public string? Content { get; set; }
     public List<string>? ProjectFeatures { get; set; }
     public List<string>? DesignedPages { get; set; }
+    public List<string>? CategoriesId { get; set; }
 
-    
 }
 public enum ResWorkSample{
     Success,
