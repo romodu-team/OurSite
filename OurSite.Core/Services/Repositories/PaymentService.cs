@@ -188,15 +188,35 @@ namespace OurSite.Core.Services.Repositories
             }
             return ResProject.NotFound;
         }
-    }
-    #endregion
+        #endregion
 
-    #region Delete Payment by admin
-    public async Task<ResProject> DeletePayment(long ProId, long AdminId)
-    {
-        var pay = await payme
+        #region Delete payment by admin
+        public async Task<ResProject> DeletePayment(long ProId, bool IsAdmin)
+        {
+            var pay = await PaymentRepositories.GetEntity(ProId);
+            if(pay is not null)
+            {
+                if (IsAdmin)
+                {
+                    var IsRemove = await PaymentRepositories.DeleteEntity(pay.Id);
+                    if(IsRemove is true)
+                    {
+                        await PaymentRepositories.SaveEntity();
+                        return ResProject.Success;
+                    }
+                    else
+                    {
+                        return ResProject.Faild;
+                    }
+                }
+            }
+            return ResProject.Error;
+        }
+        #endregion
+
     }
-    #endregion
+
+
 
 }
 
