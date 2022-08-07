@@ -20,6 +20,11 @@ namespace OurSite.WebApi.Controllers.Forms
         #endregion
 
         #region List Of All Tickets
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpGet("Ticket-list")]
         public async Task<IActionResult> GetAllTicket([FromQuery] ReqFilterTicketDto filter)
         {
@@ -37,7 +42,7 @@ namespace OurSite.WebApi.Controllers.Forms
 
         #region Found Ticket By Id
 
-        [HttpGet("Find-Ticket")]
+        [HttpGet("Find-Ticket/{ticketId}")]
         public async Task<IActionResult> FindTicket([FromRoute] long ticketId)
         {
             var res = await ticketService.FindTicketById(ticketId);

@@ -24,16 +24,22 @@ namespace OurSite.WebApi.Controllers
 
 
         #region Req Payment
+        /// <summary>
+        /// Submit a payment request to the app
+        /// , return The link of the payment gateway to which the user should be redirected
+        /// </summary>
+        /// <param name="paymentRequestDto"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> RequestPayment([FromBody] PaymentRequestDto paymentRequestDto)
         {
             var _url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRequest.json";
-
+      
             var _values = new Dictionary<string, string>
             {
                { "MerchantID", "00000000-0000-0000-0000-000000000000" }, //Change This To work, some thing like this : xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
                { "Amount", paymentRequestDto.amount }, //Toman
-               { "CallbackURL", $"http://localhost:7181/api/payment/VerifyPayment?amount={paymentRequestDto.amount}" },
+               { "CallbackURL", $"https://localhost:7181/api/payment/VerifyPayment?amount={paymentRequestDto.amount}" },
                { "Mobile", paymentRequestDto.phoneNumber }, //Mobile number will be shown in the transactions list of the wallet as a separate field.
                { "Description", paymentRequestDto.description }
             };
@@ -44,19 +50,27 @@ namespace OurSite.WebApi.Controllers
             var _response = await client.PostAsync(_url, content);
             var _responseString = await _response.Content.ReadAsStringAsync();
 
-            ZarinPalRequestResponse _zarinPalResponseModel =
-             JsonConvert.DeserializeObject<ZarinPalRequestResponse>(_responseString);
-
-
+            ZarinPalRequestResponse _zarinPalResponseModel =JsonConvert.DeserializeObject<ZarinPalRequestResponse>(_responseString);
+            _zarinPalResponseModel.Amount = paymentRequestDto.amount;
+           
             var finalUrl = $"https://sandbox.zarinpal.com/pg/StartPay/{_zarinPalResponseModel.Authority/*+"/Sad"*/}";
-            return Ok(finalUrl);
+            _zarinPalResponseModel.GateWayUrl = finalUrl;
+            
+            return Ok(_zarinPalResponseModel);
 
         }
         #endregion
 
         #region Verify
+        /// <summary>
+        /// This function should be executed when returning from the payment gateway. This function validates the user's payment
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="Authority"></param>
+        /// <param name="Status"></param>
+        /// <returns></returns>
         [HttpGet("VerifyPayment")]
-        public async Task<IActionResult> VerifyPayment(string Authority, string amount)
+        public async Task<IActionResult> VerifyPayment([FromQuery] string amount,[FromQuery] string Authority, [FromQuery]string Status)
         {
             var _url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentVerification.json";
 
@@ -64,21 +78,34 @@ namespace OurSite.WebApi.Controllers
             {
                { "MerchantID", "00000000-0000-0000-0000-000000000000" }, //Change This To work, some thing like this : xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
                { "Authority", Authority },
-               { "Amount", amount } //Toman
+               { "Amount", amount }, //Toman
+                {"Status",Status }
             };
+            var result = "";
+            _values.TryGetValue("Status", out result);
+            if (result == "OK")
+            {
+                var _paymenResponsetJsonValue = JsonConvert.SerializeObject(_values);
+                var content = new StringContent(_paymenResponsetJsonValue, Encoding.UTF8, "application/json");
 
-            var _paymenResponsetJsonValue = JsonConvert.SerializeObject(_values);
-            var content = new StringContent(_paymenResponsetJsonValue, Encoding.UTF8, "application/json");
-
-            var _response = await client.PostAsync(_url, content);
-            var _responseString = await _response.Content.ReadAsStringAsync();
+                var _response = await client.PostAsync(_url, content);
+                var _responseString = await _response.Content.ReadAsStringAsync();
 
 
-            ZarinPalVerifyResponse _zarinPalResponseModel =
-             JsonConvert.DeserializeObject<ZarinPalVerifyResponse>(_responseString);
+                ZarinPalVerifyResponse _zarinPalResponseModel =
+                 JsonConvert.DeserializeObject<ZarinPalVerifyResponse>(_responseString);
 
-
-            return Ok(_zarinPalResponseModel);
+                if (_zarinPalResponseModel.Status == 100)
+                    return JsonStatusResponse.Success(_zarinPalResponseModel, "Payment was successful");
+                else
+                    return JsonStatusResponse.Error("The transaction has already been verified");
+            }
+            else
+            {
+                return JsonStatusResponse.Error(message: "Transaction failed");
+            }
+                
+            
         }
         #endregion
 
