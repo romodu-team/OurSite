@@ -179,7 +179,8 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Delete paymet
-        public async Task<IActionResult> DeletePayment(long PayId)
+        [HttpDelete("delete-payment")]
+        public async Task<IActionResult> DeletePayment([FromBody]long PayId)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -197,6 +198,8 @@ namespace OurSite.WebApi.Controllers
                         break;
                 }
             }
+            return JsonStatusResponse.Error("u didnt login. please login first");
+
         }
         #endregion
 

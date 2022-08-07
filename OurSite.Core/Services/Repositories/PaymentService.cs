@@ -191,6 +191,7 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Delete payment by admin
+        ]
         public async Task<ResProject> DeletePayment(long ProId, bool IsAdmin)
         {
             var pay = await PaymentRepositories.GetEntity(ProId);
