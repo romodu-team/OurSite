@@ -99,8 +99,6 @@ options.TokenValidationParameters = new TokenValidationParameters()
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<ITicketService, TicketService>();
-builder.Services.AddScoped<ITicketMessageService, TicketMessageService>();
 builder.Services.AddScoped<IimageGalleryService, ImageGalleryService>();
 builder.Services.AddScoped<IWorkSampleService, WorkSampleService>();
 builder.Services.AddScoped<IWorkSampleCategoryService,WorkSampleCategoryService >();
