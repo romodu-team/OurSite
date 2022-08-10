@@ -8,6 +8,7 @@ using OurSite.DataLayer.Entities.ContactWithUs;
 using OurSite.DataLayer.Entities.ImageGalleries;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Entities.RatingModel;
+using OurSite.DataLayer.Entities.Ticketing;
 using OurSite.DataLayer.Entities.WorkSamples;
 using OurSite.OurSite.DataLayer.Entities.WorkSamples;
 
@@ -40,10 +41,13 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<ProjectFeatures> ProjectFeatures { get; set; }
         public DbSet<WorkSampleCategory> WorkSampleCategories { get; set; }
         public DbSet<WorkSampleInCategory> WorkSampleInCategories { get; set; }
+        public DbSet<TicketAttachment> TicketAttachments { get; set; }
+        public DbSet<TicketCategory> TicketCategories { get; set; }
+        public DbSet<TicketDiscussion> TicketDiscussions { get; set; }
+        public DbSet<TicketModel> Ticket { get; set; }
+        public DbSet<TicketPriority> TicketPriorities { get; set; }
+        public DbSet<TicketStatus> TicketStatuses { get; set; }
         
-
-
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
