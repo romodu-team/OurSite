@@ -21,7 +21,7 @@ namespace OurSite.DataLayer.Entities.Ticketing
         [Required]
         public long TicketStatusId { get; set; }
         [Required]
-        public long TicketPriorityId { get; set; }
+        public long? TicketPriorityId { get; set; }
         public long? SupporterId { get; set; }
         [Required]
         public long UserId { get; set; }
