@@ -210,7 +210,10 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
-
+        public async Task<bool> IsUserExist(long userId)
+        {
+            return await userService.GetAllEntity().AnyAsync(u => u.Id == userId && u.IsRemove==false && u.IsActive==true);
+        }
         #region Active User
         public async Task<ResActiveUser> ActiveUser(string activationCode)
         {
@@ -562,6 +565,8 @@ namespace OurSite.Core.Services.Repositories
             }
             return adminview;
         }
+
+
         #endregion
 
         #endregion
