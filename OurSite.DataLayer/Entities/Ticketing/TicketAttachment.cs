@@ -11,7 +11,7 @@ namespace OurSite.DataLayer.Entities.Ticketing
     {
         public long TicketDiscussionId { get; set; }
         public string FileName { get; set; }
-        public string FileSize { get; set; }
+        public long FileSize { get; set; }
         public string ContentType { get; set; }
 
         public TicketDiscussion TicketDiscussion { get; set; }

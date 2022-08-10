@@ -15,12 +15,9 @@ namespace OurSite.DataLayer.Entities.Ticketing
         [Required]
         public string Title { get; set; }
         [Required]
-        public string Description { get; set; }
-        [Required]
         public long TicketCategoryId { get; set; }
         [Required]
         public long TicketStatusId { get; set; }
-        [Required]
         public long? TicketPriorityId { get; set; }
         public long? SupporterId { get; set; }
         [Required]
