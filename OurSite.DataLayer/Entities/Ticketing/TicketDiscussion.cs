@@ -12,7 +12,7 @@ namespace OurSite.DataLayer.Entities.Ticketing
         public long TicketId { get; set; }
         public long SenderId { get; set; }
         public string Content { get; set; }
-        public long? FileId { get; set; }
+        public long? AttachmentId { get; set; }
         public TicketModel Ticket { get; set; }
         public TicketAttachment Attachment { get; set; }
     }

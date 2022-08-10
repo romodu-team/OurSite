@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Authorization;
 using OurSite.Core.Services.Repositories.Forms;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.OurSite.Core.Services.Repositories;
+using OurSite.Core.Services.Interfaces.TicketInterfaces;
+using OurSite.Core.Services.Repositories.TicketServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,6 +104,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IimageGalleryService, ImageGalleryService>();
 builder.Services.AddScoped<IWorkSampleService, WorkSampleService>();
 builder.Services.AddScoped<IWorkSampleCategoryService,WorkSampleCategoryService >();
+builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("viewUser", policy => policy.RequireClaim("viewUser"));

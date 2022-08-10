@@ -61,7 +61,7 @@ namespace OurSite.DataLayer.Repositories
 
         public async Task<Tentity> GetEntity(long Id)
         {
-            var get = await dbset.SingleOrDefaultAsync(x => x.Id == Id);
+            var get = await dbset.SingleOrDefaultAsync(x => x.Id == Id && x.IsRemove==false);
             return get;
         }
 
