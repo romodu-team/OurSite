@@ -26,5 +26,8 @@ namespace OurSite.Core.Utilities
 
         public static string ContractUploadPath =Path.Combine(Directory.GetCurrentDirectory() ,"upload\\File\\Contracts");
         public static string ContractUploadName = "/upload/file/contract/";
+
+        public static string TicketAttachmentUploadPath = Path.Combine(Directory.GetCurrentDirectory(), "upload\\File\\TicketAttachment");
+        public static string TicketAttachmentDownloadPath = "/upload/file/TicketAttachment/";
     }
 }
