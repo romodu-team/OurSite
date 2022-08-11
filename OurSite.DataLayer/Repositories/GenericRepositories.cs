@@ -26,12 +26,12 @@ namespace OurSite.DataLayer.Repositories
 
         public async Task<bool> DeleteEntity(long Id)
         {
-            var find = await dbset.AnyAsync(x => x.Id == Id);
+            var entity = await dbset.FindAsync(Id);
             try
             {
-                if (find == true)
+                if (entity is not null)
                 {
-                    var entity = await dbset.FindAsync(Id);
+                   
                     entity.IsRemove = true;
                     UpDateEntity(entity);
                     return true;
@@ -68,12 +68,12 @@ namespace OurSite.DataLayer.Repositories
         public async Task<bool> RealDeleteEntity(long Id)
         {
 
-            var find = await dbset.AnyAsync(x => x.Id == Id);
+            var entity = await dbset.FindAsync(Id);
             try
             {
-                if (find == true)
+                if (entity is not null)
                 {
-                    var entity = await dbset.FindAsync(Id);
+                    
                     dbset.Remove(entity);
                     return true;
 

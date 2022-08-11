@@ -37,7 +37,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
         {
             //find ticket
             var ticket = await _TicketRepository.GetEntity(TicketId);
-            if (ticket is not null)
+            if (ticket is not null && ticket.IsRemove != false)
             {
                 //if status is valid
                 var TicketStatus = await _TicketStatusRepository.GetEntity(StatusId);

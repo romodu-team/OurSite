@@ -1,4 +1,5 @@
-﻿using OurSite.Core.DTOs.TicketDtos;
+﻿using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.TicketDtos;
 using OurSite.Core.Services.Interfaces.TicketInterfaces;
 using OurSite.DataLayer.Entities.Ticketing;
 using OurSite.DataLayer.Interfaces;
@@ -21,12 +22,70 @@ namespace OurSite.Core.Services.Repositories.TicketServices
         }
 
         #endregion
-        public async Task<ResGetCategoryDto> GetCategory(long CategoryId)
+
+        public async Task<bool> CreateCategory(string title, string name)
+        {
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(name))
+            {
+                try
+                {
+                    await _TicketCategoryRepository.AddEntity(new TicketCategory { Name = name, Title = title });
+                    await _TicketCategoryRepository.SaveEntity();
+                    return true;
+                }
+                catch (Exception)
+                {
+
+                    return false;
+                }
+
+            }
+            return false;
+        }
+
+        public async Task<bool> DeleteCategory(long CategoryId)
+        {
+            var res = await _TicketCategoryRepository.RealDeleteEntity(CategoryId);
+            if (res)
+                await _TicketCategoryRepository.SaveEntity();
+            return res;
+        }
+
+        public async Task<List<TicketCategory>> GetAllCategories()
+        {
+            var priorities = await _TicketCategoryRepository.GetAllEntity().Where(p => p.IsRemove != false).ToListAsync();
+            return priorities;
+        }
+
+        public async Task<TicketCategory> GetCategory(long CategoryId)
         {
             var category = await _TicketCategoryRepository.GetEntity(CategoryId);
-            if (category is not null)
-                return new ResGetCategoryDto { CreateDate = category.CreateDate.ToShortDateString(), Id = category.Id, LastUpdateDate = category.LastUpdate.ToShortDateString(), Name = category.Name, Title = category.Title };
-            return null;
+            return category;
+        }
+
+        public async Task<bool> UpdateCategory(long CategoryId, string? title, string? name)
+        {
+            var Category = await _TicketCategoryRepository.GetEntity(CategoryId);
+            if (Category != null)
+            {
+                if (!string.IsNullOrWhiteSpace(title))
+                    Category.Title = title;
+                if (!string.IsNullOrWhiteSpace(name))
+                    Category.Name = name;
+
+                try
+                {
+                    _TicketCategoryRepository.UpDateEntity(Category);
+                    await _TicketCategoryRepository.SaveEntity();
+                    return true;
+                }
+                catch (Exception)
+                {
+
+                    return false;
+                }
+            }
+            return false;
         }
     }
 }
