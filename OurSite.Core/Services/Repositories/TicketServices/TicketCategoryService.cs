@@ -16,9 +16,12 @@ namespace OurSite.Core.Services.Repositories.TicketServices
     {
         #region constructor
         private IGenericReopsitories<TicketCategory> _TicketCategoryRepository;
-        public TicketCategoryService(IGenericReopsitories<TicketCategory> ticketCategoryRepository)
+        private IGenericReopsitories<TicketModel> _ticketRepository;
+
+        public TicketCategoryService(IGenericReopsitories<TicketCategory> ticketCategoryRepository, IGenericReopsitories<TicketModel> ticketRepository)
         {
             _TicketCategoryRepository = ticketCategoryRepository;
+            _ticketRepository = ticketRepository;
         }
 
         #endregion
@@ -43,27 +46,46 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             return false;
         }
 
-        public async Task<bool> DeleteCategory(long CategoryId)
+        public async Task<ResDeleteOpration> DeleteCategory(long CategoryId)
         {
-            var res = await _TicketCategoryRepository.RealDeleteEntity(CategoryId);
-            if (res)
-                await _TicketCategoryRepository.SaveEntity();
-            return res;
+            var tickets = await _ticketRepository.GetAllEntity().Where(t => t.TicketCategoryId == CategoryId && t.IsRemove == false).ToListAsync();
+            if (tickets != null & tickets.Count > 0)
+                return ResDeleteOpration.RefrenceError;
+            else
+            {
+                try
+                {
+                    var res = await _TicketCategoryRepository.RealDeleteEntity(CategoryId);
+                    if (res)
+                    {
+                        await _TicketCategoryRepository.SaveEntity();
+                        return ResDeleteOpration.Success;
+                    }
+                    return ResDeleteOpration.Failure;
+                }
+                catch (Exception)
+                {
+
+                    return ResDeleteOpration.Failure;
+                }
+            }
         }
 
-        public async Task<List<TicketCategory>> GetAllCategories()
+        public async Task<List<TicketCategoryDto>> GetAllCategories()
         {
-            var priorities = await _TicketCategoryRepository.GetAllEntity().Where(p => p.IsRemove != false).ToListAsync();
-            return priorities;
+            var categories = await _TicketCategoryRepository.GetAllEntity().Where(p => p.IsRemove == false).Select(c=>new TicketCategoryDto { Id=c.Id,Title=c.Title,ParentId=c.ParentId,Name=c.Name}).ToListAsync();
+            return categories;
         }
 
-        public async Task<TicketCategory> GetCategory(long CategoryId)
+        public async Task<TicketCategoryDto> GetCategory(long CategoryId)
         {
             var category = await _TicketCategoryRepository.GetEntity(CategoryId);
-            return category;
+            if (category == null)
+                return null;
+            return new TicketCategoryDto { Id=category.Id,Name=category.Name,ParentId=category.ParentId,Title=category.Title};
         }
 
-        public async Task<bool> UpdateCategory(long CategoryId, string? title, string? name)
+        public async Task<bool> UpdateCategory(long CategoryId, string? title, string? name, long? parentId)
         {
             var Category = await _TicketCategoryRepository.GetEntity(CategoryId);
             if (Category != null)
@@ -72,6 +94,14 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                     Category.Title = title;
                 if (!string.IsNullOrWhiteSpace(name))
                     Category.Name = name;
+                if (parentId != null)
+                {
+                    if(await _TicketCategoryRepository.GetAllEntity().AnyAsync(c => c.Id == parentId))
+                        Category.ParentId = parentId;
+                    else
+                        return false;
+                }   
+                    
 
                 try
                 {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.TicketDtos;
 using OurSite.Core.Services.Interfaces.TicketInterfaces;
 using OurSite.DataLayer.Entities.Ticketing;
 using OurSite.DataLayer.Interfaces;
@@ -14,9 +15,12 @@ namespace OurSite.Core.Services.Repositories.TicketServices
     {
         #region constructor
         private IGenericReopsitories<TicketStatus> _TicketStatusRepository;
-        public TicketStatusService(IGenericReopsitories<TicketStatus> ticketStatusRepository)
+        private IGenericReopsitories<TicketModel> _ticketRepository;
+
+        public TicketStatusService(IGenericReopsitories<TicketStatus> ticketStatusRepository, IGenericReopsitories<TicketModel> ticketRepository)
         {
             _TicketStatusRepository = ticketStatusRepository;
+            _ticketRepository = ticketRepository;
         }
 
         #endregion
@@ -41,24 +45,44 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             return false;
         }
 
-        public async Task<bool> DeleteStatus(long StatusId)
+        public async Task<ResDeleteOpration> DeleteStatus(long StatusId)
         {
-            var res = await _TicketStatusRepository.RealDeleteEntity(StatusId);
-            if (res)
-                await _TicketStatusRepository.SaveEntity();
-            return res;
+            var tickets = await _ticketRepository.GetAllEntity().Where(t => t.TicketStatusId == StatusId && t.IsRemove == false).ToListAsync();
+            if (tickets != null & tickets.Count > 0)
+                return ResDeleteOpration.RefrenceError;
+            else
+            {
+                try
+                {
+                    var res = await _TicketStatusRepository.RealDeleteEntity(StatusId);
+                    if (res)
+                    {
+                        await _TicketStatusRepository.SaveEntity();
+                        return ResDeleteOpration.Success;
+                    }
+                    return ResDeleteOpration.Failure;
+                }
+                catch (Exception)
+                {
+
+                    return ResDeleteOpration.Failure;
+                }
+            }
         }
 
-        public async Task<List<TicketStatus>> GetAllStatus()
+        public async Task<List<TicketStatusDto>> GetAllStatus()
         {
-            var statusList = await _TicketStatusRepository.GetAllEntity().Where(p => p.IsRemove != false).ToListAsync();
+            var statusList = await _TicketStatusRepository.GetAllEntity().Where(p => p.IsRemove == false).Select(s=>new TicketStatusDto { StatusId = s.Id, Name = s.Name, Title = s.Title }).ToListAsync();
             return statusList;
         }
 
-        public async Task<TicketStatus> GetStatus(long StatusId)
+        public async Task<TicketStatusDto> GetStatus(long StatusId)
         {
             var status = await _TicketStatusRepository.GetEntity(StatusId);
-            return status;
+
+            if (status == null)
+                return null;
+            return new TicketStatusDto { StatusId = status.Id, Name = status.Name, Title = status.Title };
         }
 
         public async Task<bool> UpdateStatus(long StatusId, string? title, string? name)

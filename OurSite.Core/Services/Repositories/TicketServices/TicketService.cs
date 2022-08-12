@@ -37,7 +37,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
         {
             //find ticket
             var ticket = await _TicketRepository.GetEntity(TicketId);
-            if (ticket is not null && ticket.IsRemove != false)
+            if (ticket is not null && ticket.IsRemove == false)
             {
                 //if status is valid
                 var TicketStatus = await _TicketStatusRepository.GetEntity(StatusId);
@@ -68,64 +68,72 @@ namespace OurSite.Core.Services.Repositories.TicketServices
         public async Task<ResCreateDiscussionDto> CreateDiscussion(ReqCreateDiscussion request)
         {
             //find ticket
-            if (await _TicketRepository.GetAllEntity().AnyAsync(t => t.Id == request.TicketId))
+            var ticket = await _TicketRepository.GetAllEntity().Include(t=>t.TicketStatus).SingleOrDefaultAsync(t => t.Id == request.TicketId);
+            if (ticket is not null)
             {
-                //find sender
-                bool validSender = false;
-                if (request.IsAdmin)
-                    validSender = await _AdminService.IsAdminExist(request.SenderId);
-                else
-                    validSender = await _UserService.IsUserExist(request.SenderId);
-                if (validSender)
+                if (ticket.TicketStatus.Name != "Closed")
                 {
-                    //create discussion
-                    var discussion = new TicketDiscussion()
+                    //find sender
+                    bool validSender = false;
+                    if (request.IsAdmin)
+                        validSender = await _AdminService.IsAdminExist(request.SenderId);
+                    else
+                        validSender = await _UserService.IsUserExist(request.SenderId);
+                    if (validSender)
                     {
-                        Content = request.Content,
-                        SenderId = request.SenderId,
-                        TicketId = request.TicketId,
-                        IsRemove = false
-
-                    };
-                    try
-                    {
-                        await _DiscussionRepository.AddEntity(discussion);
-                        await _DiscussionRepository.SaveEntity();
-
-                        //upload attachment
-                        if (request.Attachment is not null)
+                        //create discussion
+                        var discussion = new TicketDiscussion()
                         {
-                            var res = await FileUploader.UploadTicketAttachment(PathTools.TicketAttachmentUploadPath, request.Attachment, 20);
-                            if (res.Status == resFileUploader.Success)
+                            Content = request.Content,
+                            SenderId = request.SenderId,
+                            TicketId = request.TicketId,
+                            IsAdmin = request.IsAdmin,
+                            IsRemove = false
+
+                        };
+                        try
+                        {
+                            await _DiscussionRepository.AddEntity(discussion);
+                            await _DiscussionRepository.SaveEntity();
+
+                            //upload attachment
+                            if (request.Attachment is not null)
                             {
-                                var attachment = new TicketAttachment()
+                                var res = await FileUploader.UploadTicketAttachment(PathTools.TicketAttachmentUploadPath, request.Attachment, 20);
+                                if (res.Status == resFileUploader.Success)
                                 {
-                                    ContentType = res.ContentType,
-                                    FileName = res.FileName,
-                                    FileSize = (long)res.FileSize,
-                                    TicketDiscussionId = discussion.Id
-                                };
-                                await _AttachmentRepository.AddEntity(attachment);
-                                await _AttachmentRepository.SaveEntity();
+                                    var attachment = new TicketAttachment()
+                                    {
+                                        ContentType = res.ContentType,
+                                        FileName = res.FileName,
+                                        FileSize = (float)res.FileSize,
+                                        TicketDiscussionId = discussion.Id
+                                    };
+                                    await _AttachmentRepository.AddEntity(attachment);
+                                    await _AttachmentRepository.SaveEntity();
+                                    discussion.AttachmentId = attachment.Id;
+                                    _DiscussionRepository.UpDateEntity(discussion);
+                                    await _DiscussionRepository.SaveEntity();
+                                    return new ResCreateDiscussionDto { AttachmentStatus = resFileUploader.Success, DiscussionStatus = ResOperation.Success };
 
-                                return new ResCreateDiscussionDto { AttachmentStatus = resFileUploader.Success, DiscussionStatus = ResOperation.Success };
-
+                                }
+                                else
+                                    return new ResCreateDiscussionDto { AttachmentStatus = res.Status, DiscussionStatus = ResOperation.Success };
                             }
-                            else
-                                return new ResCreateDiscussionDto { AttachmentStatus = res.Status, DiscussionStatus = ResOperation.Success };
+
+                            return new ResCreateDiscussionDto { AttachmentStatus = resFileUploader.NoContent, DiscussionStatus = ResOperation.Success };
+                        }
+                        catch (Exception)
+                        {
+                            return new ResCreateDiscussionDto { DiscussionStatus = ResOperation.Failure, AttachmentStatus = resFileUploader.Failure };
+
                         }
 
-                        return new ResCreateDiscussionDto { AttachmentStatus = resFileUploader.NoContent, DiscussionStatus = ResOperation.Success };
                     }
-                    catch (Exception)
-                    {
-                        return new ResCreateDiscussionDto { DiscussionStatus = ResOperation.Failure, AttachmentStatus = resFileUploader.Failure };
-
-                    }
-
-
+                    return new ResCreateDiscussionDto { DiscussionStatus = ResOperation.SenderNotFound, AttachmentStatus = resFileUploader.NoContent };
                 }
-                return new ResCreateDiscussionDto { DiscussionStatus = ResOperation.SenderNotFound, AttachmentStatus = resFileUploader.NoContent };
+                return new ResCreateDiscussionDto { DiscussionStatus = ResOperation.notAllowed, AttachmentStatus = resFileUploader.NoContent };
+
             }
             return new ResCreateDiscussionDto { AttachmentStatus = resFileUploader.NoContent, DiscussionStatus = ResOperation.NotFound };
         }
@@ -139,12 +147,14 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                 //create ticket
                 var ticket = new TicketModel
                 {
+                    Title=request.Title,
                     UserId = request.UserId,
                     ProjectId = request.ProjectId,
                     SupporterId = request.SupporterId,
                     TicketCategoryId = request.TicketCategoryId,
                     TicketPriorityId = request.TicketPriorityId,
-                    TicketStatusId = request.TicketStatusId
+                    TicketStatusId = request.TicketStatusId,
+                    
                 };
                 try
                 {
@@ -163,7 +173,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
 
 
             }
-            return new ResCreateDiscussionDto { AttachmentStatus = resFileUploader.NoContent, DiscussionStatus = ResOperation.NotFound };
+            return new ResCreateDiscussionDto { AttachmentStatus = resFileUploader.NoContent, DiscussionStatus = ResOperation.UserNotFound };
 
         }
 
@@ -274,7 +284,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             var count = (int)Math.Ceiling(TicketQuery.Count() / (double)request.TakeEntity);
             var pager = Pager.Build(count, request.PageId, request.TakeEntity);
 
-            var list = await TicketQuery.Select(t => new GetAllTicketDto { AssignedTo = String.Concat(t.Supporter.FirstName, t.Supporter.LastName), Category = t.TicketCategory.Title, CreateDate = t.CreateDate.ToShortDateString(), LastUpdateDate = t.LastUpdate.ToShortDateString(), Name = t.Title, UserName = t.User.UserName, Priority = t.TicketPriority.Title, Status = t.TicketStatus.Title, Id = t.Id }).ToListAsync();
+            var list = await TicketQuery.Select(t => new GetAllTicketDto { AssignedTo = String.Concat(t.Supporter.FirstName," ", t.Supporter.LastName), Category = t.TicketCategory.Title, CreateDate = t.CreateDate.ToShortDateString(), LastUpdateDate = t.LastUpdate.ToShortDateString(), Name = t.Title, UserName = t.User.UserName, Priority = t.TicketPriority.Title, Status = t.TicketStatus.Title, Id = t.Id }).ToListAsync();
 
             var result = new ResFilteredGetAllTicketDto();
             result.SetPaging(pager);
@@ -289,23 +299,33 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             if (ticket != null)
             {
                 //get discussions with attachments
-                var discussions = await _DiscussionRepository.GetAllEntity().Where(d => d.TicketId == TicketId && d.IsRemove == false).Include(d => d.Attachment).ToListAsync();
+                var discussions = await _DiscussionRepository.GetAllEntity().Include(d => d.Attachment).Where(d => d.TicketId == TicketId && d.IsRemove == false).ToListAsync();
                 var resultGetTicket = new ResGetTicketDto()
                 {
                     Category = ticket.TicketCategory.Title,
                     CreateDate = ticket.CreateDate.ToShortDateString(),
                     LastUpdateDate = ticket.LastUpdate.ToShortDateString(),
-                    AssignedTo = String.Concat(ticket.Supporter.FirstName, ticket.Supporter.LastUpdate),
+                    AssignedTo = String.Concat(ticket.Supporter.FirstName," ", ticket.Supporter.LastName),
                     Name = ticket.Title,
                     UserEmail = ticket.User.Email,
-                    UserFullname = String.Concat(ticket.User.FirstName, ticket.User.LastUpdate),
+                    UserFullname = String.Concat(ticket.User.FirstName, ticket.User.LastName),
                     Priority = ticket.TicketPriority.Title,
                     Status = ticket.TicketStatus.Title,
                     ProjectId = ticket.ProjectId,
-
+                    Attachments = new List<TicketAttachmentDto>()
                 };
-
-                resultGetTicket.Discussions = discussions.Select(d => new TicketDiscussionDto { Content = d.Content, CreateDate = d.CreateDate.ToShortDateString(), Id = d.Id, SenderId = d.SenderId, AttachmentPath = PathTools.TicketAttachmentDownloadPath + d.Attachment.FileName }).ToList();
+                foreach (var discussion in discussions)
+                {
+                    if (discussion.Attachment != null)
+                    {
+                        var attachment = new TicketAttachmentDto() { AttachmentId=discussion.Attachment.Id,ContentType=discussion.Attachment.ContentType,FileName=discussion.Attachment.FileName,FileSize=discussion.Attachment.FileSize,TicketDiscussionId=discussion.Attachment.TicketDiscussionId};
+                        resultGetTicket.Attachments.Add(attachment);
+                    }
+                      
+                      
+                }
+                if(discussions is not null && discussions.Count>0)
+                    resultGetTicket.Discussions = discussions.Select(d => new TicketDiscussionDto { Content = d.Content, CreateDate = d.CreateDate.ToShortDateString(), Id = d.Id,IsAdmin=d.IsAdmin ,SenderId = d.SenderId, AttachmentPath =d.Attachment != null? PathTools.TicketAttachmentDownloadPath + d.Attachment.FileName:null }).ToList();
                 return resultGetTicket;
             }
             return null;
@@ -380,7 +400,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             var count = (int)Math.Ceiling(TicketQuery.Count() / (double)request.TakeEntity);
             var pager = Pager.Build(count, request.PageId, request.TakeEntity);
 
-            var list = await TicketQuery.Select(t => new GetAllTicketDto { AssignedTo = String.Concat(t.Supporter.FirstName, t.Supporter.LastName), Category = t.TicketCategory.Title, CreateDate = t.CreateDate.ToShortDateString(), LastUpdateDate = t.LastUpdate.ToShortDateString(), Name = t.Title, UserName = t.User.UserName, Priority = t.TicketPriority.Title, Status = t.TicketStatus.Title, Id = t.Id }).ToListAsync();
+            var list = await TicketQuery.Select(t => new GetAllTicketDto { AssignedTo = String.Concat(t.Supporter.FirstName," ", t.Supporter.LastName), Category = t.TicketCategory.Title, CreateDate = t.CreateDate.ToShortDateString(), LastUpdateDate = t.LastUpdate.ToShortDateString(), Name = t.Title, UserName = t.User.UserName, Priority = t.TicketPriority.Title, Status = t.TicketStatus.Title, Id = t.Id }).ToListAsync();
 
             var result = new ResFilteredGetAllTicketDto();
             result.SetPaging(pager);
@@ -439,13 +459,14 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             var report = new TicketReportDto();
             report.TotalTicket = await _TicketRepository.GetAllEntity().Where(t => t.IsRemove == false).CountAsync();
             report.TotalSolvedTicket = await _TicketRepository.GetAllEntity().Include(t => t.TicketStatus).Where(t => t.TicketStatus.Name == "Closed" && t.IsRemove == false).CountAsync();
-            report.TotalUser = await _TicketRepository.GetAllEntity().Include(t => t.User).Where(t => t.IsRemove == false).GroupBy(t => t.User).CountAsync();
-            var res = await _TicketRepository.GetAllEntity().Include(t => t.TicketStatus).Where(t => t.IsRemove == false).GroupBy(t => t.TicketStatus.Title).ToListAsync();
+            var resGroupByUserId = _TicketRepository.GetAllEntity().Where(u=>u.IsRemove==false).AsEnumerable().GroupBy(u=>u.UserId);
+            report.TotalUser = resGroupByUserId.Count();
+            var resGroupByStatusId = _TicketRepository.GetAllEntity().Where(t => t.IsRemove == false).Include(u=>u.TicketStatus).AsEnumerable().GroupBy(t =>t.TicketStatus.Title);
 
             report.NumberOfTicketsPerStatus = new Dictionary<string, string>();
-            foreach (var item in res)
+            foreach (var item in resGroupByStatusId)
             {
-                report.NumberOfTicketsPerStatus.Add(item.Key, item.Count().ToString());
+                report.NumberOfTicketsPerStatus.Add(item.Key.ToString(), item.Count().ToString());
             }
 
             return report;
