@@ -36,6 +36,7 @@ namespace OurSite.WebApi.Controllers.Forms
         /// Error("فرمت فایل انتخابی نامناسب می‌باشد")
         /// Error("فرمت فایل انتخابی نامناسب می‌باشد")
         /// </summary>
+        /// <remarks>The file size must be less than 10 MB</remarks>
         /// <param name="sendConsultationFormWithFile"></param>
         /// <returns></returns>
         [HttpPost("send-form-with-file")]

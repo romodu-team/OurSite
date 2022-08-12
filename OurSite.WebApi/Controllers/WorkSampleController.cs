@@ -22,7 +22,7 @@ public class WorkSampleController: Controller
     /// <summary>
     /// Creates a work sample
     /// </summary>
-    /// <remarks>ShortDescription and Content can contain html. ProjectName is required</remarks>
+    /// <remarks>ShortDescription and Content can contain html. ProjectName is required - The file size must be less than 10 MB</remarks>
     /// <returns></returns>
     [HttpPost("create-WorkSample")]
     public async Task<IActionResult> CreateWorkSample([FromForm]CreateWorkSampleDto request){
@@ -167,6 +167,7 @@ public class WorkSampleController: Controller
     /// </summary>
     /// <param name="worksampleId"></param>
     /// <param name="request"></param>
+    /// <remarks>The file size must be less than 10 MB</remarks>
     /// <returns></returns>
     [HttpPut("update-workSample/{worksampleId}")]
     public async Task<IActionResult> UpdateWorkSample([FromRoute]long worksampleId,[FromForm]EditWorkSampleDto request)

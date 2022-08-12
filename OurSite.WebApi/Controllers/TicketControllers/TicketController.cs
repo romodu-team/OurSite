@@ -199,6 +199,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <summary>
         /// create a discussion for a ticket
         /// </summary>
+        /// <remarks>The size of the attached file must be less than 20 MB</remarks>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("create-discussion")]
