@@ -9,7 +9,7 @@ using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Entities.Payments;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
-using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
+using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
 
 namespace OurSite.Core.Services.Repositories
 {

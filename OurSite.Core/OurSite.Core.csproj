@@ -28,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\Interfaces\Projecta\" />
-    <Folder Include="DTOs\ProjectDtos\" />
     <Folder Include="Services\Repositories\Forms\" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System;
 using OurSite.Core.DTOs.Payment;
-using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
+using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
 
 namespace OurSite.Core.Services.Interfaces.Projecta
 {
