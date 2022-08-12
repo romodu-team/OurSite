@@ -3,6 +3,7 @@
     public class TicketDiscussionDto
     {
         public long SenderId { get; set; }
+        public bool IsAdmin { get; set; }
         public long Id { get; set; }
         public string Content { get; set; }
         public string CreateDate { get; set; }

@@ -10,7 +10,7 @@ namespace OurSite.Core.DTOs.TicketDtos
     public class ResUploadTicketAttachment
     {
         public string? FileName { get; set; }
-        public long? FileSize { get; set; }
+        public float? FileSize { get; set; }
         public string? ContentType { get; set; }
         public resFileUploader Status { get; set; }
     }

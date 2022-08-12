@@ -105,6 +105,9 @@ builder.Services.AddScoped<IimageGalleryService, ImageGalleryService>();
 builder.Services.AddScoped<IWorkSampleService, WorkSampleService>();
 builder.Services.AddScoped<IWorkSampleCategoryService,WorkSampleCategoryService >();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
+builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
+builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("viewUser", policy => policy.RequireClaim("viewUser"));

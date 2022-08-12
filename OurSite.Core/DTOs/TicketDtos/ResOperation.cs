@@ -6,7 +6,9 @@
         Failure,
         NotFound,
         StatusNotFound,
-        SenderNotFound
+        SenderNotFound,
+        UserNotFound,
+        notAllowed
     }
 
 }
