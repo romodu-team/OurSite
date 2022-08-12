@@ -90,7 +90,7 @@ namespace OurSite.Core.Utilities
             {
                 try
                 {
-                    var size = file.Length / 1000;
+                    float size = file.Length / 1000;
                     if (size > maxSizeMb * 1024)
                         return new ResUploadTicketAttachment { Status = resFileUploader.ToBig, FileName = null, ContentType = null, FileSize = null };
 
@@ -136,7 +136,7 @@ namespace OurSite.Core.Utilities
                         fileStream.Flush();
 
                     }
-                    return new ResUploadTicketAttachment { Status = resFileUploader.Success, FileName = FileName, ContentType = file.ContentType, FileSize = size };
+                    return new ResUploadTicketAttachment { Status = resFileUploader.Success, FileName = FileName, ContentType = file.ContentType, FileSize = (size/1024) };
                 }
                 catch
                 {
