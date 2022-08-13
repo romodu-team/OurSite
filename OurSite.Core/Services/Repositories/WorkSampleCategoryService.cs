@@ -15,6 +15,14 @@ public class WorkSampleCategoryService : IWorkSampleCategoryService
         _WorkSampleCategoryRepository=WorkSampleCategoryRepository;
         _WorkSampleInCategoryReopsitory=WorkSampleInCategoryReopsitory;
     }
+
+    public void Dispose()
+    {
+        _WorkSampleInCategoryReopsitory.Dispose();
+        _WorkSampleCategoryRepository.Dispose();
+    }
+
+
     public async Task<bool> AddCategoriesToWorkSample(long worksampleId, List<long> CategoriesId)
     {
         //delete all existed worksampleincategories
@@ -120,6 +128,8 @@ public class WorkSampleCategoryService : IWorkSampleCategoryService
         }
         
     }
+
+
 
     public async Task<bool> Editcategory(long categoryId, string? Title, string? Name)
     {
