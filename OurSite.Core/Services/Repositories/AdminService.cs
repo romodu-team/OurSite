@@ -37,30 +37,15 @@ namespace OurSite.Core.Services.Repositories
             this.roleService = roleService;
             AdditionalDataRepository = additionalData;
         }
-
-<<<<<<< Updated upstream
-        #region Dispose
-=======
-
          #region Dispose
->>>>>>> Stashed changes
+
         public void Dispose()
         {
             adminRepository.Dispose();
             roleService.Dispose();
             AdditionalDataRepository.Dispose();
-<<<<<<< Updated upstream
+
         }
-        #endregion
-
-
-
-=======
-            mailService.Dispose();
-    
-        }
-        #endregion
->>>>>>> Stashed changes
         #endregion
 
         #region Admin management
