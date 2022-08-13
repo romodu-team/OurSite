@@ -29,6 +29,8 @@ namespace OurSite.Core.Services.Repositories
         public void Dispose()
         {
             PaymentRepositories.Dispose();
+            AdminRepositories.Dispose();
+            ProjectRepositories.Dispose();
         }
         #endregion
 
