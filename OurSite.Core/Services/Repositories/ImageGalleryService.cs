@@ -20,6 +20,12 @@ public class ImageGalleryService : IimageGalleryService
         this.WorkSampleRepository=WorkSampleRepository;
     }
 
+    public void Dispose()
+    {
+        ImageGalleryRepository.Dispose();
+        WorkSampleRepository.Dispose();
+    }
+
     public async Task<ResAddImageToGallery> AddImageToGallery(SiteSections SiteSection, long WorkSampleId, IFormFile Image,string? alt)
     {   //check if siteSection is valid
        if(!SiteSections.IsDefined(SiteSection))
@@ -87,6 +93,8 @@ public class ImageGalleryService : IimageGalleryService
         }
         return ResDeleteImage.Faild;
     }
+
+
 
     public async Task<List<GetGalleryDto>> GetActiveGalleryByWorkSampleId(long WorkSampleId)
     {
