@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs.Paging;
+using OurSite.Core.DTOs.CheckBoxDtos;
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Services.Interfaces;
@@ -299,12 +300,12 @@ namespace OurSite.Core.Services.Repositories
                     Description = project.Description,
                     Situation = project.Situation,
                     ContractFilePath = PathTools.ContractUploadName + project.ContractFileName
-                    
+                    ,PlanDetails=new List<CheckBoxDto>()
                 };
                 var selectedPlans = await SelectedProjectRepository.GetAllEntity().Where(x => x.ProjectId == ProjectId).Include(x => x.CheckBox).ToListAsync();
                 foreach (var item in selectedPlans)
                 {
-                    ViewrProject.PlanDetails.Add(item.CheckBox);
+                    ViewrProject.PlanDetails.Add(new CheckBoxDto{Id=item.CheckBox.Id,Description=item.CheckBox.Description,IconName=item.CheckBox.IconName,Title=item.CheckBox.CheckBoxName});
                 }
                 return ViewrProject;
             }

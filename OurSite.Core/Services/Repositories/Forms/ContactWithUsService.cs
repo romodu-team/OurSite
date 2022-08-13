@@ -58,7 +58,7 @@ namespace OurSite.Core.Services.Repositories.Forms
                     ToEmail=form1.UserEmail,
                     Subject="پیام تماس با ما جدید دریافت شد",
                     Body=""};
-                await mailService.SendEmailAsync()
+                await mailService.SendEmailAsync(MailMessageDto);
                 return true;
             }
             catch

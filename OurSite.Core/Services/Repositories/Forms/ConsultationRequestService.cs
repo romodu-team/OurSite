@@ -41,7 +41,7 @@ namespace OurSite.Core.Services.Repositories.Forms
         #endregion
 
 
-        public async Task<bool> SendConsultationForm(ConsultationRequestDto consultationRequestDto)
+        public async Task<bool> SendConsultationForm(ConsultationRequestDto consultationRequestDto,string? SubmittedFileName)
         {
             bool flag = true;
             ConsultationRequest request = new ConsultationRequest()
@@ -50,7 +50,8 @@ namespace OurSite.Core.Services.Repositories.Forms
                 UserEmail = consultationRequestDto.UserEmail,
                 UserPhoneNumber = consultationRequestDto.UserPhoneNumber,
                 Expration = consultationRequestDto.Expration,
-                SubmittedFileName = consultationRequestDto.SubmittedFileName,
+                SubmittedFileName = SubmittedFileName,
+                IsRead=false
             };
             try
             {
@@ -64,7 +65,7 @@ namespace OurSite.Core.Services.Repositories.Forms
                 return flag;
             }
            
-            if(consultationRequestDto.ItemSelectedsId.Any())
+            if(consultationRequestDto.ItemSelectedsId is not null && consultationRequestDto.ItemSelectedsId.Count>0)
             {
                 var list = consultationRequestDto.ItemSelectedsId[0].Split(",");
                 foreach (var item in list)
@@ -108,7 +109,7 @@ namespace OurSite.Core.Services.Repositories.Forms
             var consultationRequestQuery = consultationRequestRepo.GetAllEntity();
             var count = (int)Math.Ceiling(consultationRequestQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await consultationRequestRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllConsultationRequestDto {Id=x.Id, UserFullName = x.UserFullName, UserEmail = x.UserEmail, UserPhoneNumber = x.UserPhoneNumber }).ToListAsync();
+            var list = await consultationRequestRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllConsultationRequestDto {IsRead=x.IsRead,Id=x.Id, UserFullName = x.UserFullName, UserEmail = x.UserEmail, UserPhoneNumber = x.UserPhoneNumber }).ToListAsync();
             var result = new ResFilterConsultationRequestDto();
             result.SetPaging(pager);
             return result.SetConsultationRequests(list);
@@ -130,7 +131,8 @@ namespace OurSite.Core.Services.Repositories.Forms
                     UserEmail=consulationFrom.UserEmail,
                     UserFullName=consulationFrom.UserFullName,
                     UserPhoneNumber=consulationFrom.UserPhoneNumber,
-                    ItemSelected=new List<DTOs.CheckBoxDtos.CheckBoxDto?>()
+                    ItemSelected=new List<DTOs.CheckBoxDtos.CheckBoxDto?>(),
+                    IsRead=consulationFrom.IsRead
                 };
                 foreach (var item in consulationFrom.ItemSelecteds)
                 {
@@ -143,7 +145,23 @@ namespace OurSite.Core.Services.Repositories.Forms
             return null;
         }
         #endregion
+        public async Task<bool> ChangeReadStatus(long ConsultationFormId)
+        {
+            var form= await consultationRequestRepo.GetEntity(ConsultationFormId);
+            form.IsRead=!form.IsRead;
+            try
+            {
+                consultationRequestRepo.UpDateEntity(form);
+                await consultationRequestRepo.SaveEntity();
+                return true;
+            }
+            catch (System.Exception)
+            {
 
+                return false;
+            }
+
+        }
 
     }
 }

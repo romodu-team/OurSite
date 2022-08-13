@@ -12,5 +12,6 @@ namespace OurSite.Core.DTOs.ConsultationRequestDtos
         public string UserFullName { get; set; }
         public string UserEmail { get; set; }
         public string UserPhoneNumber { get; set; }
+        public bool IsRead { get; set; }
     }
 }

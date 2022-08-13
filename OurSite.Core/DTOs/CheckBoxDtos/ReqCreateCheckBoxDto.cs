@@ -1,10 +1,11 @@
+using OurSite.DataLayer.Entities.ConsultationRequest;
+
 namespace OurSite.Core.DTOs.CheckBoxDtos;
 
-public class CheckBoxDto
-{    
-    public long Id { get; set; }
+public class ReqCreateCheckBoxDto
+{
     public string Title { get; set; }
     public string? Description { get; set; }
-    public string SiteSectionName { get; set; } 
+    public section SiteSectionId { get; set; } 
     public string? IconName { get; set; }
 }

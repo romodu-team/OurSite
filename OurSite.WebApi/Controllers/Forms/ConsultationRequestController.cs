@@ -51,8 +51,12 @@ namespace OurSite.WebApi.Controllers.Forms
                 switch (firstResponse.Status)
                 {
                     case resFileUploader.Success:
-                        sendConsultationFormWithFile.SubmittedFileName = firstResponse.FileName;
-                        break;
+                        {
+                            var secondResponse = await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile,firstResponse.FileName);
+                            if (secondResponse)
+                                return JsonStatusResponse.Success("درخواست با موفقیت ارسال گردید");
+                            return JsonStatusResponse.Error("درخواست شما ارسال نگردید");
+                        }
                     case resFileUploader.Failure:
                         return JsonStatusResponse.Error("ارسال فایل با خطا مواجه شد");
                     case resFileUploader.ToBig:
@@ -65,11 +69,11 @@ namespace OurSite.WebApi.Controllers.Forms
                         return JsonStatusResponse.Error("ارسال فایل با خطا مواجه شد");
                 }
             }
-
-            var secondResponse = await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile);
-            if (secondResponse)
+            var res = await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile,null);
+            if (res)
                 return JsonStatusResponse.Success("درخواست با موفقیت ارسال گردید");
-            return JsonStatusResponse.Error("درخواست شما ارسال نگردید");
+            return JsonStatusResponse.Error("درخواست شما ارسال نگردید");            
+            
         }
         #endregion
 
@@ -109,7 +113,18 @@ namespace OurSite.WebApi.Controllers.Forms
             return JsonStatusResponse.NotFound("Consulation form not found");
         }
         #endregion
-
+        /// <summary>
+        /// change read status of consultion form , Unread and read
+        /// </summary>
+        /// <param name="ConsulationId"></param>
+        /// <returns></returns>
+        [HttpPut("Change-Consulation-Read-Status")]
+        public async Task<IActionResult> ChangeReadStatus(long ConsulationId){
+            var res= await consultationRequestService.ChangeReadStatus(ConsulationId);
+            if(res)
+                return JsonStatusResponse.Success("The read status of the form has changed");
+            return JsonStatusResponse.Error("server error");
+        }
         #endregion
     }
 }
