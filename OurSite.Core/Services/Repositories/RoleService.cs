@@ -109,7 +109,7 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(RolesQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await RolesQuery.Paging(pager).Select(r => new RoleDto { Name = r.Name, Title = r.Title }).ToListAsync();    //use the genric interface options and save values in variable
+            var list = await RolesQuery.Paging(pager).Select(r => new RoleDto { RoleId = r.Id , Name = r.Name, Title = r.Title }).ToListAsync();    //use the genric interface options and save values in variable
 
             var result = new ResRoleFilterDto();
             result.SetPaging(pager);

@@ -121,7 +121,7 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(PayQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await PayQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllPayDto { DatePay = x.DatePay, Id = x.Id, status = (StatusPay)x.status, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
+            var list = await PayQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllPayDto { DatePay = x.DatePay, PayId = x.Id, status = (StatusPay)x.status, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
 
             var result = new ResFilterPayDto();
             result.SetPaging(pager);
@@ -188,8 +188,35 @@ namespace OurSite.Core.Services.Repositories
             }
             return ResProject.NotFound;
         }
+        #endregion
+
+        #region Delete payment by admin
+        public async Task<ResProject> DeletePayment(long ProId, bool IsAdmin)
+        {
+            var pay = await PaymentRepositories.GetEntity(ProId);
+            if(pay is not null)
+            {
+                if (IsAdmin)
+                {
+                    var IsRemove = await PaymentRepositories.DeleteEntity(pay.Id);
+                    if(IsRemove is true)
+                    {
+                        await PaymentRepositories.SaveEntity();
+                        return ResProject.Success;
+                    }
+                    else
+                    {
+                        return ResProject.Faild;
+                    }
+                }
+            }
+            return ResProject.Error;
+        }
+        #endregion
+
     }
-    #endregion
+
+
 
 }
 
