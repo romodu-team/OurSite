@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OurSite.Core.Services.Interfaces.TicketInterfaces
 {
-    public interface ITicketService
+    public interface ITicketService: IDisposable
     {
         Task<ResCreateDiscussionDto> CreateTicket(ReqCreateTicketDto request);
         Task<ResOperation> UpdateTicket(ReqUpdateTicketDto request);
