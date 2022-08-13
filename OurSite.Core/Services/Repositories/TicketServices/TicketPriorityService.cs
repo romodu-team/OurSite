@@ -20,6 +20,14 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             _priorityRepository = PriorityRepository;
             _ticketRepository = ticketRepository;
         }
+        
+        
+        
+        public void Dispose()
+        {
+            _priorityRepository.Dispose();
+            _ticketRepository.Dispose();
+        }
         public async Task<bool> CreatePriority(string title, string name)
         {
             if(!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(name))
@@ -66,6 +74,8 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             }
             
         }
+
+
 
         public async Task<List<TicketPriorityDto>> GetAllPriority()
         {
