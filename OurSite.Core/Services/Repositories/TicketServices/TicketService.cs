@@ -32,6 +32,17 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             _AdminService = AdminService;
             _UserService = UserService;
         }
+
+
+        public void Dispose()
+        {
+            _AttachmentRepository.Dispose();
+            _DiscussionRepository.Dispose();
+            _TicketRepository.Dispose();
+            _TicketStatusRepository.Dispose();
+            _AdminService.Dispose();
+            _UserService.Dispose();
+        }
         #endregion
         public async Task<ResOperation> ChangeTicketStatus(long TicketId, long StatusId)
         {
@@ -233,6 +244,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             }
 
         }
+
 
         public async Task<ResFilteredGetAllTicketDto> GetAllTickets(ReqGetAllTicketDto request)
         {
