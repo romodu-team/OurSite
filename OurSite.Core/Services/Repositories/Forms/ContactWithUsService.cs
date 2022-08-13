@@ -33,7 +33,6 @@ namespace OurSite.Core.Services.Repositories.Forms
         public void Dispose()
         {
             contactWithUsRepo.Dispose();
-            mailService.Dispose();
         }
         #endregion
         #endregion

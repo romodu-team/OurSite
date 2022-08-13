@@ -452,14 +452,6 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
-<<<<<<< Updated upstream
-=======
-
-
-
-
-
-
->>>>>>> Stashed changes
+        #endregion
     }
 }
