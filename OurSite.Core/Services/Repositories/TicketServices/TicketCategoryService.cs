@@ -24,6 +24,11 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             _ticketRepository = ticketRepository;
         }
 
+        public void Dispose()
+        {
+            _TicketCategoryRepository.Dispose();
+            _ticketRepository.Dispose();
+        }
         #endregion
 
         public async Task<bool> CreateCategory(string title, string name)
@@ -70,6 +75,8 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                 }
             }
         }
+
+
 
         public async Task<List<TicketCategoryDto>> GetAllCategories()
         {
