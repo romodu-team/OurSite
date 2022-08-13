@@ -33,9 +33,10 @@ namespace OurSite.DataLayer.Entities.ConsultationRequest
 
         [DisplayName("نام فایل ارسالی")]
         public string? SubmittedFileName { get; set; }
-
+        public bool IsRead { get; set; } 
         #region Realation
         public ICollection<ItemSelected> ItemSelecteds { get; set; }
+     
         #endregion
     }
 }

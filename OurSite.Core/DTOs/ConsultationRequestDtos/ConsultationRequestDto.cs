@@ -29,9 +29,6 @@ namespace OurSite.Core.DTOs.ConsultationRequestDtos
         [Required(ErrorMessage = "لطفا توضیحات را وارد کنید")]
         public string Expration { get; set; }
 
-        [DisplayName("نام فایل ارسالی")]
-        public string? SubmittedFileName { get; set; }
-
         [DisplayName("فایل ارسالی")]
         public IFormFile? SubmittedFile { get; set; }
 

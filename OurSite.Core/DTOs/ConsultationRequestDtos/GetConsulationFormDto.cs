@@ -12,6 +12,7 @@ public class GetConsulationFormDto
         public string Expration { get; set; }
         public string CreateDate { get; set; }
         public string LastUpdateDate { get; set; }
+        public bool IsRead { get; set; }
         public List<CheckBoxDto?>? ItemSelected { get; set; }
 }
 
