@@ -152,6 +152,7 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
+        #region Update role
         public async Task<ResUpdateRole> UpdateRole(ReqUpdateRoleDto reqUpdate)
         {
             if (!RoleRepository.GetAllEntity().Any(r => r.Title == reqUpdate.RoleTitle))
@@ -175,7 +176,9 @@ namespace OurSite.Core.Services.Repositories
             }
             return ResUpdateRole.Exist;
         }
+        #endregion
 
+        #region admin roles
         public async Task<Role> GetAdminRole(long adminId)
         {
             var role = await accounInRoleRepository.GetAllEntity().Include(a => a.Role).SingleOrDefaultAsync(r => r.AdminId == adminId && r.IsRemove == false);
@@ -183,6 +186,7 @@ namespace OurSite.Core.Services.Repositories
                 return role.Role;
             return null;
         }
+        #endregion
 
         #region Dispose
         public void Dispose()

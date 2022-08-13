@@ -282,6 +282,10 @@ namespace OurSite.Core.Services.Repositories
         {
             return await adminRepository.GetAllEntity().AnyAsync(a=>(a.UserName==UserName.Trim().ToLower()||a.Email==Email.Trim().ToLower())&& a.IsRemove==false);
         }
+        public async Task<bool> IsAdminExist(long AdminId)
+        {
+            return await adminRepository.GetAllEntity().AnyAsync(a => a.Id==AdminId && a.IsRemove == false);
+        }
         #endregion
 
         #region Reset password

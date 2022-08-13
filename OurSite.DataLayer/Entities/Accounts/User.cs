@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using OurSite.DataLayer.Entities.BaseEntities;
+using OurSite.DataLayer.Entities.Payments;
 using OurSite.DataLayer.Entities.Projects;
 
 namespace OurSite.DataLayer.Entities.Accounts
@@ -15,6 +16,7 @@ namespace OurSite.DataLayer.Entities.Accounts
 
         #region Realations
         public AdditionalDataOfUser? AdditionalDataOfUser { get; set; }
+        public ICollection<Payment> Payments { get; set; }
         #endregion
     }
 

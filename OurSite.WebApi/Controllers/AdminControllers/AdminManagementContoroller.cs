@@ -98,6 +98,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <summary>
         ///  API for Update Admin Profile by system administrator {Get request from body}
         /// </summary>
+        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("Update-another-Admin-profile")]

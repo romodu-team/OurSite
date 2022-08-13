@@ -51,23 +51,24 @@ namespace OurSite.Core.Services.Repositories.Forms
                 return flag;
             }
            
-
-            foreach (var item in consultationRequestDto.ItemSelecteds)
+            if(consultationRequestDto.ItemSelectedsId.Any())
             {
-                if (item.IsCheck == true)
+                var list = consultationRequestDto.ItemSelectedsId[0].Split(",");
+                foreach (var item in list)
                 {
-                    if (await checkBoxsRepo.GetEntity(item.CheckBoxId) != null)
+                    var checkbox = await checkBoxsRepo.GetEntity(Convert.ToInt64(item));
+                    if (checkbox != null)
                     {
                         var selectedItem = new ItemSelected()
                         {
-                            CheckBoxId = item.CheckBoxId,
+                            CheckBoxId = Convert.ToInt64(item),
                             ConsultationFormId = request.Id
                             
                         };
                         await itemSelectedRepo.AddEntity(selectedItem);
                     }
+     
                 }
-            }
             try
             {
                 await itemSelectedRepo.SaveEntity();
@@ -80,6 +81,8 @@ namespace OurSite.Core.Services.Repositories.Forms
                 flag= false;
                 return flag;
             }
+            }
+            return flag;
         }
 
 
@@ -92,7 +95,7 @@ namespace OurSite.Core.Services.Repositories.Forms
             var consultationRequestQuery = consultationRequestRepo.GetAllEntity();
             var count = (int)Math.Ceiling(consultationRequestQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await consultationRequestRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllConsultationRequestDto { UserFullName = x.UserFullName, UserEmail = x.UserEmail, UserPhoneNumber = x.UserPhoneNumber }).ToListAsync();    //use the genric interface options and save values in variable
+            var list = await consultationRequestRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllConsultationRequestDto {Id=x.Id, UserFullName = x.UserFullName, UserEmail = x.UserEmail, UserPhoneNumber = x.UserPhoneNumber }).ToListAsync();
             var result = new ResFilterConsultationRequestDto();
             result.SetPaging(pager);
             return result.SetConsultationRequests(list);
@@ -100,13 +103,41 @@ namespace OurSite.Core.Services.Repositories.Forms
         }
 
         #endregion
+        
+        #region Get Consulation From
+        public async Task<GetConsulationFormDto> GetConsulationForm(long ConsultationFormId)
+        {
+            var consulationFrom = await consultationRequestRepo.GetAllEntity().Include(c=>c.ItemSelecteds).ThenInclude(c=>c.CheckBox).SingleOrDefaultAsync(c=>c.Id==ConsultationFormId);
+            if(consulationFrom is not null)
+            {
+                var dto = new GetConsulationFormDto(){
+                    Expration=consulationFrom.Expration,
+                    CreateDate=consulationFrom.CreateDate.ToString(),
+                    LastUpdateDate=consulationFrom.LastUpdate.ToString(),
+                    UserEmail=consulationFrom.UserEmail,
+                    UserFullName=consulationFrom.UserFullName,
+                    UserPhoneNumber=consulationFrom.UserPhoneNumber,
+                    ItemSelected=new List<DTOs.CheckBoxDtos.CheckBoxDto?>()
+                };
+                foreach (var item in consulationFrom.ItemSelecteds)
+                {
+                    var checkbox = new DTOs.CheckBoxDtos.CheckBoxDto{Description=item.CheckBox.Description,IconName=item.CheckBox.IconName,Title=item.CheckBox.CheckBoxName,Id=item.CheckBox.Id};
+                    dto.ItemSelected.Add(checkbox);
+                }
 
+                return dto;
+            }
+            return null;
+        }
+        #endregion
 
         #region Dispose
         public void Dispose()
         {
             consultationRequestRepo.Dispose();
         }
+
+
         #endregion
     }
 }

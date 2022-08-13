@@ -131,7 +131,8 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <summary>
         ///  API for Update admin profile by self{Get request from form}
         /// </summary>
-        /// <param name="request"></param>
+        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
+        /// <param name="req"></param>
         /// <returns></returns>
         [HttpPut("update-admin-profile")]
         public async Task<IActionResult> UpdateAdminBySelf([FromBody] ReqUpdateAdminDto req)

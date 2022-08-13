@@ -26,18 +26,27 @@ namespace OurSite.WebApi.Controllers.Forms
 
         #region send form with file
         /// <summary>
-        /// send file in forms and tickets {Get request from form}
+        /// Registers a consultation form.The form can contain file and checkboxes
+        /// Note: Do not submit "SubmittedFileName" This is an unimportant field
+        /// Returns:
+        /// Success("درخواست با موفقیت ارسال گردید")
+        /// Error("ارسال فایل با خطا مواجه شد")
+        /// Error("فایلی برای ارسال انتخاب نشده است")
+        /// Error("حجم فایل انتخابی بیش از حد مجاز می‌باشد")
+        /// Error("فرمت فایل انتخابی نامناسب می‌باشد")
+        /// Error("فرمت فایل انتخابی نامناسب می‌باشد")
         /// </summary>
+        /// <remarks>The file size must be less than 10 MB</remarks>
         /// <param name="sendConsultationFormWithFile"></param>
         /// <returns></returns>
         [HttpPost("send-form-with-file")]
-        public async Task<IActionResult> SendConsultationForm([FromBody] ConsultationRequestDto sendConsultationFormWithFile)
+        public async Task<IActionResult> SendConsultationForm([FromForm] ConsultationRequestDto sendConsultationFormWithFile)
         {
 
             if (sendConsultationFormWithFile.SubmittedFile != null)
             {
-                string path = Directory.GetCurrentDirectory() + "\\wwwroot\\uploads\\";
-                var firstResponse = await FileUploader.UploadFile(path, sendConsultationFormWithFile.SubmittedFile, 10);
+                // string path = Directory.GetCurrentDirectory() + "\\wwwroot\\uploads\\";
+                var firstResponse = await FileUploader.UploadFile(PathTools.ConsultationFilePath, sendConsultationFormWithFile.SubmittedFile, 10);
 
                 switch (firstResponse.Status)
                 {
@@ -65,11 +74,17 @@ namespace OurSite.WebApi.Controllers.Forms
         #endregion
 
         #region ConsultationRequest All Form
-        [HttpGet("view-all-ConsultationRequest")] //Get user list
+        /// <summary>
+        /// Get all Consultation forms filtered by pagination
+        /// Returns: Success with Return Data ,NotFound
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("view-all-ConsultationRequest")]
         public async Task<IActionResult> GetAllConsultationRequest([FromQuery] ReqFilterConsultationRequestDto filter)
         {
             var consultationRequest = await consultationRequestService.GetAllConsultationRequest(filter);
-            if (consultationRequest.ConsultationRequests.Any())
+            if (consultationRequest.ConsultationRequests is not null)
             {
                 return JsonStatusResponse.Success(message: "موفق", ReturnData: consultationRequest);
             }
@@ -77,6 +92,24 @@ namespace OurSite.WebApi.Controllers.Forms
 
         }
         #endregion
+
+        #region Get Consulation Form
+        /// <summary>
+        /// Getting a consultation form with ID
+        /// Returns: Success with data  , NotFound
+        /// </summary>
+        /// <param name="ConsultationFormId"></param>
+        /// <returns></returns>
+        [HttpGet("get-consulationFtom/{ConsultationFormId}")]
+        public async Task<IActionResult> GetConsulationForm([FromRoute] long ConsultationFormId)
+        {
+            var res = await consultationRequestService.GetConsulationForm(ConsultationFormId);
+            if (res is not null)
+                return JsonStatusResponse.Success(res, "success");
+            return JsonStatusResponse.NotFound("Consulation form not found");
+        }
+        #endregion
+
         #endregion
     }
 }

@@ -97,7 +97,7 @@ namespace OurSite.WebApi.Controllers
         /// <summary>
         ///  API for Send Reset password Request for User Email {Get request from body}
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="EmailOrUserName"></param>
         /// <returns></returns>
         [HttpPost("SendEmail-ResetUserPass")]
         public async Task<IActionResult> SendResetPassLink([FromBody] string EmailOrUserName)
@@ -121,7 +121,7 @@ namespace OurSite.WebApi.Controllers
         /// <summary>
         ///  API for Register User Panel and make it Active {Get request from Route}
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="ActivationCode"></param>
         /// <returns></returns>
         [HttpGet("Active-User/{ActivationCode}")]
         public async Task<IActionResult> ActiveUser([FromRoute] string ActivationCode)
@@ -178,6 +178,7 @@ namespace OurSite.WebApi.Controllers
         ///  API for Update User Profile by user{Get request from form}
         /// </summary>
         /// <param name="request"></param>
+        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
         /// <returns></returns>
         [HttpPut("Update-Profile")]
         public async Task<IActionResult> UpDate([FromForm] ReqUpdateUserDto userdto)

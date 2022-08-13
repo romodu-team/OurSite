@@ -110,6 +110,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         ///  API for update user by admin {Get request from form}
         /// </summary>
         /// <param name="request"></param>
+        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
         /// <returns></returns>
         [HttpPut("update-user-profile")]
         public async Task<IActionResult> UpdateUserByAdmin([FromForm] ReqUpdateUserDto userDto, long id)

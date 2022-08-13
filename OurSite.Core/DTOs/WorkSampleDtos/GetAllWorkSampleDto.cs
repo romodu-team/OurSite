@@ -2,6 +2,7 @@ namespace OurSite.Core.DTOs.WorkSampleDtos;
 
 public class GetAllWorkSampleDto
 {
+    public long Id { get; set; }
     public string ProjectName { get; set; }
     public string? LogoPath { get; set; }
     public int Like { get; set; }

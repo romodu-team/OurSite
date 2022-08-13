@@ -18,4 +18,5 @@ public class WorkSampleDto
     public List<string>? DesignedPages { get; set; }
     public int Likes { get; set; }
     public List<string>? ImageGalleryPaths { get; set; }
+    public List<long>? CategoriesId { get; set; }
 }

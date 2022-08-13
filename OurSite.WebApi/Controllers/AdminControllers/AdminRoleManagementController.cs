@@ -144,6 +144,14 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         #endregion
 
         #region Update admin role(delete before account in role and add new one)
+        /// <summary>
+        /// If the admin already has a role, her role will be updated, otherwise a new role will be assigned to her
+        /// send parameters from query
+        /// result can be : Success,NotFound(role or admin),Error
+        /// </summary>
+        /// <param name="adminId"></param>
+        /// <param name="RoleId"></param>
+        /// <returns></returns>
         [HttpPut("Update-admin-role")]
         public async Task<IActionResult> UpdateAdminRole(long adminId,long RoleId)
         {
@@ -153,24 +161,30 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                 case Core.DTOs.AdminDtos.ResUpdate.Success:
                     return JsonStatusResponse.Success("role has been updated successfully ");
                 case Core.DTOs.AdminDtos.ResUpdate.NotFound:
-                    return JsonStatusResponse.Success("admin not found");
+                    return JsonStatusResponse.NotFound("admin not found");
                
                 case Core.DTOs.AdminDtos.ResUpdate.Error:
-                    return JsonStatusResponse.Success("role has not been updated ");
+                    return JsonStatusResponse.Error("role has not been updated ");
 
                 case Core.DTOs.AdminDtos.ResUpdate.RoleNotFound:
-                    return JsonStatusResponse.Success("role not found");
+                    return JsonStatusResponse.NotFound("role not found");
 
                 default:
-                    return JsonStatusResponse.Success("role has not been updated ");
+                    return JsonStatusResponse.Error("role has not been updated ");
 
             }
         }
         #endregion
 
         #region get all permission
-        [HttpGet("get-all-permissions")]
-        public async Task<IActionResult> GetAllPermissions(long roleId)
+        /// <summary>
+        /// Returns a list of all available permissions for which the selected permissions for this role are specified with isCheck=true
+        /// result can be Success with permission list , NotFound
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        [HttpGet("get-all-permissions/{roleId}")]
+        public async Task<IActionResult> GetAllPermissions([FromRoute]long roleId)
         {
             var permissions =await roleService.GetAllPermission(roleId);
             if (permissions.Any())
@@ -180,6 +194,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         #endregion
 
         #region Update role permissions(delete before perrmissions and add new permissions)
+        /// <summary>
+        /// parameters: role id and The ID list of the permissions selected for this role
+        /// Deletes all existing permissions and registers new permissions
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut("update-permissions-role")]
         public async Task<IActionResult> UpdatePermissionRole([FromBody]ReqUpdatePermissionRole request)
         {

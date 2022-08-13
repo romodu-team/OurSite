@@ -19,13 +19,14 @@ namespace OurSite.WebApi.Controllers.Forms
         }
 
         #region Send ContactWithUs
-        #region form
+
         /// <summary>
-        ///  form contact with us {Get request from form}
+        /// Send contact with us form {Get request from form}
+        /// Returns : Success , Error
         /// </summary>
         /// <param name="sendContactForm"></param>
         /// <returns></returns>
-        [HttpPost("send-form")]
+        [HttpPost("send-contact-us")]
         public async Task<IActionResult> SendContactWithUsForm([FromForm] ContactWithUsDto sendContactForm)
         {
             if (ModelState.IsValid)
@@ -37,17 +38,23 @@ namespace OurSite.WebApi.Controllers.Forms
             {
                 return JsonStatusResponse.Error("اطلاعات ارسال شده معتبر نمی‌باشد");
             }
-            #endregion
+   
 
         }
         #endregion
 
         #region ContactWithUs All Form
-        [HttpGet("view-all-ContactWithUs")] //Get user list
+        /// <summary>
+        /// Get all Contact With Us forms filtered by pagination
+        /// Returns: Success with Return Data ,NotFound
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("view-all-ContactWithUs")]
         public async Task<IActionResult> GetAllContactWithUs([FromQuery] ReqFilterContactWithUsDto filter)
         {
             var contactWithUs = await contactWithUsService.GetAllContactWithUs(filter);
-            if (contactWithUs.ContactWithUses.Any())
+            if (contactWithUs.ContactWithUses is not null)
             {
                 return JsonStatusResponse.Success(message: "موفق", ReturnData: contactWithUs);
             }

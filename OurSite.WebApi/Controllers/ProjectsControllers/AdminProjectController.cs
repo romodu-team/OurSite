@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities;
-using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
+using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,13 +24,13 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Creat Project
         /// <summary>
-        /// Create project by admin for user {get request from body}
+        /// Api for Create project by admin for user {get request from body}
         /// </summary>
         /// <param name="prodto"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpPost("create-project")]
-        public async Task<IActionResult> CreateProject([FromBody]CreatProjectDto prodto, long userId)
+        public async Task<IActionResult> CreateProject([FromBody]CreateProjectDto prodto, long userId)
         {
             var res = await projectservice.CreateProject(prodto , userId);
             switch (res)
@@ -52,7 +52,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Edit Project
         /// <summary>
-        /// edit project details by admin {get request from body}
+        /// Api for edit project details by admin {get request from body}
         /// </summary>
         /// <param name="prodto"></param>
         /// <returns></returns>
@@ -80,30 +80,60 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <summary>
         /// Api for Delete project by admin{Get request from body}
         /// </summary>
-        /// <param name="ReqDeleteProject"></param>
+        /// <param name="ProId"></param>
         /// <returns></returns>
         [HttpDelete("admin-delete-project")]
-        public async Task<IActionResult> DeleteProject([FromBody]DeleteProjectDto ReqDeleteProject)
+        public async Task<IActionResult> DeleteProject([FromBody] long ProId)
         {
-            var remove = await projectservice.DeleteProject(ReqDeleteProject);
-            switch (remove)
+            if (User.Identity.IsAuthenticated)
             {
-                case ResProject.Success:
-                    return JsonStatusResponse.Success("The project has been deleted successfully");
-                case ResProject.Error:
-                    return JsonStatusResponse.Error("Project delete failed. Try again later.");
-                case ResProject.NotFound:
-                    return JsonStatusResponse.NotFound("Project not Found");
-                default:
-                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                var remove = await projectservice.DeleteProject(ProId, true);
+                switch (remove)
+                {
+                    case ResProject.Success:
+                        return JsonStatusResponse.Success("The project has been deleted successfully");
+                    case ResProject.Error:
+                        return JsonStatusResponse.Error("Project delete failed. Try again later.");
+                    case ResProject.NotFound:
+                        return JsonStatusResponse.NotFound("Project not Found");
+                    default:
+                        return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                }
             }
+            return JsonStatusResponse.Error("u didnt login. please login first");
+
         }
         #endregion
 
+
+        #region View project
+        /// <summary>
+        /// Api for get one project by admin {Get request from route}
+        /// </summary>
+        /// <param name="ProjectId"></param>
+        /// <returns></returns>
+        [HttpGet("view-project-by-admin/{ProjectId}")]
+        public async Task<IActionResult> GetProject([FromRoute]long ProjectId)
+        {
+            var res = await projectservice.GetProject(ProjectId);
+            if (res is not null)
+                return JsonStatusResponse.Success(ReturnData: res,message: "Project find successfully");
+
+            return JsonStatusResponse.Error("Project Not found");
+        }
+        #endregion
+
+
         #region Upload contract File
+        /// <summary>
+        /// Api for Upload contract in projrct order {get request from body}
+        /// </summary>
+        /// <remarks>The size of the contract file must be less than 10 MB</remarks>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Upload-Contract")]
-        public async Task<IActionResult> UploadContract(ReqUploadContractDto request)
+        public async Task<IActionResult> UploadContract([FromBody]ReqUploadContractDto request)
         {
             var res = await projectservice.UploadContract(request);
             switch (res)
@@ -125,8 +155,27 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                     return JsonStatusResponse.Error("server error");
             }
         }
-            
+
         #endregion
+
+        #region Project list
+        /// <summary>
+        /// Api for get projects list{get request from query}
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("project-list")]
+        public async Task<IActionResult> GetAllProject([FromQuery] ReqFilterProjectDto filter)
+        {
+            var projects = await projectservice.GetAllProject(filter);
+            if (projects.Projects is not null && projects.Projects.Count>0)
+            {
+                return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: projects);
+            }
+            return JsonStatusResponse.NotFound(message: "nist ke bekhorishi");
+        }
+        #endregion
+
     }
 }
 

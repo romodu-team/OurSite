@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Authorization;
 using OurSite.Core.Services.Repositories.Forms;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.OurSite.Core.Services.Repositories;
+using OurSite.Core.Services.Interfaces.TicketInterfaces;
+using OurSite.Core.Services.Repositories.TicketServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +75,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IProject, ProjectService>();
+builder.Services.AddScoped<IPayment, PaymentService>();
 
 #endregion
 #region Autentication
@@ -98,11 +101,13 @@ options.TokenValidationParameters = new TokenValidationParameters()
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<ITicketService, TicketService>();
-builder.Services.AddScoped<ITicketMessageService, TicketMessageService>();
 builder.Services.AddScoped<IimageGalleryService, ImageGalleryService>();
 builder.Services.AddScoped<IWorkSampleService, WorkSampleService>();
 builder.Services.AddScoped<IWorkSampleCategoryService,WorkSampleCategoryService >();
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
+builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
+builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("viewUser", policy => policy.RequireClaim("viewUser"));
