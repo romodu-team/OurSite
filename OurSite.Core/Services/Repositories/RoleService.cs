@@ -29,6 +29,19 @@ namespace OurSite.Core.Services.Repositories
             this.RolePermissionRepository=RolePermissionRepository;
             this.PermissionRepository=PermissionRepository;
         }
+
+
+        #region Dispose
+        public void Dispose()
+        {
+            RoleRepository.Dispose();
+            accounInRoleRepository.Dispose();
+            RolePermissionRepository.Dispose();
+            PermissionRepository.Dispose();
+        }
+        #endregion
+
+
         #endregion
 
         #region Add new role for admin
@@ -188,11 +201,6 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        #region Dispose
-        public void Dispose()
-        {
-            RoleRepository.Dispose();
-        }
 
         public async Task<bool> AddRoleToAdmin(AccounInRole accounInRole)
         {
@@ -324,6 +332,7 @@ namespace OurSite.Core.Services.Repositories
             return SelectedPermissions;
         }
 
+        #region Update Permission role
         public async Task<resUpdatePermissionRole> UpdatePermissionRole(ReqUpdatePermissionRole request)
         {
             //check role is exist
