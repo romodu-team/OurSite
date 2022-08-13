@@ -27,18 +27,28 @@ namespace OurSite.Core.Services.Repositories
         // private IGenericReopsitories<Role> RoleRepository;
         private IRoleService roleService;
         private IPasswordHelper passwordHelper;
-        private IMapper mapper;
         private IMailService mailService;
 
         public AdminService(IGenericReopsitories<AdditionalDataOfAdmin> additionalData, IRoleService roleService, IMailService mailService, IMapper mapper, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper)
         {
-            this.mapper = mapper;
             this.adminRepository = adminRepository;
             this.passwordHelper = passwordHelper;
             this.mailService = mailService;
             this.roleService = roleService;
             AdditionalDataRepository = additionalData;
         }
+
+        #region Dispose
+        public void Dispose()
+        {
+            adminRepository.Dispose();
+            roleService.Dispose();
+            AdditionalDataRepository.Dispose();
+        }
+        #endregion
+
+
+
         #endregion
 
         #region Admin management
@@ -445,21 +455,5 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
-
-
-
-        #region Dispose
-        public void Dispose()
-        {
-            adminRepository.Dispose();
-            roleService.Dispose();
-        }
-
-     
-
-
-        #endregion
-
-
     }
 }
