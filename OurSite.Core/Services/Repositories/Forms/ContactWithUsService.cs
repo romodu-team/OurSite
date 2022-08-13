@@ -27,6 +27,15 @@ namespace OurSite.Core.Services.Repositories.Forms
             this.contactWithUsRepo = contactWithUsRepo;
             this.mailService=mailService;
         }
+        
+        
+        #region Dispose
+        public void Dispose()
+        {
+            contactWithUsRepo.Dispose();
+            mailService.Dispose();
+        }
+        #endregion
         #endregion
 
         #region Send ContactWithUs Form
@@ -76,12 +85,7 @@ namespace OurSite.Core.Services.Repositories.Forms
 
         #endregion
 
-        #region Dispose
-        public void Dispose()
-        {
-            contactWithUsRepo.Dispose();
-        }
-
+        #region answer to message
         public async Task<bool> AnswerToMessage(string ToEmail, string subject, string Content,List<IFormFile>? Attachments)
         {
            var res =await mailService.SendEmailAsync(new MailRequestDto(){ToEmail=ToEmail,Body=Content,Subject=subject,Attachments=Attachments});
