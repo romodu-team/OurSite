@@ -2,7 +2,7 @@
 
 namespace OurSite.Core.Services.Interfaces.TicketInterfaces
 {
-    public interface ITicketCategoryService
+    public interface ITicketCategoryService : IDisposable
     {
         Task<bool> CreateCategory(string title, string name);
         Task<ResDeleteOpration> DeleteCategory(long CategoryId);
