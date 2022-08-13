@@ -26,6 +26,15 @@ public class WorkSampleService : IWorkSampleService
         _ImageGalleryService = ImageGalleryService;
     }
 
+    public void Dispose()
+    {
+        _WorkSampleRepository.Dispose();
+        _ProjectFeatureRepository.Dispose();
+        _LikeRepository.Dispose();
+        _ImageGalleryService.Dispose();
+        _IworkSampleCategoryService.Dispose();
+    }
+
     public async Task<ResCreateWorkSampleDto> CreateWorkSample(CreateWorkSampleDto request)
     {
         WorkSample worksample = new WorkSample()
@@ -164,6 +173,7 @@ public class WorkSampleService : IWorkSampleService
 
 
     }
+
 
     public async Task<ResWorkSample> EditWorkSample(long worksampleId, EditWorkSampleDto request)
     {
