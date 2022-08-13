@@ -4,7 +4,7 @@ using OurSite.DataLayer.Entities.ImageGalleries;
 
 namespace OurSite.Core.Services.Interfaces;
 
-public interface IimageGalleryService
+public interface IimageGalleryService : IDisposable
 {
     Task<List<GetGalleryDto>> GetActiveGalleryByWorkSampleId(long WorkSampleId);
     Task<ResDeleteImage> DeleteImageFromGallery(long ImageId);
