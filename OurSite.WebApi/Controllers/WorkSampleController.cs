@@ -9,13 +9,21 @@ namespace OurSite.WebApi.Controllers.AdminControllers;
  [ApiController]
 public class WorkSampleController: Controller
 {
+    #region constructor
     private IWorkSampleService _workSampleService;
     private IWorkSampleCategoryService _workSampleCategoryService;
-    public WorkSampleController(IWorkSampleService workSampleService,IWorkSampleCategoryService workSampleCategoryService)
+    public WorkSampleController(IWorkSampleService workSampleService, IWorkSampleCategoryService workSampleCategoryService)
     {
-        _workSampleService=workSampleService;
-        _workSampleCategoryService=workSampleCategoryService;
+        _workSampleService = workSampleService;
+        _workSampleCategoryService = workSampleCategoryService;
     }
+    #endregion
+
+    /// <summary>
+    /// Creates a work sample
+    /// </summary>
+    /// <remarks>ShortDescription and Content can contain html. ProjectName is required - The file size must be less than 10 MB</remarks>
+    /// <returns></returns>
     [HttpPost("create-WorkSample")]
     public async Task<IActionResult> CreateWorkSample([FromForm]CreateWorkSampleDto request){
         if(ModelState.IsValid){
@@ -27,7 +35,11 @@ public class WorkSampleController: Controller
         }
         return JsonStatusResponse.Error("model state is not valid");
     }
-
+    /// <summary>
+    /// Get a work sample. Returns not found or the instance
+    /// </summary>
+    /// <param name="WorkSampleId"></param>
+    /// <returns></returns>
     [HttpGet("get-worksample/{WorkSampleId}")]
     public async Task<IActionResult> GetWorkSample([FromRoute]long WorkSampleId)
     {
@@ -36,7 +48,12 @@ public class WorkSampleController: Controller
             return JsonStatusResponse.NotFound("Worksample NotFound");
         return JsonStatusResponse.Success(res,"Success");
     }
-
+    /// <summary>
+    /// Get the list of filtered orkSamples
+    /// </summary>
+    /// <remarks>Orderby: DateAsc=0,DateDec=1,LikeAsc=2,LikeDec=3</remarks>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("GetAll-WorkSamples")]
     public async Task<IActionResult> GetAllWorkSamples([FromBody] ReqFilterWorkSampleDto request)
     {
@@ -46,7 +63,12 @@ public class WorkSampleController: Controller
         else
             return JsonStatusResponse.NotFound("No work samples found");
     }
-    
+    /// <summary>
+    /// create a category
+    /// </summary>
+    /// <param name="Title"></param>
+    /// <param name="Name"></param>
+    /// <returns></returns>
     [HttpPost("Create-WorkSample-Category")]
     public async Task<IActionResult> CreateWorkSampleCategory([FromQuery]string Title,[FromQuery]string Name)
     {
@@ -55,7 +77,12 @@ public class WorkSampleController: Controller
             return JsonStatusResponse.Success("category has been added successfully");
         return JsonStatusResponse.Error("faild");
     }
-
+    /// <summary>
+    /// delete a category
+    /// </summary>
+    /// <remarks>Deleting a category removes the category from all work samples</remarks>
+    /// <param name="categoryId"></param>
+    /// <returns></returns>
     [HttpDelete("delete-WorkSample-Category/{categoryId}")]
     public async Task<IActionResult> DeleteWorkSampleCategory([FromRoute]long categoryId)
     {
@@ -64,7 +91,14 @@ public class WorkSampleController: Controller
             return JsonStatusResponse.Success("category has been deleted successfully");
         return JsonStatusResponse.Error("faild");
     }
-
+    /// <summary>
+    /// update a category
+    /// </summary>
+    /// <remarks>Submit only the fields you want to update</remarks>
+    /// <param name="CategoryId"></param>
+    /// <param name="Title"></param>
+    /// <param name="Name"></param>
+    /// <returns></returns>
     [HttpPut("Update-WorkSample-Category")]
     public async Task<IActionResult> CreateWorkSampleCategory([FromQuery] long CategoryId,[FromQuery]string? Title,[FromQuery]string? Name)
     {
@@ -73,7 +107,10 @@ public class WorkSampleController: Controller
             return JsonStatusResponse.Success("category has been updated successfully");
         return JsonStatusResponse.Error("faild");
     }  
-
+    /// <summary>
+    /// Get list of categories
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("GetAll-WorkSample-Categories")]
     public async Task<IActionResult> GetAllWorkSampleCategories()
     {
@@ -82,7 +119,11 @@ public class WorkSampleController: Controller
             return JsonStatusResponse.Success(res,"Success");
         return JsonStatusResponse.Error("No categories found");
     }
-
+    /// <summary>
+    /// Get a category by id
+    /// </summary>
+    /// <param name="categoryId"></param>
+    /// <returns></returns>
     [HttpGet("Get-WorkSample-Category/{categoryId}")]
     public async Task<IActionResult> GetAllWorkSampleCategories([FromRoute]long categoryId)
     {
@@ -90,17 +131,23 @@ public class WorkSampleController: Controller
         if(res is not null)
             return JsonStatusResponse.Success(res,"Success");
         return JsonStatusResponse.Error("Category not found");
-    }  
-
-    [HttpPost("Add-Categories-ToWorkSample/{worksampleId}")]
-    public async Task<IActionResult> AddCategoriesToWorkSample([FromRoute]long worksampleId,[FromBody]List<long> CategoriesId)
-    {
-        var res =await _workSampleCategoryService.AddCategoriesToWorkSample(worksampleId,CategoriesId);
-        if(res)
-            return JsonStatusResponse.Success("category has been added to Worksample successfully");
-        return JsonStatusResponse.Error("faild");
     }
+    // we dont need this method
+    //[HttpPost("Add-Categories-ToWorkSample/{worksampleId}")]
+    //public async Task<IActionResult> AddCategoriesToWorkSample([FromRoute]long worksampleId,[FromBody]List<long> CategoriesId)
+    //{
+    //    var res =await _workSampleCategoryService.AddCategoriesToWorkSample(worksampleId,CategoriesId);
+    //    if(res)
+    //        return JsonStatusResponse.Success("category has been added to Worksample successfully");
+    //    return JsonStatusResponse.Error("faild");
+    //}
 
+    /// <summary>
+    /// delete a work sample
+    /// </summary>
+    /// <remarks>this method delete worksample,delete worksample image gallery,delete worksample like,delete worksample in category,delete project features</remarks>
+    /// <param name="worksampleId"></param>
+    /// <returns></returns>
     [HttpDelete("delete-WorkSample/{worksampleId}")]
     public async Task<IActionResult> DeleteWorkSample([FromRoute] long worksampleId)
     {
@@ -115,7 +162,13 @@ public class WorkSampleController: Controller
                 return JsonStatusResponse.Error("server error");
         }
     }
-
+    /// <summary>
+    /// Update work sample
+    /// </summary>
+    /// <param name="worksampleId"></param>
+    /// <param name="request"></param>
+    /// <remarks>The file size must be less than 10 MB</remarks>
+    /// <returns></returns>
     [HttpPut("update-workSample/{worksampleId}")]
     public async Task<IActionResult> UpdateWorkSample([FromRoute]long worksampleId,[FromForm]EditWorkSampleDto request)
     {

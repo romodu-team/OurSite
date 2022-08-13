@@ -10,7 +10,7 @@ using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
-using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
+using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -36,7 +36,7 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Creat project
-        public async Task<ResProject> CreateProject(CreatProjectDto prodto, long userId)
+        public async Task<ResProject> CreateProject(CreateProjectDto prodto, long userId)
         {
             var user = await UserService.ViewUser(userId);
             if (user is not null)
@@ -94,9 +94,9 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Delete project
-        public async Task<ResProject> DeleteProject(DeleteProjectDto ReqDeleteProject,bool IsAdmin)
+        public async Task<ResProject> DeleteProject(long ProId, bool IsAdmin)
         {
-            var project = await ProjectsRepository.GetEntity(ReqDeleteProject.ProId);
+            var project = await ProjectsRepository.GetEntity(ProId);
 
             if(project is not null)
             {

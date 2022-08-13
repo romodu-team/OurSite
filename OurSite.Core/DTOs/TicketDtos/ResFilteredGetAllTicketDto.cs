@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OurSite.Core.DTOs.TicketsDtos
+namespace OurSite.Core.DTOs.TicketDtos
 {
-    public class ResFilterTicketDto : BasePaging
+    public class ResFilteredGetAllTicketDto: BasePaging
     {
         public List<GetAllTicketDto>? Tickets { get; set; }
 
-        public ResFilterTicketDto SetPaging(BasePaging paging)
+        public ResFilteredGetAllTicketDto SetPaging(BasePaging paging)
         {
             this.PageId = paging.PageId;
             this.PageCount = paging.PageCount;
@@ -22,7 +22,7 @@ namespace OurSite.Core.DTOs.TicketsDtos
             this.ActivePage = paging.ActivePage;
             return this;
         }
-        public ResFilterTicketDto SetTickets(List<GetAllTicketDto> tickets)
+        public ResFilteredGetAllTicketDto SetTickets(List<GetAllTicketDto> tickets)
         {
             this.Tickets = tickets;
             return this;

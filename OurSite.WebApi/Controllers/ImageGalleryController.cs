@@ -28,6 +28,7 @@ public class ImageGalleryController:Controller
     /// Error("worksample not found")
     /// Error("Site Section is Not Valid")
     /// </summary>
+    /// <remarks>The size of the image file must be less than 10 MB</remarks>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("add-image-gallery")]

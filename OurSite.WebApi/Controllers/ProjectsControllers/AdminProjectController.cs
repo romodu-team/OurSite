@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities;
-using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
+using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,7 +30,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpPost("create-project")]
-        public async Task<IActionResult> CreateProject([FromBody]CreatProjectDto prodto, long userId)
+        public async Task<IActionResult> CreateProject([FromBody]CreateProjectDto prodto, long userId)
         {
             var res = await projectservice.CreateProject(prodto , userId);
             switch (res)
@@ -80,14 +80,14 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <summary>
         /// Api for Delete project by admin{Get request from body}
         /// </summary>
-        /// <param name="ReqDeleteProject"></param>
+        /// <param name="ProId"></param>
         /// <returns></returns>
         [HttpDelete("admin-delete-project")]
-        public async Task<IActionResult> DeleteProject([FromBody]DeleteProjectDto ReqDeleteProject)
+        public async Task<IActionResult> DeleteProject([FromBody] long ProId)
         {
             if (User.Identity.IsAuthenticated)
             {
-                var remove = await projectservice.DeleteProject(ReqDeleteProject,true);
+                var remove = await projectservice.DeleteProject(ProId, true);
                 switch (remove)
                 {
                     case ResProject.Success:
@@ -128,6 +128,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <summary>
         /// Api for Upload contract in projrct order {get request from body}
         /// </summary>
+        /// <remarks>The size of the contract file must be less than 10 MB</remarks>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
@@ -167,7 +168,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         public async Task<IActionResult> GetAllProject([FromQuery] ReqFilterProjectDto filter)
         {
             var projects = await projectservice.GetAllProject(filter);
-            if (projects.Projects.Any())
+            if (projects.Projects is not null && projects.Projects.Count>0)
             {
                 return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: projects);
             }

@@ -7,7 +7,7 @@ using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities;
 using System.Security.Claims;
 using System.Text;
-using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
+using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
 
 namespace OurSite.WebApi.Controllers
 {
@@ -185,7 +185,7 @@ namespace OurSite.WebApi.Controllers
         /// <summary>
         /// Api for edit payments details by admin {get request from body}
         /// </summary>
-        /// <param name="prodto"></param>
+        /// <param name="Paydto"></param>
         /// <returns></returns>
         [HttpPut("edit-payment")]
         public async Task<IActionResult> EditPay([FromBody] EditPayDto Paydto)

@@ -3,7 +3,7 @@ using OurSite.DataLayer.Entities.Projects;
 
 namespace OurSite.Core.DTOs.ProjectDtos
 {
-    public class CreatProjectDto
+    public class CreateProjectDto
     {
         public string Name { get; set; }
         public ProType Type { get; set; }

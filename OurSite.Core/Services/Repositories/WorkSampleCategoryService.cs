@@ -30,11 +30,16 @@ public class WorkSampleCategoryService : IWorkSampleCategoryService
         {
             foreach (var categoryId in CategoriesId)
             {
-                var workSampleIncategory= new WorkSampleInCategory(){
-                     WorkSampleCategoryId=categoryId,
-                     WorkSampleId=worksampleId
+                if(await _WorkSampleCategoryRepository.GetAllEntity().AnyAsync(c => c.Id == categoryId))
+                {
+                    var workSampleIncategory = new WorkSampleInCategory()
+                    {
+                        WorkSampleCategoryId = categoryId,
+                        WorkSampleId = worksampleId
                     };
-                await _WorkSampleInCategoryReopsitory.AddEntity(workSampleIncategory);
+                    await _WorkSampleInCategoryReopsitory.AddEntity(workSampleIncategory);
+                }
+                
             }
             await _WorkSampleInCategoryReopsitory.SaveEntity();
             return true;
@@ -71,8 +76,18 @@ public class WorkSampleCategoryService : IWorkSampleCategoryService
 
     public async Task<bool> DeleteCategory(long categoryId)
     {
+       
         try
         {
+            //get list of workasmple in category
+            var list = await _WorkSampleInCategoryReopsitory.GetAllEntity().Where(c => c.WorkSampleCategoryId == categoryId).ToListAsync();
+            //delete each element of list
+            foreach (var item in list)
+            {
+                await _WorkSampleInCategoryReopsitory.RealDeleteEntity(item.Id);
+            }
+            await _WorkSampleInCategoryReopsitory.SaveEntity();
+            //delete category
             await _WorkSampleCategoryRepository.RealDeleteEntity(categoryId);
             await _WorkSampleCategoryRepository.SaveEntity();
             return true;
@@ -91,7 +106,7 @@ public class WorkSampleCategoryService : IWorkSampleCategoryService
 
         foreach (var item in list)
         {
-            await _WorkSampleInCategoryReopsitory.DeleteEntity(item.Id);
+            await _WorkSampleInCategoryReopsitory.RealDeleteEntity(item.Id);
         }
         try
         {
@@ -135,6 +150,12 @@ public class WorkSampleCategoryService : IWorkSampleCategoryService
         var categories = await _WorkSampleCategoryRepository.GetAllEntity().Select(c=>new GetWorkSampleCategoryDto(){CategoryId=c.Id,Name=c.Name,Title=c.Title}).ToListAsync();
 
         return categories;
+    }
+
+    public async Task<List<long>> GetCategoriesIdByWorkSampleId(long WorkSampleId)
+    {
+        var categoriesId = await _WorkSampleInCategoryReopsitory.GetAllEntity().Where(c => c.WorkSampleId == WorkSampleId).Select(c => c.WorkSampleCategoryId).ToListAsync();
+        return categoriesId;
     }
 
     public async Task<GetWorkSampleCategoryDto> GetCategory(long categoryId)

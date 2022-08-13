@@ -62,5 +62,16 @@ namespace OurSite.WebApi.Controllers.Forms
 
         }
         #endregion
+
+        #region Answer To Contact us Message
+        [HttpPost("Send-Answer-ToUser")]
+        public async Task<IActionResult> AnswerToContactUSMessage([FromForm]string ToEmail,[FromForm]string subject,[FromForm]string Content,[FromForm]List<IFormFile>? Attachments)
+        {
+            var res = await contactWithUsService.AnswerToMessage(ToEmail,subject,Content,Attachments);
+            if(res)
+                return JsonStatusResponse.Success("Email has been successfully sent");
+            return JsonStatusResponse.Error("The email was not sent");
+        }
+        #endregion
     }
 }

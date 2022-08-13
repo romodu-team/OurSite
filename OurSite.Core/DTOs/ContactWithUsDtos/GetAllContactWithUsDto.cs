@@ -12,5 +12,6 @@ namespace OurSite.Core.DTOs.ContactWithUsDtos
         public string UserLastName { get; set; }
         public string UserEmail { get; set; }
         public string UserPhoneNumber { get; set; }
+        public string Message { get; set; }
     }
 }

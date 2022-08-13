@@ -2,7 +2,7 @@
 using OurSite.Core.DTOs.ProjectDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.DataLayer.Entities.Projects;
-using static OurSite.Core.DTOs.ProjectDtos.CreatProjectDto;
+using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
 
 namespace OurSite.Core.Services.Interfaces.Projecta
 {
@@ -10,8 +10,8 @@ namespace OurSite.Core.Services.Interfaces.Projecta
     {
         Task<ResFilterProjectDto> GetAllProject(ReqFilterProjectDto filter);
         Task<GetProjectDto> GetProject(long ProjectId);
-        Task<ResProject> CreateProject(CreatProjectDto prodto, long userId);
-        Task<ResProject> DeleteProject(DeleteProjectDto ReqDeleteProject,bool IsAdmin);
+        Task<ResProject> CreateProject(CreateProjectDto prodto, long userId);
+        Task<ResProject> DeleteProject(long ProId, bool IsAdmin);
 
         #region Admin
         Task<ResProject> EditProject(EditProjectDto prodto);

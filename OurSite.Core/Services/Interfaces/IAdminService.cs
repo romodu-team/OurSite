@@ -22,6 +22,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<RessingupDto> RegisterAdmin(ReqRegisterAdminDto req);
 
         Task<bool> IsAdminExist(string UserName, string Email);
+        Task<bool> IsAdminExist(long adminId);
         Task<bool> ResetPassword(ReqResetPassword request);
         Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName);
         Task<Admin> GetAdminByEmailOrUserName(string EmailOrUserName);
