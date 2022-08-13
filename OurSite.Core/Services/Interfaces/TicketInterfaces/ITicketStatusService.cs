@@ -3,7 +3,7 @@
 
 namespace OurSite.Core.Services.Interfaces.TicketInterfaces
 {
-    public interface ITicketStatusService
+    public interface ITicketStatusService: IDisposable
     {
         Task<bool> CreateStatus(string title, string name);
         Task<ResDeleteOpration> DeleteStatus(long StatusId);
