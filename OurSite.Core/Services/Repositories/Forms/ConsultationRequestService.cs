@@ -25,6 +25,19 @@ namespace OurSite.Core.Services.Repositories.Forms
             this.checkBoxsRepo = checkBoxsRepo;
             this.itemSelectedRepo = itemSelectedRepo;
         }
+        
+        
+        #region Dispose
+        public void Dispose()
+        {
+            consultationRequestRepo.Dispose();
+            checkBoxsRepo.Dispose();
+            itemSelectedRepo.Dispose();
+            
+        }
+
+
+        #endregion
         #endregion
 
 
@@ -131,13 +144,6 @@ namespace OurSite.Core.Services.Repositories.Forms
         }
         #endregion
 
-        #region Dispose
-        public void Dispose()
-        {
-            consultationRequestRepo.Dispose();
-        }
 
-
-        #endregion
     }
 }
