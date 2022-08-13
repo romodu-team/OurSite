@@ -1,7 +1,7 @@
 using OurSite.OurSite.Core.DTOs.WorkSampleDtos;
 
 namespace OurSite.Core.Services.Interfaces;
-public interface IWorkSampleCategoryService
+public interface IWorkSampleCategoryService :IDisposable
 {
     Task<bool> AddCategory(string Title,string Name);
     Task<bool> DeleteCategory(long categoryId);
