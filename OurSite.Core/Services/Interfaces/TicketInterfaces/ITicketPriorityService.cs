@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OurSite.Core.Services.Interfaces.TicketInterfaces
 {
-    public interface ITicketPriorityService
+    public interface ITicketPriorityService: IDisposable
     {
         Task<bool> CreatePriority(string title, string name);
         Task<ResDeleteOpration> DeletePriority(long priorityId);
