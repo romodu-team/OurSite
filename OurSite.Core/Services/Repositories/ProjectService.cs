@@ -32,6 +32,9 @@ namespace OurSite.Core.Services.Repositories
         public void Dispose()
         {
             ProjectsRepository.Dispose();
+            CheckBoxRepository.Dispose();
+            SelectedProjectRepository.Dispose();
+            UserService.Dispose();
         }
         #endregion
 
