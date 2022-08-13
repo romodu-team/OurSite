@@ -205,5 +205,30 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
+        #region Delete paymet
+        [HttpDelete("delete-payment")]
+        public async Task<IActionResult> DeletePayment([FromBody]long PayId)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var delete = await Paymentservice.DeletePayment(PayId , true);
+                switch (delete)
+                {
+                    case ResProject.Success:
+                        return JsonStatusResponse.Success("Payment delete successfully");
+                    case ResProject.Faild:
+                        return JsonStatusResponse.Error("Payment delete failed.");
+                    case ResProject.Error:
+                        return JsonStatusResponse.Error("payment not found");
+                    default:
+                        return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                        break;
+                }
+            }
+            return JsonStatusResponse.Error("u didnt login. please login first");
+
+        }
+        #endregion
+
     }
 }
