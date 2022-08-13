@@ -29,7 +29,7 @@ namespace OurSite.Core.Services.Repositories
         private IPasswordHelper passwordHelper;
         private IMailService mailService;
 
-        public AdminService(IGenericReopsitories<AdditionalDataOfAdmin> additionalData, IRoleService roleService, IMailService mailService, IMapper mapper, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper)
+        public AdminService(IGenericReopsitories<AdditionalDataOfAdmin> additionalData, IRoleService roleService, IMailService mailService, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper)
         {
             this.adminRepository = adminRepository;
             this.passwordHelper = passwordHelper;
@@ -38,17 +38,29 @@ namespace OurSite.Core.Services.Repositories
             AdditionalDataRepository = additionalData;
         }
 
+<<<<<<< Updated upstream
         #region Dispose
+=======
+
+         #region Dispose
+>>>>>>> Stashed changes
         public void Dispose()
         {
             adminRepository.Dispose();
             roleService.Dispose();
             AdditionalDataRepository.Dispose();
+<<<<<<< Updated upstream
         }
         #endregion
 
 
 
+=======
+            mailService.Dispose();
+    
+        }
+        #endregion
+>>>>>>> Stashed changes
         #endregion
 
         #region Admin management
@@ -455,5 +467,14 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
+<<<<<<< Updated upstream
+=======
+
+
+
+
+
+
+>>>>>>> Stashed changes
     }
 }
