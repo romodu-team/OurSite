@@ -7,7 +7,7 @@ using OurSite.Core.DTOs.WorkSampleDtos;
 
 namespace OurSite.Core.Services.Interfaces
 {
-    public interface IWorkSampleService
+    public interface IWorkSampleService : IDisposable
     {
         Task<ResCreateWorkSampleDto> CreateWorkSample(CreateWorkSampleDto request);
         Task<ResFilterWorkSampleDto> GetAllWorkSamples(ReqFilterWorkSampleDto request);
