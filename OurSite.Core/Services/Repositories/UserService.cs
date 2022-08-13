@@ -46,6 +46,8 @@ namespace OurSite.Core.Services.Repositories
         public void Dispose()
         {
             userService?.Dispose();
+            additionalDataRepository.Dispose();
+            
         }
 
 
