@@ -23,6 +23,12 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             _ticketRepository = ticketRepository;
         }
 
+        public void Dispose()
+        {
+            _TicketStatusRepository.Dispose();
+            _ticketRepository.Dispose();
+        }
+
         #endregion
         public async Task<bool> CreateStatus(string title, string name)
         {
@@ -69,6 +75,8 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                 }
             }
         }
+
+
 
         public async Task<List<TicketStatusDto>> GetAllStatus()
         {
