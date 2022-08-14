@@ -9,8 +9,8 @@ namespace OurSite.Core.Services.Interfaces;
 public interface ICheckBoxService:IDisposable
 {
         Task<bool> CreateCheckBox(string title,string? IconName, string? Description,section SiteSection);
-        Task<ResDeleteOpration> DeleteCheckBox(long CheckBoxId);
+        Task<ResDeleteOpration> DeleteCheckBox(List<long> CheckBoxId);
         Task<CheckBoxDto> GetCheckBox(long CheckBoxId);
-        Task<bool> UpdateCheckBox(long CheckBoxId, string title,string? IconName, string? Description,int? SiteSection);
+        Task<bool> UpdateCheckBox(long CheckBoxId, string? title,string? IconName, string? Description,int? SiteSection);
         Task<List<CheckBoxDto>> GetAllCheckBox();
 }

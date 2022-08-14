@@ -43,32 +43,37 @@ public class CheckBoxService : ICheckBoxService
             return false;
     }
 
-    public async Task<ResDeleteOpration> DeleteCheckBox(long CheckBoxId)
+    public async Task<ResDeleteOpration> DeleteCheckBox(List<long> CheckBoxId)
     {
         //check if checkbox used in project and consultion form 
-        var Resprojects = await _SelectedProjectPlanRepository.GetAllEntity().Where(t => t.CheckBoxId == CheckBoxId && t.IsRemove == false).ToListAsync();
-        var consultions = await _ConsultionItemSelectedRepository.GetAllEntity().Where(t => t.CheckBoxId == CheckBoxId && t.IsRemove == false).ToListAsync();
+        bool check=true;
+        foreach (var checkbox in CheckBoxId)
+        {
+            var Resprojects = await _SelectedProjectPlanRepository.GetAllEntity().Where(t => t.CheckBoxId == checkbox && t.IsRemove == false).ToListAsync();
+            var consultions = await _ConsultionItemSelectedRepository.GetAllEntity().Where(t => t.CheckBoxId == checkbox && t.IsRemove == false).ToListAsync();
             if ((Resprojects != null & Resprojects.Count > 0)||(consultions != null & consultions.Count > 0))
                 return ResDeleteOpration.RefrenceError;
             else
             {
-                try
-                {
-                    var res = await _CheckBoxRepository.RealDeleteEntity(CheckBoxId);
-                    if (res)
-                    {
-                        await _CheckBoxRepository.SaveEntity();
-                        return ResDeleteOpration.Success;
-                    }
-                    return ResDeleteOpration.Failure;   
-                }
-                catch (Exception)
-                {
-
-                    return ResDeleteOpration.Failure;
-                }
-                
+                check = await _CheckBoxRepository.RealDeleteEntity(checkbox);
             }
+        }
+       
+        try
+        {
+            if (check)
+            {
+                await _CheckBoxRepository.SaveEntity();
+                return ResDeleteOpration.Success;
+            }
+            return ResDeleteOpration.Failure;   
+        }
+        catch (Exception)
+        {
+
+            return ResDeleteOpration.Failure;
+        }
+                
     }
 
     public void Dispose()
@@ -92,7 +97,7 @@ public class CheckBoxService : ICheckBoxService
             return new CheckBoxDto { Title=CheckBox.CheckBoxName,Description=CheckBox.Description,IconName=CheckBox.IconName,Id=CheckBox.Id,SiteSectionName=CheckBox.sectionName == section.ConsultationForm?"فرم مشاوره":"پروژه" };
     }
 
-    public async Task<bool> UpdateCheckBox(long CheckBoxId, string title, string? IconName, string? Description, int? SiteSection)
+    public async Task<bool> UpdateCheckBox(long CheckBoxId, string? title, string? IconName, string? Description, int? SiteSection)
     {
         var CheckBox =await _CheckBoxRepository.GetEntity(CheckBoxId);
             if(CheckBox != null)
