@@ -37,8 +37,6 @@ namespace OurSite.Core.Services.Repositories
                 IsClosed = false,
                 UserId = ticketDto.UserId
 
-
-
             };
             TicketMessage message = new TicketMessage()
             {

@@ -20,4 +20,10 @@
     <ProjectReference Include="..\OurSite.DataLayer\OurSite.DataLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Security\Authorizations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Security\Authorizations\" />
+  </ItemGroup>
 </Project>

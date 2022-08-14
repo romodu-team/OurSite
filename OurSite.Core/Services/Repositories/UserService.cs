@@ -29,13 +29,15 @@ namespace OurSite.Core.Services.Repositories
     {
         #region constructor
         private readonly IGenericReopsitories<User> userService;
+        private readonly IGenericReopsitories<AdditionalDataOfUser> additionalDataRepository;
         private IPasswordHelper passwordHelper;
         private IMailService mailService;
-        public UserService(IGenericReopsitories<User> userService, IPasswordHelper passwordHelper, IMailService mailService)
+        public UserService(IGenericReopsitories<AdditionalDataOfUser> additionalDataRepository, IGenericReopsitories<User> userService, IPasswordHelper passwordHelper, IMailService mailService)
         {
             this.userService = userService;
             this.passwordHelper = passwordHelper;
             this.mailService = mailService;
+            this.additionalDataRepository = additionalDataRepository;
         }
         #endregion
 
@@ -238,7 +240,7 @@ namespace OurSite.Core.Services.Repositories
         #region Update profile by user
         public async Task<ResUpdate> UpDate(ReqUpdateUserDto userdto,long id)
         {
-            var user = await userService.GetEntity(id);
+            var user = await userService.GetAllEntity().Include(u => u.AdditionalDataOfUser).SingleOrDefaultAsync(u => u.Id == id);
             if (user != null)
             {
                 if (!string.IsNullOrWhiteSpace(userdto.FirstName))
@@ -251,24 +253,57 @@ namespace OurSite.Core.Services.Repositories
                     user.Email = userdto.Email.Trim().ToLower();
                 if (!string.IsNullOrWhiteSpace(userdto.Mobile))
                     user.Mobile = userdto.Mobile;
-                if (userdto.Gender is not null)
-                    user.Gender = (DataLayer.Entities.BaseEntities.gender?)userdto.Gender;
-                if (!string.IsNullOrWhiteSpace(userdto.Address))
-                    user.Address = userdto.Address;
+                
                 if (!string.IsNullOrWhiteSpace(userdto.ImageName))
                     user.ImageName = userdto.ImageName;
-                if (!string.IsNullOrWhiteSpace(userdto.Birthday))
-                    user.Birthday = userdto.Birthday;
-                if (!string.IsNullOrWhiteSpace(userdto.Phone))
-                    user.Phone = userdto.Phone;
-                if (!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
-                    user.ShabaNumbers = userdto.ShabaNumbers;
+               
                 if (userdto.AccountType is not null)
                     user.AccountType = (DataLayer.Entities.Accounts.accountType)userdto.AccountType;
-                if (!string.IsNullOrWhiteSpace(userdto.BusinessCode))
-                    user.BusinessCode = userdto.BusinessCode;
-                if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
-                    user.RegistrationNumber = userdto.RegistrationNumber;
+                
+
+                if (user.AdditionalDataOfUser is not null)
+                {
+                    if (userdto.Gender is not null)
+                        user.AdditionalDataOfUser.Gender = (DataLayer.Entities.Accounts.gender?)userdto.Gender;
+                    if (!string.IsNullOrWhiteSpace(userdto.Address))
+                        user.AdditionalDataOfUser.Address = userdto.Address;
+                    if (!string.IsNullOrWhiteSpace(userdto.Birthday))
+                        user.AdditionalDataOfUser.Birthday = userdto.Birthday;
+                    if (!string.IsNullOrWhiteSpace(userdto.Phone))
+                        user.AdditionalDataOfUser.Phone = userdto.Phone;
+                    if (!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
+                        user.AdditionalDataOfUser.ShabaNumbers = userdto.ShabaNumbers;
+                    if (!string.IsNullOrWhiteSpace(userdto.BusinessCode))
+                        user.AdditionalDataOfUser.BusinessCode = userdto.BusinessCode;
+                    if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
+                        user.AdditionalDataOfUser.RegistrationNumber = userdto.RegistrationNumber;
+
+                }
+                else if (userdto.Address != null || userdto.Birthday != null || userdto.Gender != null|| userdto.Phone != null || userdto.ShabaNumbers != null || userdto.BusinessCode != null || userdto.RegistrationNumber != null)
+                {
+                    AdditionalDataOfUser addDataUser = new AdditionalDataOfUser
+                    {
+                        UserId = user.Id
+                    };
+                    if (userdto.Gender is not null)
+                        addDataUser.Gender = (DataLayer.Entities.Accounts.gender?)userdto.Gender;
+                    if (!string.IsNullOrWhiteSpace(userdto.Address))
+                        addDataUser.Address = userdto.Address;
+                    if (!string.IsNullOrWhiteSpace(userdto.Birthday))
+                        addDataUser.Birthday = userdto.Birthday;
+                    if (!string.IsNullOrWhiteSpace(userdto.Phone))
+                        addDataUser.Phone = userdto.Phone;
+                    if (!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
+                        addDataUser.ShabaNumbers = userdto.ShabaNumbers;
+                    if (!string.IsNullOrWhiteSpace(userdto.BusinessCode))
+                        addDataUser.BusinessCode = userdto.BusinessCode;
+                    if (!string.IsNullOrWhiteSpace(userdto.RegistrationNumber))
+                        addDataUser.RegistrationNumber = userdto.RegistrationNumber;
+
+                    await additionalDataRepository.AddEntity(addDataUser);
+                    await additionalDataRepository.SaveEntity();
+                }
+
                 try
                 {
                     user.LastUpdate = DateTime.Now;
@@ -308,7 +343,7 @@ namespace OurSite.Core.Services.Repositories
         #region view profile by user
         public async Task<ReqViewUserDto> ViewProfile(long id)
         {
-            var user = await userService.GetEntity(id);
+            var user = await userService.GetAllEntity().Include(u=>u.AdditionalDataOfUser).SingleOrDefaultAsync(u=>u.Id==id);
             ReqViewUserDto userdto = new ReqViewUserDto();
             if (user is not null)
             {
@@ -318,16 +353,21 @@ namespace OurSite.Core.Services.Repositories
                 userdto.NationalCode = user.NationalCode;
                 userdto.Email = user.Email;
                 userdto.Mobile = user.Mobile;
-                userdto.Gender = (gender?)user.Gender;
-                userdto.Address = user.Address;
-                userdto.ImageName = user.ImageName;
-                userdto.Phone = user.Phone;
-                userdto.Birthday = user.Birthday;
-                userdto.ShabaNumbers = user.ShabaNumbers;
+                
+                userdto.ImageName =PathTools.GetProfilePhotos + user.ImageName;
+               
                 userdto.AccountType = (accountType?)user.AccountType;
-                userdto.BusinessCode = user.BusinessCode;
-                userdto.RegistrationNumber = user.RegistrationNumber;
-
+                
+                if(user.AdditionalDataOfUser != null)
+                {
+                    userdto.Gender = (DTOs.UserDtos.gender?)user.AdditionalDataOfUser.Gender;
+                    userdto.Address = user.AdditionalDataOfUser.Address;
+                    userdto.Phone = user.AdditionalDataOfUser.Phone;
+                    userdto.Birthday = user.AdditionalDataOfUser.Birthday;
+                    userdto.ShabaNumbers = user.AdditionalDataOfUser.ShabaNumbers;
+                    userdto.BusinessCode = user.AdditionalDataOfUser.BusinessCode;
+                    userdto.RegistrationNumber = user.AdditionalDataOfUser.RegistrationNumber;
+                }
                 return userdto;
             }
             return null;
@@ -366,13 +406,23 @@ namespace OurSite.Core.Services.Repositories
         #region Delete User
         public async Task<bool> DeleteUser(long id)
         {
+            bool flag = false;
             var isdelete = await userService.DeleteEntity(id); //get id and return true that it means user deleted
-            if (isdelete)
+            flag = isdelete;
+            var additionalData =await additionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.UserId == id);
+            if (additionalData is not null)
+            {
+                var isdeleteAdd = await additionalDataRepository.DeleteEntity(additionalData.Id);
+                
+
+                flag = isdeleteAdd;
+            }
+            if (flag)
             {
                 try
                 {
                     await userService.SaveEntity();
-
+                    await additionalDataRepository.SaveEntity();
                 }
                 catch (Exception ex)
                 {
@@ -380,7 +430,7 @@ namespace OurSite.Core.Services.Repositories
                 }
             }
 
-            return isdelete;
+            return flag;
 
         }
         #endregion
@@ -418,10 +468,59 @@ namespace OurSite.Core.Services.Repositories
         #region Get user list 
         public async Task<ResFilterUserDto> GetAlluser(ReqFilterUserDto filter) //for return a list of user that singup in our site for admin
         {
-            var usersQuery = userService.GetAllEntity();
+            var usersQuery = userService.GetAllEntity().AsQueryable();
+            switch (filter.OrderBy)
+            {
+                case UsersOrderBy.NameAsc:
+                    usersQuery = usersQuery.OrderBy(u => u.FirstName);
+                    break;
+                case UsersOrderBy.NameDec:
+                    usersQuery = usersQuery.OrderByDescending(u => u.FirstName);
+                    break;
+                case UsersOrderBy.CreateDateAsc:
+                    usersQuery = usersQuery.OrderBy(u => u.CreateDate);
+                    break;
+                case UsersOrderBy.CreateDateDec:
+                    usersQuery = usersQuery.OrderByDescending(u => u.CreateDate);
+                    break;
+                default:
+                    break;
+            }
+            switch (filter.ActiveationFilter)
+            {
+                case UsersActiveationFilter.Active:
+                    usersQuery = usersQuery.Where(u => u.IsActive == true);
+                    break;
+                case UsersActiveationFilter.NotActive:
+                    usersQuery = usersQuery.Where(u => u.IsActive == false);
+                    break;
+                case UsersActiveationFilter.All:
+                    break;
+                default:
+                    break;
+            }
+            switch (filter.RemoveFilter)
+            {
+                case UsersRemoveFilter.Deleted:
+                    usersQuery = usersQuery.Where(u => u.IsRemove == true);
+                    break;
+                case UsersRemoveFilter.NotDeleted:
+                    usersQuery = usersQuery.Where(u => u.IsRemove == false);
+                    break;
+                case UsersRemoveFilter.All:
+                    break;
+                default:
+                    break;
+            }
+            if (!string.IsNullOrWhiteSpace(filter.EmailSearchKey))
+                usersQuery = usersQuery.Where(u => u.Email.Contains(filter.EmailSearchKey));
+            if(!string.IsNullOrWhiteSpace(filter.UserNameSearchKey))
+                usersQuery= usersQuery.Where(u => u.UserName.Contains(filter.UserNameSearchKey));
+
             var count = (int)Math.Ceiling(usersQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list =await userService.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
+            var list =await usersQuery.Paging(pager).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
+            
             var result = new ResFilterUserDto();
             result.SetPaging(pager);
             return result.SetUsers(list);
@@ -434,7 +533,7 @@ namespace OurSite.Core.Services.Repositories
         [Authorize(Roles = "نقش مدنظر")]
         public async Task<ResViewuserAdminDto> ViewUser(long id)
         {
-            var user = await userService.GetEntity(id);
+            var user = await userService.GetAllEntity().Include(u => u.AdditionalDataOfUser).SingleOrDefaultAsync(u => u.Id == id);
             ResViewuserAdminDto adminview = new ResViewuserAdminDto();
             if (user is not null)
             {
@@ -448,15 +547,18 @@ namespace OurSite.Core.Services.Repositories
                 adminview.NationalCode = user.NationalCode;
                 adminview.Email = user.Email;
                 adminview.Mobile = user.Mobile;
-                adminview.Gender = (gender?)user.Gender;
-                adminview.Address = user.Address;
-                adminview.ImageName = user.ImageName;
-                adminview.Phone = user.Phone;
-                adminview.Birthday = user.Birthday;
-                adminview.ShabaNumbers = user.ShabaNumbers;
+                adminview.ImageName =PathTools.GetProfilePhotos + user.ImageName;
                 adminview.AccountType = (accountType?)user.AccountType;
-                adminview.BusinessCode = user.BusinessCode;
-                adminview.RegistrationNumber = user.RegistrationNumber;
+                if (user.AdditionalDataOfUser != null)
+                {
+                    adminview.Gender = (DTOs.UserDtos.gender?)user.AdditionalDataOfUser.Gender;
+                    adminview.Address = user.AdditionalDataOfUser.Address;
+                    adminview.Phone = user.AdditionalDataOfUser.Phone;
+                    adminview.Birthday = user.AdditionalDataOfUser.Birthday;
+                    adminview.ShabaNumbers = user.AdditionalDataOfUser.ShabaNumbers;
+                    adminview.BusinessCode = user.AdditionalDataOfUser.BusinessCode;
+                    adminview.RegistrationNumber = user.AdditionalDataOfUser.RegistrationNumber;
+                }
             }
             return adminview;
         }

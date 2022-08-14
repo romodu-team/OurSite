@@ -15,6 +15,10 @@ using OurSite.DataLayer.Contexts;
 using OurSite.DataLayer.Interfaces;
 using OurSite.DataLayer.Repositories;
 using System.Text;
+using Microsoft.Extensions.FileProviders;
+using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
+using OurSite.Core.Security.Authorizations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +30,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -63,7 +69,6 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
-
 
 #endregion
 #region Autentication
@@ -103,8 +108,10 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(options =>
+    options.SerializeAsV2 = true); ;
+    app.UseSwaggerUI(options=>
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 }
 
 //app.UseHttpsRedirection();
@@ -113,5 +120,10 @@ app.UseCors("EnableCors");
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();
-
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "upload")),
+    RequestPath = "/upload"
+});
 app.Run();

@@ -32,6 +32,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Login
+        /// <summary>
+        ///  API for login user into system {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] ReqLoginDto request)
         {
@@ -66,6 +71,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Reset Password
+        /// <summary>
+        ///  API for Reset password User Panel {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ReqResetPassword request)
         {
@@ -81,6 +91,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Send Reset Password Email
+        /// <summary>
+        ///  API for Send Reset password Request for User Email {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("SendEmail-ResetUserPass")]
         public async Task<IActionResult> SendResetPassLink([FromBody] string EmailOrUserName)
         {
@@ -100,6 +115,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Active User
+        /// <summary>
+        ///  API for Register User Panel and make it Active {Get request from Route}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet("Active-User/{ActivationCode}")]
         public async Task<IActionResult> ActiveUser([FromRoute] string ActivationCode)
         {
@@ -116,7 +136,12 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
-        #region Singup 
+        #region Singup
+        /// <summary>
+        ///  API for singup User{Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("signUp-user")]
         public async Task<IActionResult> SingupUser([FromBody] ReqSingupUserDto userDto)
         {
@@ -146,6 +171,11 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region Update profile
+        /// <summary>
+        ///  API for Update User Profile by user{Get request from form}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut("Update-Profile")]
         public async Task<IActionResult> UpDate([FromForm] ReqUpdateUserDto userdto)
         {
@@ -195,9 +225,14 @@ namespace OurSite.WebApi.Controllers
         #endregion
 
         #region view profile
+        /// <summary>
+        ///  API for View User Panel by user{Get request from ...}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Authorize]
-        [HttpGet("View-Profile")]
-        public async Task<IActionResult> ViewProfile()
+        [HttpGet("View-Profile/{id}")]
+        public async Task<IActionResult> ViewProfile([FromRoute]long id)
         {
             var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var userdto = await userservice.ViewProfile(Convert.ToInt64(userid));
