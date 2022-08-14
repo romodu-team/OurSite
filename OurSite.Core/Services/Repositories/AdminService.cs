@@ -27,17 +27,24 @@ namespace OurSite.Core.Services.Repositories
         // private IGenericReopsitories<Role> RoleRepository;
         private IRoleService roleService;
         private IPasswordHelper passwordHelper;
-        private IMapper mapper;
         private IMailService mailService;
 
-        public AdminService(IGenericReopsitories<AdditionalDataOfAdmin> additionalData, IRoleService roleService, IMailService mailService, IMapper mapper, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper)
+        public AdminService(IGenericReopsitories<AdditionalDataOfAdmin> additionalData, IRoleService roleService, IMailService mailService, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper)
         {
-            this.mapper = mapper;
             this.adminRepository = adminRepository;
             this.passwordHelper = passwordHelper;
             this.mailService = mailService;
             this.roleService = roleService;
             AdditionalDataRepository = additionalData;
+        }
+         #region Dispose
+
+        public void Dispose()
+        {
+            adminRepository.Dispose();
+            roleService.Dispose();
+            AdditionalDataRepository.Dispose();
+
         }
         #endregion
 
@@ -93,7 +100,6 @@ namespace OurSite.Core.Services.Repositories
             {
                 var admin = await adminRepository.GetEntity(adminId);
                 admin.IsActive = !admin.IsActive;
-                admin.LastUpdate = DateTime.Now;
                 adminRepository.UpDateEntity(admin);
                 await adminRepository.SaveEntity();
                 return true;
@@ -159,7 +165,16 @@ namespace OurSite.Core.Services.Repositories
             if (!string.IsNullOrWhiteSpace(req.Roleid))
             {
                 var accountinrole = await roleService.GetAdminInRole(id);
-                accountinrole.RoleId = Convert.ToInt64(req.Roleid);
+                if(accountinrole is not null)
+                    accountinrole.RoleId = Convert.ToInt64(req.Roleid);
+                else{
+                    accountinrole = new AccounInRole(){
+                        AdminId=id,
+                        RoleId=Convert.ToInt64(req.Roleid),
+
+
+                    };
+                }
                 var res = await roleService.UpdateAdminRole(accountinrole);
 
 
@@ -228,7 +243,7 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Add new admin
-        public async Task<RessingupDto> RegisterAdmin(ReqSingupUserDto req)
+        public async Task<RessingupDto> RegisterAdmin(ReqRegisterAdminDto req)
         {
             var check = await IsAdminExist(req.UserName.Trim().ToLower(), req.Email.ToLower().Trim());
             if (check)
@@ -273,6 +288,10 @@ namespace OurSite.Core.Services.Repositories
         public async Task<bool> IsAdminExist(string UserName, string Email)
         {
             return await adminRepository.GetAllEntity().AnyAsync(a=>(a.UserName==UserName.Trim().ToLower()||a.Email==Email.Trim().ToLower())&& a.IsRemove==false);
+        }
+        public async Task<bool> IsAdminExist(long AdminId)
+        {
+            return await adminRepository.GetAllEntity().AnyAsync(a => a.Id==AdminId && a.IsRemove == false);
         }
         #endregion
 
@@ -387,7 +406,39 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
+
+        #region Update Admin Role
+        public async Task<ResUpdate> UpdateAdminRole(long adminId, long RoleId)
+        {
+            var Admin =await adminRepository.GetEntity(adminId);
+            if (Admin is null)
+                return ResUpdate.NotFound;
+            var Role = await roleService.GetRoleById(RoleId);
+            if (Role is null)
+                return ResUpdate.RoleNotFound;
+
+            var adminRole =await roleService.GetAdminInRole(adminId);
+            if(adminRole is not null)
+            {
+                adminRole.RoleId = RoleId;
+                var res=await roleService.UpdateAdminRole(adminRole);
+                if (res)
+                    return ResUpdate.Success;
+                return ResUpdate.Error;
+            }
+            else
+            {
+                var adminInRole = new AccounInRole() { AdminId=adminId,RoleId=RoleId};
+                var res =await roleService.AddRoleToAdmin(adminInRole);
+                if (res)
+                    return ResUpdate.Success;
+                return ResUpdate.Error;
+            }
+        }
+
         #endregion
+        #endregion
+
 
 
         #region login
@@ -401,20 +452,6 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
-
-
-
-        #region Dispose
-        public void Dispose()
-        {
-            adminRepository.Dispose();
-            roleService.Dispose();
-        }
-
-   
-
         #endregion
-
-
     }
 }

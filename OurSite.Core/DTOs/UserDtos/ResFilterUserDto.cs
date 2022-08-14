@@ -1,4 +1,5 @@
 ﻿using OurSite.Core.DTOs.Paging;
+using OurSite.Core.DTOs.ProjectDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace OurSite.Core.DTOs.UserDtos
 {
-    public class ResFilterUserDto:BasePaging
+    public class ResFilterUserDto : BasePaging
     {
         public List<GetAllUserDto>? Users { get; set; }
-        
+
         public ResFilterUserDto SetPaging(BasePaging paging)
         {
             this.PageId = paging.PageId;

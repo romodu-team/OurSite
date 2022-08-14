@@ -5,6 +5,7 @@
 
 OurSite.WebApi/appsettings.Development.json
 OurSite.WebApi/appsettings.json
+OurSite.DataLayer/Migrations
 # User-specific files
 *.rsuser
 *.suo

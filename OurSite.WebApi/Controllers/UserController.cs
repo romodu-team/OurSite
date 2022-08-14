@@ -23,10 +23,12 @@ namespace OurSite.WebApi.Controllers
     {
         #region constructor
         private IUserService userservice;
+        private IRoleService Roleservice;
 
-        public UserController(IUserService userService)
+        public UserController(IRoleService Roleservice,IUserService userService)
         {
             this.userservice = userService;
+            this.Roleservice=Roleservice;
 
         }
         #endregion
@@ -42,13 +44,14 @@ namespace OurSite.WebApi.Controllers
         {
             if (ModelState.IsValid)
             {
+                AuthenticationHelper authenticationHelper = new AuthenticationHelper(Roleservice);
                 var res = await userservice.LoginUser(request);
                 switch (res)
                 {
                     case ResLoginDto.Success:
 
                         var user = await userservice.GetUserByUserPass(request.UserName, request.Password);
-                        var token = AuthenticationHelper.GenerateUserToken(user, 3);
+                        var token = authenticationHelper.GenerateUserToken(user, 3);
                         HttpContext.Response.StatusCode = 200;
                         return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName }, "ورود با موفقیت انجام شد");
                     case ResLoginDto.IncorrectData:
@@ -94,7 +97,7 @@ namespace OurSite.WebApi.Controllers
         /// <summary>
         ///  API for Send Reset password Request for User Email {Get request from body}
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="EmailOrUserName"></param>
         /// <returns></returns>
         [HttpPost("SendEmail-ResetUserPass")]
         public async Task<IActionResult> SendResetPassLink([FromBody] string EmailOrUserName)
@@ -118,7 +121,7 @@ namespace OurSite.WebApi.Controllers
         /// <summary>
         ///  API for Register User Panel and make it Active {Get request from Route}
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="ActivationCode"></param>
         /// <returns></returns>
         [HttpGet("Active-User/{ActivationCode}")]
         public async Task<IActionResult> ActiveUser([FromRoute] string ActivationCode)
@@ -175,6 +178,7 @@ namespace OurSite.WebApi.Controllers
         ///  API for Update User Profile by user{Get request from form}
         /// </summary>
         /// <param name="request"></param>
+        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
         /// <returns></returns>
         [HttpPut("Update-Profile")]
         public async Task<IActionResult> UpDate([FromForm] ReqUpdateUserDto userdto)

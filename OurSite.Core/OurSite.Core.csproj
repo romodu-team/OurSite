@@ -13,6 +13,7 @@
     <PackageReference Include="MailKit" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
     <PackageReference Include="MimeKit" Version="3.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
   </ItemGroup>
 
@@ -21,9 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Security\Authorizations\" />
+    <None Remove="Services\Interfaces\IProjecta\" />
+    <None Remove="DTOs\ProjectDtos\" />
+    <None Remove="Services\Repositories\Forms\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Security\Authorizations\" />
+    <Folder Include="Services\Interfaces\Projecta\" />
+    <Folder Include="Services\Repositories\Forms\" />
   </ItemGroup>
 </Project>

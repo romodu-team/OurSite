@@ -10,7 +10,7 @@ namespace OurSite.Core.Services.Interfaces.Mail
 {
     public interface IMailService
     {
-        Task SendEmailAsync(MailRequestDto mailRequest);
+        Task<bool> SendEmailAsync(MailRequestDto mailRequest);
 
         Task<bool> SendResetPasswordEmailAsync(SendEmailDto request);
 

@@ -38,5 +38,13 @@ namespace OurSite.Core.Utilities
             return new JsonResult(new { Status = "NotFound", Data = ReturnData, Message = message });
         }
 
+        public static JsonResult InvalidInput()
+        {
+            return new JsonResult(new { Status = "InvalidInput"});
+        }
+        public static JsonResult UnhandledError()
+        {
+            return new JsonResult(new { Status = "UnhandledError" });
+        }
     }
 }
