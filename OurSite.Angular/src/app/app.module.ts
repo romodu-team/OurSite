@@ -35,7 +35,7 @@ import { Dialog2Component } from './pages/contact-us/dialog2/dialog2.component';
 
 import { Card5Component } from './shared/card5/card5.component';
 import { DemoFormComponent } from './shared/demo-form/demo-form.component';
-import { DemoDetailHeaderComponent } from './pages/demo-detail/demo-detail-header/demo-detail-header.component';
+import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-detail-header.component';
 
 
 @NgModule({
