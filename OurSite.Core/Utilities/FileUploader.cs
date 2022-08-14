@@ -74,11 +74,11 @@ namespace OurSite.Core.Utilities
                 return new ResUploadDto { Status = resFileUploader.NoContent, FileName = null };
             }
         }
-        public static ResDeleteImage DeleteImage(string ImagePath)
+        public static ResDeleteImage DeleteFile(string FilePath)
         {
-            var FullPath=Directory.GetCurrentDirectory()+ImagePath;
-            var imageExist = File.Exists(FullPath); 
-            if(imageExist){
+            var FullPath=Directory.GetCurrentDirectory()+FilePath;
+            var FileExist = File.Exists(FullPath); 
+            if(FileExist){
                 File.Delete(FullPath);
                 return ResDeleteImage.Success;
             }  
