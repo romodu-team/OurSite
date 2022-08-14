@@ -1,0 +1,11 @@
+<div class="col-2 p-4 shadow rounded w-100" (mouseenter)="CardHover()"
+            [class]="cardHover" (mouseleave)="CardInHover()" style="transition: .4s ease-in-out;"
+            [style]="topHover">
+            
+    <div class="d-flex justify-content-center flex-column align-items-center">
+        <div class="mb-3"></div>
+        <i class=" fa fa-solid fa-arrow-down-to-line"></i>
+        <img [src]="img" alt="" width="80px" height="80px">
+        <p class="mt-4">{{ title }}</p>
+    </div>
+</div>

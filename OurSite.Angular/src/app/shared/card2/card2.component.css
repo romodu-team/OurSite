@@ -1,0 +1,42 @@
+@keyframes arrowAnimation {
+    from{transform: scale(1) rotate(0);}
+    to{transform: scale(1.7) rotate(-90deg);}
+}
+@keyframes canceleArrowAnimation {
+    from{transform: scale(1.7) rotate(-90deg);}
+    to{transform: scale(1) rotate(0deg);}
+}
+
+.arrow-animation{
+    animation-name: arrowAnimation;
+    animation-duration: .3s;
+    transform: scale(1.7) rotate(-90deg);
+}
+
+.cancle-arrow-animation{
+    animation-name: canceleArrowAnimation;
+    animation-duration: .3s;
+    transform: scale(1) rotate(0deg);
+}
+
+@keyframes showArrowLabel {
+    from{transform: scale(0); opacity: 0;}
+    to{transform: scale(1); opacity: 1;}
+}
+@keyframes hideArrowLabel {
+    from{transform:  scale(1); opacity: 1;}
+    to{transform:scale(0); opacity: 0;}
+}
+.show-arrow-label{
+    animation-name: showArrowLabel;
+    animation-duration: .3s;
+    transform: scale(1);
+    opacity: 1;
+}
+
+.hide-arrow-label{
+    animation-name: hideArrowLabel;
+    animation-duration: .3s;
+    transform: scale(0);
+    opacity: 0;
+}
