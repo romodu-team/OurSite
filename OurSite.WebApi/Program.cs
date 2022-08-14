@@ -76,7 +76,7 @@ builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestServi
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IProject, ProjectService>();
 builder.Services.AddScoped<IPayment, PaymentService>();
-
+builder.Services.AddScoped<ICheckBoxService, CheckBoxService>();
 #endregion
 #region Autentication
 builder.Services.AddAuthentication(options=>
