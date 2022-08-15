@@ -8,4 +8,14 @@ public class Like:BaseEntity
 {
     public long WorkSampleId { get; set; }
     public WorkSample WorkSample { get; set; }
+    public string UserIP { get; set; }
+
+}
+
+public enum ResLike
+{
+    success,
+    WorkSampleNotFound,
+    Faild,
+    Exist
 }
