@@ -16,10 +16,10 @@ namespace OurSite.Core.DTOs.ProjectDtos
         public float? Price { get; set; }
         public string? Description { get; set; }
         public situations? Situation { get; set; }
-        public string? PlanDetails { get; set; }
+        public List<long>? PlanDetails { get; set; }
         public long? AdminId { get; set; }
         public string? ContractFileName { get; set; }
-
+        
 
 
     }
