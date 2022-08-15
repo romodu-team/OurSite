@@ -393,4 +393,31 @@ public class WorkSampleService : IWorkSampleService
         return null;
 
     }
+
+    public async Task<ResLike> AddLike(string userIp, long workSampleId)
+    {
+        var worksample = await _WorkSampleRepository.GetAllEntity().AnyAsync(x => x.Id == workSampleId);
+        try
+        {
+            if (worksample is true)
+            {
+                var LikeExist = await _LikeRepository.GetAllEntity().AnyAsync(x => x.WorkSampleId == workSampleId && x.UserIP == userIp.Trim());
+                if (LikeExist is false)
+                {
+
+                    await _LikeRepository.AddEntity(new Like { UserIP = userIp, WorkSampleId = workSampleId });
+                    await _LikeRepository.SaveEntity();
+                    return ResLike.success;
+                }
+                return ResLike.Exist;
+
+            }
+            return ResLike.WorkSampleNotFound;
+        }
+        catch (Exception ex)
+        {
+            return ResLike.Faild;
+        }
+
+    }
 }
