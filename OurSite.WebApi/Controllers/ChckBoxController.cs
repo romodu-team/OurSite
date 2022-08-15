@@ -86,4 +86,5 @@ public class ChckBoxController:Controller
                 return JsonStatusResponse.Success(res,"successfull");
             return JsonStatusResponse.Error("no CheckBox found");
         }
+
 }
