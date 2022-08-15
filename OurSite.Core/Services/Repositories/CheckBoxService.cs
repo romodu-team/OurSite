@@ -16,11 +16,13 @@ public class CheckBoxService : ICheckBoxService
     private IGenericReopsitories<CheckBoxs> _CheckBoxRepository;
     private IGenericReopsitories<ItemSelected> _ConsultionItemSelectedRepository;
     private IGenericReopsitories<SelectedProjectPlan> _SelectedProjectPlanRepository;
-    public CheckBoxService(IGenericReopsitories<ItemSelected> ConsultionItemSelectedRepository,IGenericReopsitories<SelectedProjectPlan> SelectedProjectPlanRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository)
+    private IGenericReopsitories<Project> ProjectRepository;
+    public CheckBoxService(IGenericReopsitories<ItemSelected> ConsultionItemSelectedRepository,IGenericReopsitories<SelectedProjectPlan> SelectedProjectPlanRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository, IGenericReopsitories<Project> ProjectRepository)
     {
         _CheckBoxRepository=CheckBoxRepository;
         _ConsultionItemSelectedRepository=ConsultionItemSelectedRepository;
         _SelectedProjectPlanRepository=SelectedProjectPlanRepository;
+        this.ProjectRepository = ProjectRepository;
     }
     #endregion
     public async Task<bool> CreateCheckBox(string title, string? IconName, string? Description, section SiteSection)
@@ -123,5 +125,45 @@ public class CheckBoxService : ICheckBoxService
                 }
             }
             return false;
+    }
+
+
+    public async Task<bool> ChangeProjectPlans(long ProId , List<long> PlansId)
+    {
+        try
+        {
+            var project = await ProjectRepository.GetEntity(ProId);
+            if (project is not null)
+            {
+                var plans = await _SelectedProjectPlanRepository.GetAllEntity().Where(x => x.ProjectId == project.Id).ToListAsync();
+                foreach (var item in plans)
+                {
+                    await _SelectedProjectPlanRepository.RealDeleteEntity(item.Id);
+
+                }
+                await _SelectedProjectPlanRepository.SaveEntity();
+
+                foreach (var NewPlans in PlansId)
+                {
+                    SelectedProjectPlan NewPlan = new SelectedProjectPlan()
+                    {
+                        CheckBoxId = NewPlans,
+                        ProjectId = ProId
+                    };
+                    await _SelectedProjectPlanRepository.AddEntity(NewPlan);
+
+                }
+                await _SelectedProjectPlanRepository.SaveEntity();
+                
+            }
+            return true;
+        }
+
+        catch (Exception ex)
+        {
+            return false;
+        }
+        
+        
     }
 }
