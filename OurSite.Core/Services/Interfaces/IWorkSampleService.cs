@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OurSite.Core.DTOs.WorkSampleDtos;
+using OurSite.DataLayer.Entities.RatingModel;
 
 namespace OurSite.Core.Services.Interfaces
 {
@@ -15,5 +16,6 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResWorkSample> DeleteWorkSample(long WorkSampleId);
 
         Task<ResWorkSample> EditWorkSample(long worksampleId,EditWorkSampleDto  request);
+        Task<ResLike> AddLike(string userIp, long workSampleId);
     }
 }
