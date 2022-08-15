@@ -22,12 +22,14 @@ namespace OurSite.Core.Services.Repositories
         private IGenericReopsitories<CheckBoxs> CheckBoxRepository;
         private IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository;
         private IUserService UserService;
-        public ProjectService(IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository,IGenericReopsitories<Project> ProjectsRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository, IUserService userService)
+        private ICheckBoxService CheckBoxService;
+        public ProjectService(IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository,IGenericReopsitories<Project> ProjectsRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository, IUserService userService , ICheckBoxService CheckBoxService)
         {
             this.ProjectsRepository = ProjectsRepository;
             this.CheckBoxRepository=CheckBoxRepository;
             this.SelectedProjectRepository=SelectedProjectRepository;
             this.UserService = userService;
+            this.CheckBoxService = CheckBoxService;
         }
 
         public void Dispose()
@@ -36,6 +38,7 @@ namespace OurSite.Core.Services.Repositories
             CheckBoxRepository.Dispose();
             SelectedProjectRepository.Dispose();
             UserService.Dispose();
+            CheckBoxService.Dispose();
         }
         #endregion
 
@@ -100,15 +103,20 @@ namespace OurSite.Core.Services.Repositories
         #region Delete project
         public async Task<ResProject> DeleteProject(long ProId, bool IsAdmin)
         {
-            var project = await ProjectsRepository.GetEntity(ProId);
-
+            var project = await ProjectsRepository.GetAllEntity().Where(x => x.Id == ProId).Include(x => x.selectedProjectPlans).SingleOrDefaultAsync();
             if(project is not null)
             {
                 if(IsAdmin)
                 {
+                    foreach(var item in project.selectedProjectPlans)
+                    {
+                        var RemovePlanProject = await SelectedProjectRepository.DeleteEntity(item.Id);
+                    }
+                    
                     var IsRemove = await ProjectsRepository.DeleteEntity(project.Id);
                     if (IsRemove is true)
                     {
+                        await SelectedProjectRepository.SaveEntity();
                         await ProjectsRepository.SaveEntity();
                         return ResProject.Success;
                     }
@@ -123,9 +131,14 @@ namespace OurSite.Core.Services.Repositories
                 {
                     if (project.Situation == situations.Pending)
                     {
+                        foreach (var item in project.selectedProjectPlans)
+                        {
+                            var RemovePlanProject = await SelectedProjectRepository.DeleteEntity(item.Id);
+                        }
                         var IsRemove = await ProjectsRepository.DeleteEntity(project.Id);
                         if (IsRemove is true)
                         {
+                            await SelectedProjectRepository.SaveEntity();
                             await ProjectsRepository.SaveEntity();
                             return ResProject.Success;
                         }
@@ -167,8 +180,8 @@ namespace OurSite.Core.Services.Repositories
                     pro.Description = prodto.Description;
                 if (prodto.Situation is not null)
                     pro.Situation = (situations)prodto.Situation;
-                if (!string.IsNullOrWhiteSpace(prodto.PlanDetails))
-                    //add selected project plan to database
+                if (prodto.PlanDetails is not null)
+                    await CheckBoxService.ChangeProjectPlans(prodto.ProId , prodto.PlanDetails);
                 if (prodto.AdminId is null)
                     pro.AdminId = prodto.AdminId;
                 if (!string.IsNullOrWhiteSpace(prodto.ContractFileName))
