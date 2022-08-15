@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.WorkSampleDtos;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
+using OurSite.DataLayer.Entities.RatingModel;
 
 namespace OurSite.WebApi.Controllers.AdminControllers;
 
@@ -186,6 +187,31 @@ public class WorkSampleController: Controller
             default:
                 return JsonStatusResponse.Error("Server Error");
 
+        }
+    }
+
+    /// <summary>
+    /// Api for add like to work sample {Get request from query}
+    /// </summary>
+    /// <param name="userIp"></param>
+    /// <param name="workSampleId"></param>
+    /// <returns></returns>
+    [HttpGet("add-like")]
+    public async Task<IActionResult> AddLike([FromQuery]string userIp,[FromQuery] long workSampleId)
+    {
+        var like = await _workSampleService.AddLike(userIp, workSampleId);
+        switch (like)
+        {
+            case ResLike.success:
+                return JsonStatusResponse.Success("Like Add Successfully");
+            case ResLike.Faild:
+                return JsonStatusResponse.Error("Server Error");
+            case ResLike.Exist:
+                return JsonStatusResponse.Error("You like this worksample before");
+            case ResLike.WorkSampleNotFound:
+                return JsonStatusResponse.NotFound("work sample not found. try agian later.");
+            default:
+                return JsonStatusResponse.Error("Server Error");
         }
     }
 }
