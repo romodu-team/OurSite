@@ -1,8 +1,9 @@
 <div class="w-100  p-4 shadow rounded" dir="rtl" 
 style="transition: .3s ease-in-out;cursor: pointer; position: relative;" [class]="select">
     <div (click)="onSelect()">
-        <div class="d-flex" *ngIf="!showDiscription" >
-            <i class="fa fa-solid fa-list" style="font-size: 40px;"></i>
+        <div class="d-flex me-4" *ngIf="!showDiscription" >
+            <!-- <i class="fa fa-solid fa-list" style="font-size: 40px;"></i> -->
+            <mat-icon style="font-size: 50px;">laptop_chromebook</mat-icon>
             <h2 class="mx-3">{{ title }}</h2>
         </div>
     
@@ -16,8 +17,14 @@ style="transition: .3s ease-in-out;cursor: pointer; position: relative;" [class]
     </div>
 
     <div class=" d-flex justify-content-end alighn-items-center " (click)="onDiscription()">
-        <div class="d-flex justify-content-center alighn-items-center mt-2" [class]="arrowLabel">
-            <p >مشاهده بیشتر</p>
+        <div class="d-flex justify-content-center alighn-items-center mt-2" >
+            <div [class]="arrowLabel">
+                <p >مشاهده بیشتر</p>
+            </div>
+
+            <div>
+                <mat-icon [class]="arrowAnimation">keyboard_arrow_left</mat-icon>
+            </div>
         </div>
 
         <div class="d-flex justify-content-center align-items-center mx-1" [class]="arrowAnimation">

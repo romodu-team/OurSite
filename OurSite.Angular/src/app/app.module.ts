@@ -37,6 +37,8 @@ import { Card5Component } from './shared/card5/card5.component';
 import { DemoFormComponent } from './shared/demo-form/demo-form.component';
 import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-detail-header.component';
 
+import {MatIconModule} from '@angular/material/icon';
+
 
 @NgModule({
   declarations: [
@@ -76,7 +78,8 @@ import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-
     BrowserAnimationsModule,
     MatSlideToggleModule,
     MatExpansionModule,
-    MatDialogModule
+    MatDialogModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
