@@ -13,4 +13,5 @@ public interface ICheckBoxService:IDisposable
         Task<CheckBoxDto> GetCheckBox(long CheckBoxId);
         Task<bool> UpdateCheckBox(long CheckBoxId, string? title,string? IconName, string? Description,int? SiteSection);
         Task<List<CheckBoxDto>> GetAllCheckBox();
+        Task<bool> ChangeProjectPlans(long ProId , List<long> PlansId);
 }
