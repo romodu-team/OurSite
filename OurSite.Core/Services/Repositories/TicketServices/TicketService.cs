@@ -202,6 +202,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                     var attachment = await _AttachmentRepository.GetAllEntity().SingleOrDefaultAsync(a => a.TicketDiscussionId == item && a.IsRemove == false);
                     if (attachment != null)
                     {
+                        FileUploader.DeleteFile(PathTools.TicketAttachmentUploadPath + "\\" + attachment.FileName);
                         await _AttachmentRepository.DeleteEntity(attachment.Id);
 
                     }
@@ -317,7 +318,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                     Category = ticket.TicketCategory.Title,
                     CreateDate = ticket.CreateDate.ToShortDateString(),
                     LastUpdateDate = ticket.LastUpdate.ToShortDateString(),
-                    AssignedTo = String.Concat(ticket.Supporter.FirstName," ", ticket.Supporter.LastName),
+                    AssignedTo =ticket.Supporter != null? String.Concat(ticket.Supporter.FirstName," ", ticket.Supporter.LastName):"",
                     Name = ticket.Title,
                     UserEmail = ticket.User.Email,
                     UserFullname = String.Concat(ticket.User.FirstName, ticket.User.LastName),

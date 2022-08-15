@@ -79,19 +79,20 @@ public class ImageGalleryService : IimageGalleryService
       
     }
 
-    public async Task<ResDeleteImage> DeleteImageFromGallery(long ImageId)
+    public async Task<ResDeleteFile> DeleteImageFromGallery(long ImageId)
     {
         //check if image is exist
         var image = await ImageGalleryRepository.GetEntity(ImageId);
         if(image is null)
-            return ResDeleteImage.NotFound;
+            return ResDeleteFile.NotFound;
         //check if image successfully deleted
+        FileUploader.DeleteFile(PathTools.ImageGallery + "\\" + image.ImageName);
         bool res = await ImageGalleryRepository.DeleteEntity(image.Id);
         if(res){
             await ImageGalleryRepository.SaveEntity();
-            return ResDeleteImage.Success;
+            return ResDeleteFile.Success;
         }
-        return ResDeleteImage.Faild;
+        return ResDeleteFile.Faild;
     }
 
 

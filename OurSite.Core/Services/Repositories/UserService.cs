@@ -412,30 +412,37 @@ namespace OurSite.Core.Services.Repositories
         public async Task<bool> DeleteUser(long id)
         {
             bool flag = false;
-            var isdelete = await userService.DeleteEntity(id); //get id and return true that it means user deleted
-            flag = isdelete;
-            var additionalData =await additionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.UserId == id);
-            if (additionalData is not null)
+            var user= await userService.GetEntity(id);
+            if(user != null)
             {
-                var isdeleteAdd = await additionalDataRepository.DeleteEntity(additionalData.Id);
-                
-
-                flag = isdeleteAdd;
-            }
-            if (flag)
-            {
-                try
+                var isdelete = await userService.DeleteEntity(id); //get id and return true that it means user deleted
+                flag = isdelete;
+                if (user.ImageName != null)
+                    FileUploader.DeleteFile(PathTools.ProfilePhotos + "\\" + user.ImageName);
+                var additionalData = await additionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.UserId == id);
+                if (additionalData is not null)
                 {
-                    await userService.SaveEntity();
-                    await additionalDataRepository.SaveEntity();
-                }
-                catch (Exception ex)
-                {
-                    return false;
-                }
-            }
+                    var isdeleteAdd = await additionalDataRepository.DeleteEntity(additionalData.Id);
 
-            return flag;
+
+                    flag = isdeleteAdd;
+                }
+                if (flag)
+                {
+                    try
+                    {
+                        await userService.SaveEntity();
+                        await additionalDataRepository.SaveEntity();
+                    }
+                    catch (Exception ex)
+                    {
+                        return false;
+                    }
+                }
+
+                return flag;
+            }
+            return false;
 
         }
         #endregion

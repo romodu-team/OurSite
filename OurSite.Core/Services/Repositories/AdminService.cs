@@ -53,41 +53,48 @@ namespace OurSite.Core.Services.Repositories
         public async Task<bool> DeleteAdmin(long adminId)             //its return true/false -We do not have a real deletion
         {
             bool flag = false;
-            var isdelete = await adminRepository.DeleteEntity(adminId);
-            await adminRepository.SaveEntity();
-            var additionalData = AdditionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.AdminId == adminId).Result;
-            flag = isdelete;
-            if(additionalData is not null)
+            var admin = await adminRepository.GetEntity(adminId);
+            if(admin!= null)
             {
-                var isdeleteAdd = await AdditionalDataRepository.DeleteEntity(additionalData.Id);
-                await AdditionalDataRepository.SaveEntity();
-
-                flag = isdeleteAdd;
-            }
-            if (flag)
-            {
-                try
+                var isdelete = await adminRepository.DeleteEntity(adminId);
+                await adminRepository.SaveEntity();
+                if (admin.ImageName != null)
+                    FileUploader.DeleteFile(PathTools.ProfilePhotos + "\\" + admin.ImageName);
+                var additionalData = AdditionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.AdminId == adminId).Result;
+                flag = isdelete;
+                if (additionalData is not null)
                 {
+                    var isdeleteAdd = await AdditionalDataRepository.DeleteEntity(additionalData.Id);
+                    await AdditionalDataRepository.SaveEntity();
 
-                   
-                    var myres = await roleService.DeleteAdminRole(adminId);
-                    switch (myres)
+                    flag = isdeleteAdd;
+                }
+                if (flag)
+                {
+                    try
                     {
-                        case ResDeleteAdminRole.Success:
-                            return true;
-                        case ResDeleteAdminRole.NotExist:
-                            return true;
-                        case ResDeleteAdminRole.Faild:
-                            return false;
-                        default:
-                            return false;
+
+
+                        var myres = await roleService.DeleteAdminRole(adminId);
+                        switch (myres)
+                        {
+                            case ResDeleteAdminRole.Success:
+                                return true;
+                            case ResDeleteAdminRole.NotExist:
+                                return true;
+                            case ResDeleteAdminRole.Faild:
+                                return false;
+                            default:
+                                return false;
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        return false;
                     }
                 }
-                catch (Exception)
-                {
-
-                    return false;
-                }
+                return false;
             }
             return false;
         }
@@ -200,6 +207,9 @@ namespace OurSite.Core.Services.Repositories
             if (result.Status == resFileUploader.Success)
             {
                 Admin admin = await adminRepository.GetEntity(UserId);
+                if (admin.ImageName != null)
+                    FileUploader.DeleteFile(PathTools.ProfilePhotos + "\\" + admin.ImageName);
+
                 admin.ImageName = result.FileName;
                 adminRepository.UpDateEntity(admin);
                 await adminRepository.SaveEntity();
