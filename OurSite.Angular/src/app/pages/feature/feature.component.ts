@@ -21,39 +21,39 @@ export class FeatureComponent implements OnInit {
   Cards$:Observable<any[]> = of(
     [
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
     ]

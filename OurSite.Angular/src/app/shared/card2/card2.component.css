@@ -40,3 +40,6 @@
     transform: scale(0);
     opacity: 0;
 }
+p{
+    font-weight: 300;
+}
