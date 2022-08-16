@@ -3,7 +3,7 @@ using OurSite.DataLayer.Entities.BaseEntities;
 
 namespace OurSite.DataLayer.Interfaces
 {
-	public interface IGenericReopsitories<TEntity> : IDisposable  where TEntity : BaseEntity
+	public interface IGenericRepository<TEntity> : IDisposable  where TEntity : BaseEntity
 	{
 
 		Task AddEntity(TEntity entity);

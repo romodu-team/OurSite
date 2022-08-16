@@ -6,12 +6,12 @@ using OurSite.DataLayer.Interfaces;
 
 namespace OurSite.DataLayer.Repositories
 {
-    public class GenericRepositories <Tentity> : IGenericReopsitories <Tentity> where Tentity : BaseEntity
+    public class GenericRepository <Tentity> : IGenericRepository <Tentity> where Tentity : BaseEntity
     {
         
         private readonly DbSet<Tentity> dbset;
         private DataBaseContext context;
-        public GenericRepositories(DataBaseContext context)
+        public GenericRepository(DataBaseContext context)
         {
             this.context = context;
             dbset = context.Set<Tentity>();
@@ -20,6 +20,7 @@ namespace OurSite.DataLayer.Repositories
         {
             entity.CreateDate= DateTime.Now;
             entity.LastUpdate= DateTime.Now;
+            entity.UUID = Guid.NewGuid();
             await dbset.AddAsync(entity);
 
         }
