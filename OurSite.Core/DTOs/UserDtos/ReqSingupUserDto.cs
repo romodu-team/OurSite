@@ -15,7 +15,6 @@ namespace OurSite.Core.DTOs.UserDtos
         public string Mobile { get; set; }
         public string Email { get; set; }
      //   public singup Singup { get; set; }
-        public long? AdminRoleId { get; set; }
         public accountType AccountType { get; set; }
     }
 

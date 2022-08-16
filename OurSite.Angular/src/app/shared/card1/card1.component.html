@@ -1,9 +1,9 @@
-<div class="p-4 rounded shadow w-100" (mouseenter)="cardHover()"
+<div class="p-4 rounded shadow-sm w-100" (mouseenter)="cardHover()"
  (mouseleave)="cardInHover()" [class]="[CardHover ,textHover]"
   style="transition: .3s ease-in-out;cursor: pointer; position: relative;"
   [routerLink]="[link]">
-    <div class="d-flex justify-content-end">
-        <img src="" width="50px" height="50px" alt="">
+    <div class="d-flex justify-content-end me-4" [class]="textHover">
+        <mat-icon style="font-size: 50px; ">dashboard</mat-icon>
     </div>
     <div class="d-flex justify-content-end mt-4 ">
     <h3 dir="rtl" class="col-6">{{ title }}</h3>

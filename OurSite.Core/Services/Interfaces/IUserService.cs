@@ -32,6 +32,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResFilterUserDto> GetAlluser(ReqFilterUserDto filter);
         Task<bool> DeleteUser(long id);
         Task<ResadduserDto> AddUser(ReqAddUserAdminDto userDto);
+        Task<bool> IsUserExist(long userId);
         #endregion
 
 

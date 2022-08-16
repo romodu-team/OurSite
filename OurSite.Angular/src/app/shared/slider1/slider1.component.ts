@@ -14,13 +14,13 @@ export class Slider1Component implements OnInit {
 
   selectedImg: any = {
     id:1,
-    url: '../../../assets/imgs/header.png'
+    url: '../../../assets/imgs/Shot 0088.png'
   }
 
   photos:any[] = [
     {
       id:1,
-      url: '../../../assets/imgs/header.png'
+      url: '../../../assets/imgs/Shot 0088.png'
     },
     {
       id:2,
@@ -28,14 +28,14 @@ export class Slider1Component implements OnInit {
     },
     {
       id:3,
-      url: '../../../assets/imgs/header.png'
+      url: '../../../assets/imgs/Shot 0088.png'
     },
     {
       id:4,
       url: '../../../assets/imgs/Shot 0088.png'
     },
     {
-      id:4,
+      id:5,
       url: '../../../assets/imgs/Shot 0088.png'
     },
 

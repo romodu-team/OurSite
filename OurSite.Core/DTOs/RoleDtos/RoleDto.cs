@@ -8,6 +8,7 @@ namespace OurSite.Core.DTOs.RoleDtos
 {
     public class RoleDto
     {
+        public long RoleId { get; set; }
         public string Title { get; set; }
         public string Name { get; set; }
 

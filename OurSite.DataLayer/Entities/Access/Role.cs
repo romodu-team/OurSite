@@ -18,11 +18,22 @@ namespace OurSite.DataLayer.Entities.Access
         public string Name { get; set; }
         #endregion
 
-
         #region Realations
         public ICollection<AccounInRole> AccounInRoles { get; set; }
+        public ICollection<RolePermission> RolePermissions { get; set; }
+
         #endregion
 
     }
+    public enum ResRole
+    {
+        Success,
+        Faild,
+        Error,
+        NotFound,
+        InvalidInput
+    }
+
+
 }
 

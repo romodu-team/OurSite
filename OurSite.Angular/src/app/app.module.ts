@@ -13,6 +13,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { Card2Component } from './shared/card2/card2.component';
 import { Card3Component } from './shared/card3/card3.component';
+
 import { FeatureComponent } from './pages/feature/feature.component';
 import { Card6Component } from './shared/card6/card6.component';
 import { Card7Component } from './shared/card7/card7.component';
@@ -33,6 +34,13 @@ import { Dialog2Component } from './pages/contact-us/dialog2/dialog2.component';
 import { LoginComponent } from './pages/login/login.component';
 
 
+import { Card5Component } from './shared/card5/card5.component';
+import { DemoFormComponent } from './shared/demo-form/demo-form.component';
+import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-detail-header.component';
+
+import {MatIconModule} from '@angular/material/icon';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,6 +53,7 @@ import { LoginComponent } from './pages/login/login.component';
     FooterComponent,
     Card2Component,
     Card3Component,
+
     FeatureComponent,
     Card6Component,
     Card7Component,
@@ -58,6 +67,11 @@ import { LoginComponent } from './pages/login/login.component';
     Dialog1Component,
     Dialog2Component,
     LoginComponent,
+
+    Card5Component,
+    DemoFormComponent,
+    DemoDetailHeaderComponent
+
   ],
   imports: [
     BrowserModule,
@@ -66,7 +80,8 @@ import { LoginComponent } from './pages/login/login.component';
     BrowserAnimationsModule,
     MatSlideToggleModule,
     MatExpansionModule,
-    MatDialogModule
+    MatDialogModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
