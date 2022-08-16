@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using OurSite.Core.DTOs.TicketDtos;
+using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Interfaces.TicketInterfaces;
+using OurSite.Core.Services.Repositories;
 using OurSite.Core.Utilities;
+using OurSite.DataLayer.Entities.NotificationModels;
+using OurSite.DataLayer.Interfaces;
 
 namespace OurSite.WebApi.Controllers.TicketControllers
 {
@@ -15,13 +20,16 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         private ITicketCategoryService _TicketCategoryService;
         private ITicketPriorityService _TicketPriorityService;
         private ITicketStatusService _TicketStatusService;
-        public TicketController(ITicketStatusService TicketStatusService, ITicketPriorityService TicketPriorityService, ITicketService ticketService, ITicketCategoryService TicketCategoryService)
+        private readonly IHubContext<BroadcastHub, IHubClientService> _hubContext;
+        private readonly IGenericReopsitories<Notification> _notificationRepo;
+        public TicketController(IGenericReopsitories<Notification> notificationRepo, IHubContext<BroadcastHub, IHubClientService> hubContext, ITicketStatusService TicketStatusService, ITicketPriorityService TicketPriorityService, ITicketService ticketService, ITicketCategoryService TicketCategoryService)
         {
             _ticketService = ticketService;
             _TicketPriorityService = TicketPriorityService;
             _TicketCategoryService = TicketCategoryService;
             _TicketStatusService = TicketStatusService;
-
+            _hubContext = hubContext;
+            _notificationRepo = notificationRepo;
         }
         #endregion
         /// <summary>
@@ -30,7 +38,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("create-ticket")]
-        public async Task<IActionResult> CreateTicket([FromForm]ReqCreateTicketDto request)
+        public async Task<IActionResult> CreateTicket([FromForm] ReqCreateTicketDto request)
         {
             if (ModelState.IsValid)
             {
@@ -46,7 +54,17 @@ namespace OurSite.WebApi.Controllers.TicketControllers
                     case ResOperation.SenderNotFound:
                         return JsonStatusResponse.NotFound("ticket sender not found");
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.Success:
+                        Notification notification = new Notification()
+                        {
+                            EmployeeName = request.UserId.ToString(),
+                            TranType = "Edit",
+                            Message = "ticket jadid ijad shod"
+                        };
+                        await _notificationRepo.AddEntity(notification);
+                        await _notificationRepo.SaveEntity();
+                        await _hubContext.Clients.All.BroadcastMessage();
                         return JsonStatusResponse.Success("ticket has been created successfully , attachment uploaded");
+
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.NoContent:
                         return JsonStatusResponse.Success("ticket has been created successfully , No attachment found");
                     case ResOperation.Failure when res.AttachmentStatus == resFileUploader.Failure:
@@ -64,7 +82,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// </summary>
         /// <returns></returns>
         [HttpPut("update-ticket")]
-        public async Task<IActionResult> UploadTicket([FromBody]ReqUpdateTicketDto request)
+        public async Task<IActionResult> UploadTicket([FromBody] ReqUpdateTicketDto request)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +108,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="TicketId"></param>
         /// <returns></returns>
         [HttpDelete("delete-ticket")]
-        public async Task<IActionResult> DeleteTicket([FromQuery]long TicketId)
+        public async Task<IActionResult> DeleteTicket([FromQuery] long TicketId)
         {
             var res = await _ticketService.DeleteTicket(TicketId);
             switch (res)
@@ -110,9 +128,9 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="StatusId"></param>
         /// <returns></returns>
         [HttpPut("change-ticket-status")]
-        public async Task<IActionResult> ChangeTicketStatus([FromQuery]long TicketId, [FromQuery]long StatusId)
+        public async Task<IActionResult> ChangeTicketStatus([FromQuery] long TicketId, [FromQuery] long StatusId)
         {
-            var res =await _ticketService.ChangeTicketStatus(TicketId, StatusId);
+            var res = await _ticketService.ChangeTicketStatus(TicketId, StatusId);
             switch (res)
             {
                 case ResOperation.Success:
@@ -135,9 +153,9 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("Get-Ticket-Assigned-To-Admin")]
-        public async Task<IActionResult> GetTicketAssignedToAdmin([FromQuery]long adminId,[FromQuery] ReqGetAllTicketDto request)
+        public async Task<IActionResult> GetTicketAssignedToAdmin([FromQuery] long adminId, [FromQuery] ReqGetAllTicketDto request)
         {
-            var res =await _ticketService.GetTicketAssignedToAdmin(adminId, request);
+            var res = await _ticketService.GetTicketAssignedToAdmin(adminId, request);
             if (res.Tickets != null)
                 return JsonStatusResponse.Success(res, "successfully");
             return JsonStatusResponse.NotFound("No tickets found");
@@ -149,10 +167,10 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("get-User-tickets")]
-        public async Task<IActionResult> GetUserTickets([FromQuery]long UserId,[FromQuery] ReqGetAllUserTicketsDto request)
+        public async Task<IActionResult> GetUserTickets([FromQuery] long UserId, [FromQuery] ReqGetAllUserTicketsDto request)
         {
             var res = await _ticketService.GetUserTickets(UserId, request);
-            if (res.Tickets is not null && res.Tickets.Count>0)
+            if (res.Tickets is not null && res.Tickets.Count > 0)
                 return JsonStatusResponse.Success(res, "successfully");
             return JsonStatusResponse.NotFound("No tickets found");
         }
@@ -162,10 +180,10 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("get-all-tickets")]
-        public async Task<IActionResult> GetAllTickets([FromQuery]ReqGetAllTicketDto request)
+        public async Task<IActionResult> GetAllTickets([FromQuery] ReqGetAllTicketDto request)
         {
             var res = await _ticketService.GetAllTickets(request);
-            if (res.Tickets != null && res.Tickets.Count>0)
+            if (res.Tickets != null && res.Tickets.Count > 0)
                 return JsonStatusResponse.Success(res, "successfully");
             return JsonStatusResponse.NotFound("No tickets found");
         }
@@ -175,9 +193,9 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="TicketId"></param>
         /// <returns></returns>
         [HttpGet("get-ticket/{TicketId}")]
-        public async Task<IActionResult> GetTicket([FromRoute]long TicketId)
+        public async Task<IActionResult> GetTicket([FromRoute] long TicketId)
         {
-            var res =await _ticketService.GetTicket(TicketId);
+            var res = await _ticketService.GetTicket(TicketId);
             if (res is not null)
                 return JsonStatusResponse.Success(res, "Success");
             else
@@ -203,9 +221,9 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("create-discussion")]
-        public async Task<IActionResult> CreateDiscussion([FromForm]ReqCreateDiscussion request)
+        public async Task<IActionResult> CreateDiscussion([FromForm] ReqCreateDiscussion request)
         {
-            
+
             if (ModelState.IsValid)
             {
                 var res = await _ticketService.CreateDiscussion(request);
@@ -238,7 +256,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="DiscussionsId"></param>
         /// <returns></returns>
         [HttpDelete("delete-discussion")]
-        public async Task<IActionResult> DeleteDiscussion([FromBody]List<long> DiscussionsId)
+        public async Task<IActionResult> DeleteDiscussion([FromBody] List<long> DiscussionsId)
         {
             var res = await _ticketService.DeleteDiscussion(DiscussionsId);
             switch (res)
