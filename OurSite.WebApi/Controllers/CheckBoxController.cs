@@ -77,11 +77,12 @@ public class CheckBoxController : Controller
     }
     /// <summary>
     /// get list of CheckBox
+    ///<remarks>sectionId=> ConsultationForm = 0,PlanProject = 1</remarks>
     /// </summary>
     [HttpGet("get-all-CheckBox")]
-    public async Task<IActionResult> GetAllCheckBox()
+    public async Task<IActionResult> GetAllCheckBox([FromQuery]string sectionId)
     {
-        var res = await _CheckBoxService.GetAllCheckBox();
+        var res = await _CheckBoxService.GetAllCheckBox(sectionId);
         if (res is not null && res.Count > 0)
             return JsonStatusResponse.Success(res, "successfull");
         return JsonStatusResponse.Error("no CheckBox found");

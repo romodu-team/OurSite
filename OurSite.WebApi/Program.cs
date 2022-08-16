@@ -127,6 +127,7 @@ builder.Services.AddCors(options =>
     );
 });
 #endregion
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -136,6 +137,10 @@ if (app.Environment.IsDevelopment())
     options.SerializeAsV2 = true); 
     app.UseSwaggerUI(options=>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
+    app.UseRouting();
+    app.UseEndpoints(endpoints=>{
+    endpoints.MapHub<BroadcastHub>("/notify");
+});
 }
 
 app.UseHttpsRedirection();
@@ -150,4 +155,5 @@ app.UseStaticFiles(new StaticFileOptions
            Path.Combine(builder.Environment.ContentRootPath, "upload")),
     RequestPath = "/upload"
 });
+
 app.Run();

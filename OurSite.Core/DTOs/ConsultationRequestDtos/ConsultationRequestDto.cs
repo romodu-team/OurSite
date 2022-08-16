@@ -17,9 +17,8 @@ namespace OurSite.Core.DTOs.ConsultationRequestDtos
         public string UserFullName { get; set; }
 
         [EmailAddress(ErrorMessage = "آدرس ایمیل معتبر نیست")]
-        [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("ایمیل")]
-        public string UserEmail { get; set; }
+        public string? UserEmail { get; set; }
 
         [RegularExpression("09(1[0-9]|3[1-9]|2[1-9])-?[0-9]{3}-?[0-9]{4}", ErrorMessage = "شماره تماس وارد شده صحیح نیست")]
         [Required(ErrorMessage = "این فیلد اجباری است")]
