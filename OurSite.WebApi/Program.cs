@@ -65,7 +65,7 @@ builder.Services.AddSwaggerGen(option =>
 builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 #region addservices
-builder.Services.AddScoped(typeof(IGenericReopsitories<>), typeof(GenericRepositories<>));
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
 builder.Services.Configure<MailSettingsDto>(builder.Configuration.GetSection("MailSettings"));
@@ -108,6 +108,7 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
 builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
 builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("viewUser", policy => policy.RequireClaim("viewUser"));
@@ -124,7 +125,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     }
 
-    );  
+    );
 });
 #endregion
 var app = builder.Build();
@@ -136,7 +137,6 @@ if (app.Environment.IsDevelopment())
     options.SerializeAsV2 = true); 
     app.UseSwaggerUI(options=>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
-    
 }
 
 app.UseHttpsRedirection();
@@ -151,5 +151,4 @@ app.UseStaticFiles(new StaticFileOptions
            Path.Combine(builder.Environment.ContentRootPath, "upload")),
     RequestPath = "/upload"
 });
-
 app.Run();
