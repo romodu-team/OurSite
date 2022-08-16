@@ -12,9 +12,9 @@ namespace OurSite.Core.Services.Repositories;
 
 public class ImageGalleryService : IimageGalleryService
 {
-    private IGenericReopsitories<ImageGallery> ImageGalleryRepository;
-    private IGenericReopsitories<WorkSample> WorkSampleRepository;
-    public ImageGalleryService(IGenericReopsitories<WorkSample> WorkSampleRepository,IGenericReopsitories<ImageGallery> ImageGalleryRepository)
+    private IGenericRepository<ImageGallery> ImageGalleryRepository;
+    private IGenericRepository<WorkSample> WorkSampleRepository;
+    public ImageGalleryService(IGenericRepository<WorkSample> WorkSampleRepository,IGenericRepository<ImageGallery> ImageGalleryRepository)
     {
         this.ImageGalleryRepository=ImageGalleryRepository;
         this.WorkSampleRepository=WorkSampleRepository;

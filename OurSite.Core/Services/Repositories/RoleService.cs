@@ -18,11 +18,11 @@ namespace OurSite.Core.Services.Repositories
     public class RoleService : IRoleService
     {
         #region Constructor
-        private IGenericReopsitories<Role> RoleRepository;
-        private IGenericReopsitories<AccounInRole> accounInRoleRepository;
-        private IGenericReopsitories<RolePermission> RolePermissionRepository;
-        private IGenericReopsitories<Permission> PermissionRepository;
-        public RoleService(IGenericReopsitories<Permission> PermissionRepository, IGenericReopsitories<RolePermission> RolePermissionRepository,IGenericReopsitories<Role> RoleRepository, IGenericReopsitories<AccounInRole> accounInRoleRepository)
+        private IGenericRepository<Role> RoleRepository;
+        private IGenericRepository<AccounInRole> accounInRoleRepository;
+        private IGenericRepository<RolePermission> RolePermissionRepository;
+        private IGenericRepository<Permission> PermissionRepository;
+        public RoleService(IGenericRepository<Permission> PermissionRepository, IGenericRepository<RolePermission> RolePermissionRepository,IGenericRepository<Role> RoleRepository, IGenericRepository<AccounInRole> accounInRoleRepository)
         {
             this.RoleRepository = RoleRepository;
             this.accounInRoleRepository = accounInRoleRepository;

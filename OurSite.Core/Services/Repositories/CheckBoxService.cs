@@ -13,10 +13,10 @@ namespace OurSite.Core.Services.Repositories;
 public class CheckBoxService : ICheckBoxService
 {
     #region Constructor
-    private IGenericReopsitories<CheckBoxs> _CheckBoxRepository;
-    private IGenericReopsitories<ItemSelected> _ConsultionItemSelectedRepository;
-    private IGenericReopsitories<SelectedProjectPlan> _SelectedProjectPlanRepository;
-    public CheckBoxService(IGenericReopsitories<ItemSelected> ConsultionItemSelectedRepository,IGenericReopsitories<SelectedProjectPlan> SelectedProjectPlanRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository)
+    private IGenericRepository<CheckBoxs> _CheckBoxRepository;
+    private IGenericRepository<ItemSelected> _ConsultionItemSelectedRepository;
+    private IGenericRepository<SelectedProjectPlan> _SelectedProjectPlanRepository;
+    public CheckBoxService(IGenericRepository<ItemSelected> ConsultionItemSelectedRepository,IGenericRepository<SelectedProjectPlan> SelectedProjectPlanRepository,IGenericRepository<CheckBoxs> CheckBoxRepository)
     {
         _CheckBoxRepository=CheckBoxRepository;
         _ConsultionItemSelectedRepository=ConsultionItemSelectedRepository;

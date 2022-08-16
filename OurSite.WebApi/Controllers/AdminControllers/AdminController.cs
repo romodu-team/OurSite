@@ -141,7 +141,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             {
                 if (ModelState.IsValid)
                 {
-                    var Adminid = User.FindFirst(ClaimTypes.NameIdentifier);
+                    var Adminid = User.FindFirst(ClaimTypes.Sid);
                     var res = await adminService.UpdateAdmin(req, Convert.ToInt64(Adminid.Value));
                     if (req.ProfilePhoto != null)
                     {

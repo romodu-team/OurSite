@@ -12,6 +12,8 @@ namespace OurSite.Core.Services.Interfaces
     {
         Task<bool> IsUserActiveByUserName(string userName);
         Task<User> GetUserByUserPass(string username,string password);
+        Task<User> GetUserById(long UserId);
+        Task<bool> IsUserExistByUUId(Guid UserUUId);
         Task<ResLoginDto> LoginUser(ReqLoginDto login);
         Task<bool> ResetPassword(ReqResetPassword request);
         Task<User> GetUserByEmailOrUserName(string EmailOrUserName);

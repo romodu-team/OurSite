@@ -29,11 +29,11 @@ namespace OurSite.Core.Services.Repositories
     public class UserService : IUserService
     {
         #region constructor
-        private readonly IGenericReopsitories<User> userService;
-        private readonly IGenericReopsitories<AdditionalDataOfUser> additionalDataRepository;
+        private readonly IGenericRepository<User> userService;
+        private readonly IGenericRepository<AdditionalDataOfUser> additionalDataRepository;
         private IPasswordHelper passwordHelper;
         private IMailService mailService;
-        public UserService(IGenericReopsitories<AdditionalDataOfUser> additionalDataRepository, IGenericReopsitories<User> userService, IPasswordHelper passwordHelper, IMailService mailService)
+        public UserService(IGenericRepository<AdditionalDataOfUser> additionalDataRepository, IGenericRepository<User> userService, IPasswordHelper passwordHelper, IMailService mailService)
         {
             this.userService = userService;
             this.passwordHelper = passwordHelper;
@@ -531,7 +531,7 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(usersQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list =await usersQuery.Paging(pager).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
+            var list =await usersQuery.Paging(pager).Select(u=> new GetAllUserDto { UserUUID=u.UUID,Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
             
             var result = new ResFilterUserDto();
             result.SetPaging(pager);
@@ -550,6 +550,7 @@ namespace OurSite.Core.Services.Repositories
             if (user is not null)
             {
                 adminview.Id = user.Id;
+                adminview.UserUUID = user.UUID;
                 adminview.CreateDate = user.CreateDate;
                 adminview.IsRemove = user.IsRemove;
                 adminview.LastUpdate = user.LastUpdate;
@@ -579,7 +580,14 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #endregion
+        public async Task<bool> IsUserExistByUUId(Guid UserUUId)
+        {
+            return await userService.GetAllEntity().AnyAsync(a => a.UUID == UserUUId && a.IsRemove == false);
+        }
 
-
+        public Task<User> GetUserById(long UserId)
+        {
+            return userService.GetEntity(UserId);
+        }
     }
 }

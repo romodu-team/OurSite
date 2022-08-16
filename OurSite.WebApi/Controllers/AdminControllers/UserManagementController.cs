@@ -29,7 +29,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpGet("view-user/{id}")] //view user by admin
+        [HttpGet("view-user/{userid}")] //view user by admin
         public async Task<IActionResult> ViewUser([FromRoute] long userid)
         {
             var user = await userService.ViewUser(userid);

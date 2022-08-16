@@ -19,11 +19,11 @@ namespace OurSite.Core.Services.Repositories
     public class ProjectService : IProject
     {
         #region Cons&Dis
-        private IGenericReopsitories<Project> ProjectsRepository;
-        private IGenericReopsitories<CheckBoxs> CheckBoxRepository;
-        private IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository;
+        private IGenericRepository<Project> ProjectsRepository;
+        private IGenericRepository<CheckBoxs> CheckBoxRepository;
+        private IGenericRepository<SelectedProjectPlan> SelectedProjectRepository;
         private IUserService UserService;
-        public ProjectService(IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository,IGenericReopsitories<Project> ProjectsRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository, IUserService userService)
+        public ProjectService(IGenericRepository<SelectedProjectPlan> SelectedProjectRepository,IGenericRepository<Project> ProjectsRepository,IGenericRepository<CheckBoxs> CheckBoxRepository, IUserService userService)
         {
             this.ProjectsRepository = ProjectsRepository;
             this.CheckBoxRepository=CheckBoxRepository;

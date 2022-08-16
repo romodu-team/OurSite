@@ -30,12 +30,12 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="prodto"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPost("create-project-by-admin")]
+        [HttpPost("create-project-by-User")]
         public async Task<IActionResult> CreateProject([FromBody]CreateProjectDto prodto)
         {
             if (User.Identity.IsAuthenticated)
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userId = User.FindFirst(ClaimTypes.Sid).Value;
                 var res = await projectservice.CreateProject(prodto, Convert.ToInt64(userId));
                 switch (res)
                 {

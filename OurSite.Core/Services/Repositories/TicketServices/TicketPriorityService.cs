@@ -13,9 +13,9 @@ namespace OurSite.Core.Services.Repositories.TicketServices
 {
     public class TicketPriorityService : ITicketPriorityService
     {
-        private IGenericReopsitories<TicketPriority> _priorityRepository;
-        private IGenericReopsitories<TicketModel> _ticketRepository;
-        public TicketPriorityService(IGenericReopsitories<TicketModel> ticketRepository,IGenericReopsitories<TicketPriority> PriorityRepository)
+        private IGenericRepository<TicketPriority> _priorityRepository;
+        private IGenericRepository<TicketModel> _ticketRepository;
+        public TicketPriorityService(IGenericRepository<TicketModel> ticketRepository,IGenericRepository<TicketPriority> PriorityRepository)
         {
             _priorityRepository = PriorityRepository;
             _ticketRepository = ticketRepository;

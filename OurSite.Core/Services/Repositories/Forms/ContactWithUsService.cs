@@ -20,9 +20,9 @@ namespace OurSite.Core.Services.Repositories.Forms
     public class ContactWithUsService : IContactWithUsService
     {
         #region constructor
-        private readonly IGenericReopsitories<ContactWithUs> contactWithUsRepo;
+        private readonly IGenericRepository<ContactWithUs> contactWithUsRepo;
         private readonly IMailService mailService;
-        public ContactWithUsService(IGenericReopsitories<ContactWithUs> contactWithUsRepo,IMailService mailService)
+        public ContactWithUsService(IGenericRepository<ContactWithUs> contactWithUsRepo,IMailService mailService)
         {
             this.contactWithUsRepo = contactWithUsRepo;
             this.mailService=mailService;
