@@ -20,16 +20,12 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         private ITicketCategoryService _TicketCategoryService;
         private ITicketPriorityService _TicketPriorityService;
         private ITicketStatusService _TicketStatusService;
-        private readonly IHubContext<BroadcastHub, IHubClientService> _hubContext;
-        private readonly IGenericReopsitories<Notification> _notificationRepo;
-        public TicketController(IGenericReopsitories<Notification> notificationRepo, IHubContext<BroadcastHub, IHubClientService> hubContext, ITicketStatusService TicketStatusService, ITicketPriorityService TicketPriorityService, ITicketService ticketService, ITicketCategoryService TicketCategoryService)
+        public TicketController( ITicketStatusService TicketStatusService, ITicketPriorityService TicketPriorityService, ITicketService ticketService, ITicketCategoryService TicketCategoryService)
         {
             _ticketService = ticketService;
             _TicketPriorityService = TicketPriorityService;
             _TicketCategoryService = TicketCategoryService;
             _TicketStatusService = TicketStatusService;
-            _hubContext = hubContext;
-            _notificationRepo = notificationRepo;
         }
         #endregion
         /// <summary>
@@ -54,17 +50,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
                     case ResOperation.SenderNotFound:
                         return JsonStatusResponse.NotFound("ticket sender not found");
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.Success:
-                        Notification notification = new Notification()
-                        {
-                            EmployeeName = request.UserId.ToString(),
-                            TranType = "Edit",
-                            Message = "ticket jadid ijad shod"
-                        };
-                        await _notificationRepo.AddEntity(notification);
-                        await _notificationRepo.SaveEntity();
-                        await _hubContext.Clients.All.BroadcastMessage();
                         return JsonStatusResponse.Success("ticket has been created successfully , attachment uploaded");
-
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.NoContent:
                         return JsonStatusResponse.Success("ticket has been created successfully , No attachment found");
                     case ResOperation.Failure when res.AttachmentStatus == resFileUploader.Failure:
