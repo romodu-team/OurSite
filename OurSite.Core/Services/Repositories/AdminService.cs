@@ -15,6 +15,7 @@ using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
 using OurSite.Core.DTOs.Paging;
 using OurSite.Core.Utilities.Extentions.Paging;
+using OurSite.Core.Utilities.Extentions;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -139,7 +140,7 @@ namespace OurSite.Core.Services.Repositories
                 if (!string.IsNullOrWhiteSpace(req.Address))
                     admin.additionalDataOfAdmin.Address = req.Address;
                 if (!string.IsNullOrWhiteSpace(req.Birthday))
-                    admin.additionalDataOfAdmin.Birthday = req.Birthday;
+                    admin.additionalDataOfAdmin.Birthday = req.Birthday.AdDate();
                 if (req.Gender != null)
                     admin.additionalDataOfAdmin.Gender = (DataLayer.Entities.Accounts.gender?)req.Gender;
             }
@@ -152,7 +153,7 @@ namespace OurSite.Core.Services.Repositories
                 if (!string.IsNullOrWhiteSpace(req.Address))
                     addDataAdmin.Address = req.Address;
                 if (!string.IsNullOrWhiteSpace(req.Birthday))
-                    addDataAdmin.Birthday = req.Birthday;
+                    addDataAdmin.Birthday = req.Birthday.AdDate();
                 if (req.Gender != null)
                     addDataAdmin.Gender = (DataLayer.Entities.Accounts.gender?)req.Gender;
                 await AdditionalDataRepository.AddEntity(addDataAdmin);
@@ -233,7 +234,7 @@ namespace OurSite.Core.Services.Repositories
             if (additionalData != null)
             {
                 res.Address = additionalData.Address;
-                res.Birthday = additionalData.Birthday;
+                res.Birthday = additionalData.Birthday is not null? additionalData.Birthday.Value.PersianDate():null;
                 if(additionalData.Gender is not null)
                     res.Gender = additionalData.Gender.Value.ToString();
             }
