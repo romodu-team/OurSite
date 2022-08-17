@@ -63,7 +63,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="proId"></param>
         /// <returns></returns>
         [HttpDelete("user-delete-project")]
-        public async Task<IActionResult> DeleteProject([FromBody] long proId)
+        public async Task<IActionResult> DeleteProject([FromQuery] long proId)
         {
             if (User.Identity.IsAuthenticated)
             {
