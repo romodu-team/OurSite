@@ -47,7 +47,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     return JsonStatusResponse.NotFound("اطلاعات کاربری اشتباه است");
                 var role = await roleService.GetAdminRole(admin.Id);
 
-                var token = authenticationHelper.GenerateAdminToken(admin, role, 3);
+                var token =await authenticationHelper.GenerateAdminToken(admin, role, 3);
                 HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, admin.FirstName, admin.LastName }, "ورود با موفقیت انجام شد");
             }
