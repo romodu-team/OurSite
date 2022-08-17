@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using OurSite.Core.DTOs.Payment;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities;
+using OurSite.DataLayer.Entities.Payments;
 using System.Security.Claims;
 using System.Text;
 using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
@@ -90,8 +91,6 @@ namespace OurSite.WebApi.Controllers
 
                 var _response = await client.PostAsync(_url, content);
                 var _responseString = await _response.Content.ReadAsStringAsync();
-
-
                 ZarinPalVerifyResponse _zarinPalResponseModel =
                  JsonConvert.DeserializeObject<ZarinPalVerifyResponse>(_responseString);
 
@@ -207,7 +206,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Delete paymet
         [HttpDelete("delete-payment")]
-        public async Task<IActionResult> DeletePayment([FromBody]long PayId)
+        public async Task<IActionResult> DeletePayment([FromQuery]long PayId)
         {
             if (User.Identity.IsAuthenticated)
             {
