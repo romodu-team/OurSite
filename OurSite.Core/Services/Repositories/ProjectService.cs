@@ -13,6 +13,9 @@ using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
 using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
+using OurSite.Core.Services.Interfaces.Mail;
+using OurSite.Core.DTOs.NotificationDtos;
+using OurSite.Core.DTOs.MailDtos;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -23,12 +26,16 @@ namespace OurSite.Core.Services.Repositories
         private IGenericRepository<CheckBoxs> CheckBoxRepository;
         private IGenericRepository<SelectedProjectPlan> SelectedProjectRepository;
         private IUserService UserService;
-        public ProjectService(IGenericRepository<SelectedProjectPlan> SelectedProjectRepository,IGenericRepository<Project> ProjectsRepository,IGenericRepository<CheckBoxs> CheckBoxRepository, IUserService userService)
+        private INotificationService _notificationService;
+        private IMailService _mailService;
+        public ProjectService(IMailService mailService,INotificationService notificationService,IGenericRepository<SelectedProjectPlan> SelectedProjectRepository,IGenericRepository<Project> ProjectsRepository,IGenericRepository<CheckBoxs> CheckBoxRepository, IUserService userService)
         {
             this.ProjectsRepository = ProjectsRepository;
             this.CheckBoxRepository=CheckBoxRepository;
             this.SelectedProjectRepository=SelectedProjectRepository;
             this.UserService = userService;
+            _notificationService=notificationService;
+            _mailService=mailService;
         }
 
         public void Dispose()
@@ -334,7 +341,11 @@ namespace OurSite.Core.Services.Repositories
                     {
                         ProjectsRepository.UpDateEntity(Project);
                         await ProjectsRepository.SaveEntity();
-                        
+                        //send notification and email to User
+                        var user =await UserService.GetUserById(Project.UserId);
+                        await _notificationService.CreateNotification(new ReqCreateNotificationDto{AccountUUID=user.UUID,Message=$"قرارداد جدید برای پروژه شماره  {Project.Id} ثبت شد."});
+                        if(user.Email != null)
+                            await _mailService.SendEmailAsync(new MailRequestDto{ToEmail=user.Email,Subject=$"قرارداد جدید برای پروژه شماره  {Project.Id} ثبت شد.",Body="متن اپلود قرارداد",Attachments=null});
                         return resUploadContract.Success;
                     }
                     catch (System.Exception)
