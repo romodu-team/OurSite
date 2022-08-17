@@ -29,7 +29,6 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// </summary>
         /// <param name="prodto"></param>
         /// <returns></returns>
-        [Authorize]
         [HttpPost("create-project-by-User")]
         public async Task<IActionResult> CreateProject([FromBody]CreateProjectDto prodto)
         {

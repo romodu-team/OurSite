@@ -234,7 +234,6 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [Authorize]
         [HttpGet("View-Profile/{id}")]
         public async Task<IActionResult> ViewProfile([FromRoute]long id)
         {
