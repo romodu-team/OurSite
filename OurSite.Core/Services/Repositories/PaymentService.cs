@@ -9,6 +9,7 @@ using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Entities.Payments;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
+using OurSite.Core.Utilities.Extentions;
 using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
 
 namespace OurSite.Core.Services.Repositories
@@ -123,7 +124,7 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(PayQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await PayQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllPayDto { DatePay = x.DatePay, PayId = x.Id, status = (StatusPay)x.status, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
+            var list = await PayQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllPayDto { DatePay = x.DatePay != null?x.DatePay.Value.PersianDate():null , PayId = x.Id, status = (StatusPay)x.status,IsRemove = x.IsRemove, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
 
             var result = new ResFilterPayDto();
             result.SetPaging(pager);
