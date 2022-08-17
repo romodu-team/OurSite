@@ -31,7 +31,8 @@ namespace OurSite.Core.Utilities
                 claims: new List<Claim>()
                 {
                                 new Claim(ClaimTypes.Name, String.Concat(user.FirstName,user.LastName)),
-                                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                                new Claim(ClaimTypes.NameIdentifier,user.UUID.ToString()),
+                                new Claim(ClaimTypes.Sid,user.Id.ToString()),
                                 new Claim(ClaimTypes.Role,"Customer")
 
                 },
@@ -71,8 +72,9 @@ namespace OurSite.Core.Utilities
 
             var claims= new List<Claim>()
             {
-                    new Claim(ClaimTypes.NameIdentifier,admin.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier,admin.UUID.ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub,admin.Email),
+                    new Claim(ClaimTypes.Sid,admin.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email,admin.Email),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat,DateTime.Now.ToUniversalTime().ToString()),

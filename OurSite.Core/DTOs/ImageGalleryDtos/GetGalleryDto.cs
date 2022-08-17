@@ -8,7 +8,7 @@ public class GetGalleryDto
     public string ImageName { get; set; }
     public string ImagePath { get; set; }
 }
-public enum ResDeleteImage{
+public enum ResDeleteFile{
     Success,
     NotFound,
     Faild

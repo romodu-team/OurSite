@@ -16,10 +16,10 @@ namespace OurSite.Core.Services.Repositories.Forms
     public class ConsultationRequestService : IConsultationRequestService
     {
         #region constructor
-        private readonly IGenericReopsitories<ConsultationRequest> consultationRequestRepo;
-        private readonly IGenericReopsitories<CheckBoxs> checkBoxsRepo;
-        private readonly IGenericReopsitories<ItemSelected> itemSelectedRepo;
-        public ConsultationRequestService(IGenericReopsitories<ItemSelected> itemSelectedRepo, IGenericReopsitories<CheckBoxs> checkBoxsRepo, IGenericReopsitories<ConsultationRequest> consultationRequestRepo)
+        private readonly IGenericRepository<ConsultationRequest> consultationRequestRepo;
+        private readonly IGenericRepository<CheckBoxs> checkBoxsRepo;
+        private readonly IGenericRepository<ItemSelected> itemSelectedRepo;
+        public ConsultationRequestService(IGenericRepository<ItemSelected> itemSelectedRepo, IGenericRepository<CheckBoxs> checkBoxsRepo, IGenericRepository<ConsultationRequest> consultationRequestRepo)
         {
             this.consultationRequestRepo = consultationRequestRepo;
             this.checkBoxsRepo = checkBoxsRepo;

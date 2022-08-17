@@ -1,35 +1,34 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
-using OurSite.Core.DTOs.RoleDtos;
 using OurSite.Core.DTOs.MailDtos;
+using OurSite.Core.DTOs.Paging;
+using OurSite.Core.DTOs.RoleDtos;
 using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.Core.Utilities;
+using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
-using OurSite.Core.DTOs.Paging;
-using OurSite.Core.Utilities.Extentions.Paging;
 
 namespace OurSite.Core.Services.Repositories
 {
     public class AdminService : IAdminService
     {
         #region Constructor
-        private IGenericReopsitories<Admin> adminRepository;
-        private IGenericReopsitories<AdditionalDataOfAdmin> AdditionalDataRepository;
+        private IGenericRepository<Admin> adminRepository;
+        private IGenericRepository<AdditionalDataOfAdmin> AdditionalDataRepository;
         //  private IGenericReopsitories<AccounInRole> accounInRoleRepository;
         // private IGenericReopsitories<Role> RoleRepository;
         private IRoleService roleService;
         private IPasswordHelper passwordHelper;
         private IMailService mailService;
 
-        public AdminService(IGenericReopsitories<AdditionalDataOfAdmin> additionalData, IRoleService roleService, IMailService mailService, IGenericReopsitories<Admin> adminRepository, IPasswordHelper passwordHelper)
+        public AdminService(IGenericRepository<AdditionalDataOfAdmin> additionalData, IRoleService roleService, IMailService mailService, IGenericRepository<Admin> adminRepository, IPasswordHelper passwordHelper)
         {
             this.adminRepository = adminRepository;
             this.passwordHelper = passwordHelper;
@@ -37,7 +36,7 @@ namespace OurSite.Core.Services.Repositories
             this.roleService = roleService;
             AdditionalDataRepository = additionalData;
         }
-         #region Dispose
+        #region Dispose
 
         public void Dispose()
         {
@@ -53,41 +52,48 @@ namespace OurSite.Core.Services.Repositories
         public async Task<bool> DeleteAdmin(long adminId)             //its return true/false -We do not have a real deletion
         {
             bool flag = false;
-            var isdelete = await adminRepository.DeleteEntity(adminId);
-            await adminRepository.SaveEntity();
-            var additionalData = AdditionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.AdminId == adminId).Result;
-            flag = isdelete;
-            if(additionalData is not null)
+            var admin = await adminRepository.GetEntity(adminId);
+            if (admin != null)
             {
-                var isdeleteAdd = await AdditionalDataRepository.DeleteEntity(additionalData.Id);
-                await AdditionalDataRepository.SaveEntity();
-
-                flag = isdeleteAdd;
-            }
-            if (flag)
-            {
-                try
+                var isdelete = await adminRepository.DeleteEntity(adminId);
+                await adminRepository.SaveEntity();
+                if (admin.ImageName != null)
+                    FileUploader.DeleteFile(PathTools.ProfilePhotos + "\\" + admin.ImageName);
+                var additionalData = AdditionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.AdminId == adminId).Result;
+                flag = isdelete;
+                if (additionalData is not null)
                 {
+                    var isdeleteAdd = await AdditionalDataRepository.DeleteEntity(additionalData.Id);
+                    await AdditionalDataRepository.SaveEntity();
 
-                   
-                    var myres = await roleService.DeleteAdminRole(adminId);
-                    switch (myres)
+                    flag = isdeleteAdd;
+                }
+                if (flag)
+                {
+                    try
                     {
-                        case ResDeleteAdminRole.Success:
-                            return true;
-                        case ResDeleteAdminRole.NotExist:
-                            return true;
-                        case ResDeleteAdminRole.Faild:
-                            return false;
-                        default:
-                            return false;
+
+
+                        var myres = await roleService.DeleteAdminRole(adminId);
+                        switch (myres)
+                        {
+                            case ResDeleteAdminRole.Success:
+                                return true;
+                            case ResDeleteAdminRole.NotExist:
+                                return true;
+                            case ResDeleteAdminRole.Faild:
+                                return false;
+                            default:
+                                return false;
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        return false;
                     }
                 }
-                catch (Exception)
-                {
-
-                    return false;
-                }
+                return false;
             }
             return false;
         }
@@ -116,8 +122,8 @@ namespace OurSite.Core.Services.Repositories
         #region Update admin profile by self/admin
         public async Task<ResUpdate> UpdateAdmin(ReqUpdateAdminDto req, long id)
         {
-         //   var admin = await adminRepository.GetEntity(id);
-            var admin =await adminRepository.GetAllEntity().Where(a => a.Id == id).Include(a => a.additionalDataOfAdmin).SingleOrDefaultAsync();
+            //   var admin = await adminRepository.GetEntity(id);
+            var admin = await adminRepository.GetAllEntity().Where(a => a.Id == id).Include(a => a.additionalDataOfAdmin).SingleOrDefaultAsync();
             if (admin == null)
                 return ResUpdate.NotFound;
 
@@ -134,7 +140,7 @@ namespace OurSite.Core.Services.Repositories
             if (!string.IsNullOrWhiteSpace(req.UserName))
                 admin.UserName = req.UserName.ToLower().Trim();
 
-            if(admin.additionalDataOfAdmin is not null)
+            if (admin.additionalDataOfAdmin is not null)
             {
                 if (!string.IsNullOrWhiteSpace(req.Address))
                     admin.additionalDataOfAdmin.Address = req.Address;
@@ -158,19 +164,21 @@ namespace OurSite.Core.Services.Repositories
                 await AdditionalDataRepository.AddEntity(addDataAdmin);
                 await AdditionalDataRepository.SaveEntity();
             }
-            
+
 
 
             //update admin role
             if (!string.IsNullOrWhiteSpace(req.Roleid))
             {
                 var accountinrole = await roleService.GetAdminInRole(id);
-                if(accountinrole is not null)
+                if (accountinrole is not null)
                     accountinrole.RoleId = Convert.ToInt64(req.Roleid);
-                else{
-                    accountinrole = new AccounInRole(){
-                        AdminId=id,
-                        RoleId=Convert.ToInt64(req.Roleid),
+                else
+                {
+                    accountinrole = new AccounInRole()
+                    {
+                        AdminId = id,
+                        RoleId = Convert.ToInt64(req.Roleid),
 
 
                     };
@@ -200,6 +208,9 @@ namespace OurSite.Core.Services.Repositories
             if (result.Status == resFileUploader.Success)
             {
                 Admin admin = await adminRepository.GetEntity(UserId);
+                if (admin.ImageName != null)
+                    FileUploader.DeleteFile(PathTools.ProfilePhotos + "\\" + admin.ImageName);
+
                 admin.ImageName = result.FileName;
                 adminRepository.UpDateEntity(admin);
                 await adminRepository.SaveEntity();
@@ -216,14 +227,14 @@ namespace OurSite.Core.Services.Repositories
             var additionalData = AdditionalDataRepository.GetAllEntity().SingleOrDefault(a => a.AdminId == admin.Id);
             ResViewAdminDto res = new ResViewAdminDto
             {
-                
+                UUID = admin.UUID,
                 CreateDate = admin.CreateDate,
                 LastName = admin.LastName,
                 FirstName = admin.FirstName,
                 LastUpdate = admin.LastUpdate,
                 Email = admin.Email,
                 Id = admin.Id,
-                ImageName =PathTools.GetProfilePhotos + admin.ImageName,
+                ImageName = PathTools.GetProfilePhotos + admin.ImageName,
                 IsRemove = admin.IsRemove,
                 Mobile = admin.Mobile,
                 NationalCode = admin.NationalCode,
@@ -234,12 +245,16 @@ namespace OurSite.Core.Services.Repositories
             {
                 res.Address = additionalData.Address;
                 res.Birthday = additionalData.Birthday;
-                if(additionalData.Gender is not null)
+                if (additionalData.Gender is not null)
                     res.Gender = additionalData.Gender.Value.ToString();
             }
             return res;
         }
 
+        public async Task<bool> IsAdminExistByUUId(Guid adminUUId)
+        {
+            return await adminRepository.GetAllEntity().AnyAsync(a => a.UUID == adminUUId && a.IsRemove == false);
+        }
         #endregion
 
         #region Add new admin
@@ -252,12 +267,12 @@ namespace OurSite.Core.Services.Repositories
             {
                 UserName = req.UserName.Trim().ToLower(),
                 Email = req.Email.Trim().ToLower(),
-                FirstName=req.Name,
-                LastName=req.Family,
-                Mobile=req.Mobile.Trim(),
-                Password=passwordHelper.EncodePasswordMd5(req.Password),
-                CreateDate=DateTime.Now,
-                LastUpdate=DateTime.Now
+                FirstName = req.Name,
+                LastName = req.Family,
+                Mobile = req.Mobile.Trim(),
+                Password = passwordHelper.EncodePasswordMd5(req.Password),
+                CreateDate = DateTime.Now,
+                LastUpdate = DateTime.Now
             };
 
             try
@@ -287,11 +302,11 @@ namespace OurSite.Core.Services.Repositories
         }
         public async Task<bool> IsAdminExist(string UserName, string Email)
         {
-            return await adminRepository.GetAllEntity().AnyAsync(a=>(a.UserName==UserName.Trim().ToLower()||a.Email==Email.Trim().ToLower())&& a.IsRemove==false);
+            return await adminRepository.GetAllEntity().AnyAsync(a => (a.UserName == UserName.Trim().ToLower() || a.Email == Email.Trim().ToLower()) && a.IsRemove == false);
         }
         public async Task<bool> IsAdminExist(long AdminId)
         {
-            return await adminRepository.GetAllEntity().AnyAsync(a => a.Id==AdminId && a.IsRemove == false);
+            return await adminRepository.GetAllEntity().AnyAsync(a => a.Id == AdminId && a.IsRemove == false);
         }
         #endregion
 
@@ -396,13 +411,13 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(adminQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await adminQuery.Paging(pager).Select(x => new GetAllAdminDto { Email = x.Email, FirstName = x.FirstName, LastName = x.LastName, AdminId = x.Id, UserName = x.UserName, IsDelete = x.IsRemove }).ToListAsync();    //use the genric interface options and save values in variable
+            var list = await adminQuery.Paging(pager).Select(x => new GetAllAdminDto { UUID=x.UUID,Email = x.Email, FirstName = x.FirstName, LastName = x.LastName, AdminId = x.Id, UserName = x.UserName, IsDelete = x.IsRemove }).ToListAsync();    //use the genric interface options and save values in variable
 
             var result = new ResFilterAdminDto();
             result.SetPaging(pager);
             return result.SetAdmins(list);
 
-      
+
         }
 
         #endregion
@@ -410,26 +425,26 @@ namespace OurSite.Core.Services.Repositories
         #region Update Admin Role
         public async Task<ResUpdate> UpdateAdminRole(long adminId, long RoleId)
         {
-            var Admin =await adminRepository.GetEntity(adminId);
+            var Admin = await adminRepository.GetEntity(adminId);
             if (Admin is null)
                 return ResUpdate.NotFound;
             var Role = await roleService.GetRoleById(RoleId);
             if (Role is null)
                 return ResUpdate.RoleNotFound;
 
-            var adminRole =await roleService.GetAdminInRole(adminId);
-            if(adminRole is not null)
+            var adminRole = await roleService.GetAdminInRole(adminId);
+            if (adminRole is not null)
             {
                 adminRole.RoleId = RoleId;
-                var res=await roleService.UpdateAdminRole(adminRole);
+                var res = await roleService.UpdateAdminRole(adminRole);
                 if (res)
                     return ResUpdate.Success;
                 return ResUpdate.Error;
             }
             else
             {
-                var adminInRole = new AccounInRole() { AdminId=adminId,RoleId=RoleId};
-                var res =await roleService.AddRoleToAdmin(adminInRole);
+                var adminInRole = new AccounInRole() { AdminId = adminId, RoleId = RoleId };
+                var res = await roleService.AddRoleToAdmin(adminInRole);
                 if (res)
                     return ResUpdate.Success;
                 return ResUpdate.Error;
@@ -450,6 +465,8 @@ namespace OurSite.Core.Services.Repositories
             return admin;
 
         }
+
+
 
         #endregion
         #endregion

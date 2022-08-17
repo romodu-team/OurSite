@@ -12,5 +12,5 @@ public interface ICheckBoxService:IDisposable
         Task<ResDeleteOpration> DeleteCheckBox(List<long> CheckBoxId);
         Task<CheckBoxDto> GetCheckBox(long CheckBoxId);
         Task<bool> UpdateCheckBox(long CheckBoxId, string? title,string? IconName, string? Description,int? SiteSection);
-        Task<List<CheckBoxDto>> GetAllCheckBox();
+        Task<List<CheckBoxDto>> GetAllCheckBox(string sectionId);
 }

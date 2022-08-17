@@ -133,7 +133,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <returns></returns>
         [HttpPost]
         [Route("Upload-Contract")]
-        public async Task<IActionResult> UploadContract([FromBody]ReqUploadContractDto request)
+        public async Task<IActionResult> UploadContract([FromForm]ReqUploadContractDto request)
         {
             var res = await projectservice.UploadContract(request);
             switch (res)

@@ -15,10 +15,10 @@ namespace OurSite.Core.Services.Repositories.TicketServices
     public class TicketCategoryService: ITicketCategoryService
     {
         #region constructor
-        private IGenericReopsitories<TicketCategory> _TicketCategoryRepository;
-        private IGenericReopsitories<TicketModel> _ticketRepository;
+        private IGenericRepository<TicketCategory> _TicketCategoryRepository;
+        private IGenericRepository<TicketModel> _ticketRepository;
 
-        public TicketCategoryService(IGenericReopsitories<TicketCategory> ticketCategoryRepository, IGenericReopsitories<TicketModel> ticketRepository)
+        public TicketCategoryService(IGenericRepository<TicketCategory> ticketCategoryRepository, IGenericRepository<TicketModel> ticketRepository)
         {
             _TicketCategoryRepository = ticketCategoryRepository;
             _ticketRepository = ticketRepository;
