@@ -10,8 +10,8 @@ namespace OurSite.Core.DTOs.ProjectDtos
         public long ProId { get; set; }
         public string Name { get; set; }
         public ProType Type { get; set; }
-        public DateTime? StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
+        public string? StartTime { get; set; }
+        public string? EndTime { get; set; }
         public float? Price { get; set; }
         public string Description { get; set; }
         public situations Situation { get; set; }
