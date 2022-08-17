@@ -9,7 +9,8 @@ namespace OurSite.Core.DTOs.ProjectDtos
         public ProType Type { get; set; }
         public situations Situations { get; set; }
         public string UserName { get; set; }
-        public DateTime CreatDate { get; set; }
+        public string? CreatDate { get; set; }
+        public bool IsRemove { get; set; }
     }
 }
 
