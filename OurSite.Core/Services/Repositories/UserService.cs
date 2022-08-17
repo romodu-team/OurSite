@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Http;
 using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.Core.DTOs.Paging;
 using gender = OurSite.DataLayer.Entities.Accounts.gender;
+using OurSite.Core.Utilities.Extentions;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -274,7 +275,7 @@ namespace OurSite.Core.Services.Repositories
                     if (!string.IsNullOrWhiteSpace(userdto.Address))
                         user.AdditionalDataOfUser.Address = userdto.Address;
                     if (!string.IsNullOrWhiteSpace(userdto.Birthday))
-                        user.AdditionalDataOfUser.Birthday = userdto.Birthday;
+                        user.AdditionalDataOfUser.Birthday = userdto.Birthday.AdDate();
                     if (!string.IsNullOrWhiteSpace(userdto.Phone))
                         user.AdditionalDataOfUser.Phone = userdto.Phone;
                     if (!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
@@ -296,7 +297,7 @@ namespace OurSite.Core.Services.Repositories
                     if (!string.IsNullOrWhiteSpace(userdto.Address))
                         addDataUser.Address = userdto.Address;
                     if (!string.IsNullOrWhiteSpace(userdto.Birthday))
-                        addDataUser.Birthday = userdto.Birthday;
+                        addDataUser.Birthday = userdto.Birthday.AdDate();
                     if (!string.IsNullOrWhiteSpace(userdto.Phone))
                         addDataUser.Phone = userdto.Phone;
                     if (!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
@@ -369,7 +370,7 @@ namespace OurSite.Core.Services.Repositories
                     userdto.Gender = (DTOs.UserDtos.gender?)user.AdditionalDataOfUser.Gender;
                     userdto.Address = user.AdditionalDataOfUser.Address;
                     userdto.Phone = user.AdditionalDataOfUser.Phone;
-                    userdto.Birthday = user.AdditionalDataOfUser.Birthday;
+                    userdto.Birthday = user.AdditionalDataOfUser.Birthday is not null? user.AdditionalDataOfUser.Birthday.Value.PersianDate():null;
                     userdto.ShabaNumbers = user.AdditionalDataOfUser.ShabaNumbers;
                     userdto.BusinessCode = user.AdditionalDataOfUser.BusinessCode;
                     userdto.RegistrationNumber = user.AdditionalDataOfUser.RegistrationNumber;
@@ -559,7 +560,7 @@ namespace OurSite.Core.Services.Repositories
                     adminview.Gender = (gender?)user.AdditionalDataOfUser.Gender;
                     adminview.Address = user.AdditionalDataOfUser.Address;
                     adminview.Phone = user.AdditionalDataOfUser.Phone;
-                    adminview.Birthday = user.AdditionalDataOfUser.Birthday;
+                    adminview.Birthday = user.AdditionalDataOfUser.Birthday is not null? user.AdditionalDataOfUser.Birthday.Value.PersianDate():null;
                     adminview.ShabaNumbers = user.AdditionalDataOfUser.ShabaNumbers;
                     adminview.BusinessCode = user.AdditionalDataOfUser.BusinessCode;
                     adminview.RegistrationNumber = user.AdditionalDataOfUser.RegistrationNumber;
