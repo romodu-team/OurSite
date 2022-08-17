@@ -55,33 +55,18 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         }
         #endregion
 
-        #region singup
-        /// <summary>
-        ///  API for Register new Admin by system administrator {Get request from body}
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpPost("register-admin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] ReqRegisterAdminDto req)
-        {
-            if (ModelState.IsValid)
-            {
-                var res = await adminService.RegisterAdmin(req);
-                switch (res)
-                {
-                    case RessingupDto.success:
-                        HttpContext.Response.StatusCode = 201;
-                        return JsonStatusResponse.Success("اطلاعات با موفقیت ثبت شد");
-                    case RessingupDto.Exist:
-                        return JsonStatusResponse.Error("نام کاربری یا ایمیل تکراری است");
-                    default:
-                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
-                }
-            }
-            return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
 
-        }
-        #endregion
+
+
+
+
+        //[Authorize]
+        //[HttpPost("logout")]
+        //public async Task<IActionResult> Logout()
+        //{
+        //    var Id = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //}
+
 
         #region Reset Password
         /// <summary>
