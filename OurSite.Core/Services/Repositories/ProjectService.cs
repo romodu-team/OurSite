@@ -12,6 +12,7 @@ using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
 using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
+using OurSite.Core.Utilities.Extentions;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -238,7 +239,6 @@ namespace OurSite.Core.Services.Repositories
                     ProjectsQuery = ProjectsQuery.Where(x => x.Type == ProType.Appliction);
                     break;
                 case ProType.All:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity();
                     break;
                 default:
                     break;
@@ -253,7 +253,6 @@ namespace OurSite.Core.Services.Repositories
                     ProjectsQuery = ProjectsQuery.Where(x => x.IsRemove == false);
                     break;
                 case ProjectRemoveFilter.All:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity();
                     break;
                 default:
                     break;
@@ -276,7 +275,6 @@ namespace OurSite.Core.Services.Repositories
                     ProjectsQuery = ProjectsQuery.Where(x => x.Situation == situations.End);
                     break;
                 case situations.All:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity();
                     break;
                 default:
                     break;
@@ -287,7 +285,7 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(ProjectsQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await ProjectsQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllProjectDto { CreatDate = x.CreateDate, ProjectId = x.Id, Situations = x.Situation, Type = x.Type, UserName = x.User.UserName }).ToListAsync();
+            var list = await ProjectsQuery.Paging(pager).Include(x => x.User).Select(x => new GetAllProjectDto { CreatDate = x.CreateDate.PersianDate(), ProjectId = x.Id, Situations = x.Situation, IsRemove = x.IsRemove, Type = x.Type, UserName = x.User.UserName }).ToListAsync();
 
 
             var result = new ResFilterProjectDto();
@@ -305,15 +303,16 @@ namespace OurSite.Core.Services.Repositories
             {
                 GetProjectDto ViewrProject = new GetProjectDto()
                 {
+                    ProId = ProjectId,
                     Name = project.Name,
                     Type = project.Type,
-                    StartTime = project.StartTime,
-                    EndTime = project.EndTime,
+                    StartTime = project.StartTime != null? project.StartTime.Value.PersianDate():null,
+                    EndTime = project.EndTime != null? project.EndTime.Value.PersianDate():null,
                     Price = project.Price,
                     Description = project.Description,
                     Situation = project.Situation,
-                    ContractFilePath = PathTools.ContractUploadName + project.ContractFileName
-                    ,PlanDetails=new List<CheckBoxDto>()
+                    ContractFilePath = PathTools.ContractUploadName + project.ContractFileName,
+                    PlanDetails=new List<CheckBoxDto>()
                 };
                 var selectedPlans = await SelectedProjectRepository.GetAllEntity().Where(x => x.ProjectId == ProjectId).Include(x => x.CheckBox).ToListAsync();
                 foreach (var item in selectedPlans)
