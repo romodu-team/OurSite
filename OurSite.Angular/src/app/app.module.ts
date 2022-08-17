@@ -38,6 +38,7 @@ import { DemoFormComponent } from './shared/demo-form/demo-form.component';
 import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-detail-header.component';
 
 import {MatIconModule} from '@angular/material/icon';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -79,7 +80,8 @@ import {MatIconModule} from '@angular/material/icon';
     MatSlideToggleModule,
     MatExpansionModule,
     MatDialogModule,
-    MatIconModule
+    MatIconModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

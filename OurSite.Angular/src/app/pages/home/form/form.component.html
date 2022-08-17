@@ -4,19 +4,19 @@
         <span style="width:250px ;height: 2px; display: block;" class="bg-primary"></span>
     </div>
     <!-- right inputs -->
-    <div class="d-flex">
+    <div class="d-flex" [formGroup]="myForm">
         <div class="col-6 d-block ">
             
             <!-- name-familly -->
             <div class="d-flex justify-content-between ms-5 mb-3">
                 <div class="col-5">
                     <label>نام</label>
-                    <input type="text" class="form-control mt-2" dir="rtl">
+                    <input type="text" class="form-control mt-2" dir="rtl" formControlName="firstName">
                 </div>
                 
                 <div class="col-5">
                     <label>نام خانوادگی</label>
-                    <input type="text" class="form-control mt-2" dir="rtl">
+                    <input type="text" class="form-control mt-2" dir="rtl" formControlName="lastName">
                 </div>
                 
             </div>
@@ -25,13 +25,13 @@
 
                 <div class="mb-3">
                     <label>ایمیل</label>
-                    <input type="text" class="form-control mt-2" dir="rtl">
+                    <input type="text" class="form-control mt-2" dir="rtl" formControlName="email">
                 </div>
 
                 <div class="d-flex align-items-center">
                     <div class="col-10">
                         <label for="">تلفن همراه</label>
-                        <input type="text" class="form-control carv-left-none mt-2">
+                        <input type="text" class="form-control carv-left-none mt-2" formControlName="phone">
                     </div>
                     <div class="col-2 mt-2">
                         <select name="" id="" class="form-control mt-4 carv-right-none ">
@@ -48,7 +48,7 @@
         <!-- upload file -->
         <div class=" col-6 me-5 position-relative">
             <label>توضیحات</label>
-            <textarea class="form-control mt-2" dir="rtl" name="" id="" cols="30" rows="8"></textarea>
+            <textarea class="form-control mt-2" dir="rtl" name="" id="" cols="30" rows="8" formControlName="description"></textarea>
             <p class="position-absolute bottom-0 start-0 px-3" style="cursor: pointer;">ارسال فایل</p>
         </div>
         
@@ -94,7 +94,7 @@
     </div>
     <!-- save btn -->
     <div class="py-3 d-flex justify-content-start ">
-        <button class="btn-primary btn-lg rounded  px-4">ثبت</button>
+        <button class="btn-primary btn-lg rounded  px-4" (click)="submitForm()">ثبت</button>
         <button class="btn-outline-primary btn-lg rounded mx-3 px-4">انصراف</button>
     </div>
 
