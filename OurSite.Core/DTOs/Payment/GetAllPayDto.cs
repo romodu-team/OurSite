@@ -11,7 +11,8 @@ namespace OurSite.Core.DTOs.Payment
         public string Username { get; set; }
         public string Price { get; set; }
         public long ProId { get; set; }
-        public DateTime? DatePay { get; set; }
+        public string? DatePay { get; set; }
+        public bool IsRemove { get; set; }
     }
 }
 
