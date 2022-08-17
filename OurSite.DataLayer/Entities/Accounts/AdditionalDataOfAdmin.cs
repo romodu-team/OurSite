@@ -24,7 +24,7 @@ namespace OurSite.DataLayer.Entities.Accounts
 
 
         [DisplayName("تاریخ تولد")]
-        public string? Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
 
     }
     public enum gender
