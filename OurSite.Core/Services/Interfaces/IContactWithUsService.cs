@@ -11,7 +11,6 @@ namespace OurSite.Core.Services.Interfaces
     public interface IContactWithUsService : IDisposable
     {
         Task<bool> SendContactForm(ContactWithUsDto contactWithUsDto);
-
         Task<ResFilterContactWithUsDto> GetAllContactWithUs(ReqFilterContactWithUsDto filter);
         Task<bool> AnswerToMessage(string ToEmail,string subject,string Content,List<IFormFile>? Attachments);
     }

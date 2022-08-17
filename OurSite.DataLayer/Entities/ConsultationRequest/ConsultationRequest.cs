@@ -14,10 +14,13 @@ namespace OurSite.DataLayer.Entities.ConsultationRequest
     public class ConsultationRequest : BaseEntity
     {
         [Required(ErrorMessage = "این فیلد اجباری است")]
-        [DisplayName("نام و نام خانوادگی")]
+        [DisplayName("نام")]
         [MaxLength(100, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
-        public string UserFullName { get; set; }
-
+        public string FirstName { get; set; }
+        [Required(ErrorMessage = "این فیلد اجباری است")]
+        [DisplayName("نام خانوادگی")]
+        [MaxLength(100, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
+        public string LastName { get; set; }
         [EmailAddress(ErrorMessage = "آدرس ایمیل معتبر نیست")]
         [DisplayName("ایمیل")]
         public string? UserEmail { get; set; }
@@ -28,7 +31,7 @@ namespace OurSite.DataLayer.Entities.ConsultationRequest
         public string UserPhoneNumber { get; set; }
 
         [Required(ErrorMessage = "لطفا توضیحات را وارد کنید")]
-        public string Expration { get; set; }
+        public string Content { get; set; }
 
         [DisplayName("نام فایل ارسالی")]
         public string? SubmittedFileName { get; set; }

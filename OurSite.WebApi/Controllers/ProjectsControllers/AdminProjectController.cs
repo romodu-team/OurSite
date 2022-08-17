@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using OurSite.Core.DTOs.MailDtos;
+using OurSite.Core.DTOs.NotificationDtos;
 using OurSite.Core.DTOs.ProjectDtos;
+using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities;
 using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
@@ -16,9 +20,15 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
     public class AdminProjectController : Controller
     {
         private IProject projectservice;
-        public AdminProjectController(IProject projectservice)
+        private INotificationService _notificationService;
+        private IUserService _UserService;
+        private IMailService _mailService;
+        public AdminProjectController(IMailService mailService, IUserService UserService, IProject projectservice, INotificationService notificationService)
         {
+            _mailService = mailService;
             this.projectservice = projectservice;
+            _notificationService = notificationService;
+            _UserService = UserService;
         }
 
 
@@ -30,12 +40,16 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpPost("create-project")]
-        public async Task<IActionResult> CreateProject([FromBody]CreateProjectDto prodto, long userId)
+        public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto prodto, long userId)
         {
-            var res = await projectservice.CreateProject(prodto , userId);
+            var res = await projectservice.CreateProject(prodto, userId);
             switch (res)
             {
                 case ResProject.Success:
+                    var user = await _UserService.GetUserById(userId);
+                    await _notificationService.CreateNotification(new ReqCreateNotificationDto { AccountUUID = user.UUID, Message = $"پروژه جدید با نام {prodto.Name}برای شما ایجاد شد" });
+                    if (user.Email != null)
+                        await _mailService.SendEmailAsync(new MailRequestDto { ToEmail = user.Email, Subject = $"پروژه جدید با نام {prodto.Name}برای شما ایجاد شد", Body = "جزییات پروژه" });
                     return JsonStatusResponse.Success("پروژه با موفقیت ایجاد شد.");
                 case ResProject.Faild:
                     return JsonStatusResponse.Error("ایجاد پروژه با خطا مواجه شد.");
@@ -43,7 +57,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                     return JsonStatusResponse.Error("فیلد‌های ثبت پروژه نمی‌تواند خالی باشد.");
                 default:
                     return JsonStatusResponse.Error("ثبت پروژه با خطا مواجه شد. دقایقی دیگر مجدد تلاش نمایید.");
-                    
+
             }
         }
         #endregion
@@ -113,11 +127,11 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="ProjectId"></param>
         /// <returns></returns>
         [HttpGet("view-project-by-admin/{ProjectId}")]
-        public async Task<IActionResult> GetProject([FromRoute]long ProjectId)
+        public async Task<IActionResult> GetProject([FromRoute] long ProjectId)
         {
             var res = await projectservice.GetProject(ProjectId);
             if (res is not null)
-                return JsonStatusResponse.Success(ReturnData: res,message: "Project find successfully");
+                return JsonStatusResponse.Success(ReturnData: res, message: "Project find successfully");
 
             return JsonStatusResponse.Error("Project Not found");
         }
@@ -133,7 +147,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <returns></returns>
         [HttpPost]
         [Route("Upload-Contract")]
-        public async Task<IActionResult> UploadContract([FromForm]ReqUploadContractDto request)
+        public async Task<IActionResult> UploadContract([FromForm] ReqUploadContractDto request)
         {
             var res = await projectservice.UploadContract(request);
             switch (res)
@@ -150,7 +164,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                     return JsonStatusResponse.Error("contract file is very big");
                 case resUploadContract.FileExtentionError:
                     return JsonStatusResponse.Error("contract file extention invalid");
-               
+
                 default:
                     return JsonStatusResponse.Error("server error");
             }
@@ -168,7 +182,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         public async Task<IActionResult> GetAllProject([FromQuery] ReqFilterProjectDto filter)
         {
             var projects = await projectservice.GetAllProject(filter);
-            if (projects.Projects is not null && projects.Projects.Count>0)
+            if (projects.Projects is not null && projects.Projects.Count > 0)
             {
                 return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: projects);
             }
