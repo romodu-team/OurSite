@@ -58,10 +58,11 @@ namespace OurSite.Core.Services.Repositories.Forms
             bool flag = true;
             ConsultationRequest request = new ConsultationRequest()
             {
-                UserFullName = consultationRequestDto.UserFullName,
-                UserEmail = consultationRequestDto.UserEmail,
-                UserPhoneNumber = consultationRequestDto.UserPhoneNumber,
-                Expration = consultationRequestDto.Expration,
+                FirstName = consultationRequestDto.FirstName,
+                LastName = consultationRequestDto.LastName,
+                UserEmail = consultationRequestDto.Email,
+                UserPhoneNumber = consultationRequestDto.PhoneNumber,
+                Content = consultationRequestDto.Content,
                 SubmittedFileName = SubmittedFileName,
                 IsRead = false
             };
@@ -155,7 +156,7 @@ namespace OurSite.Core.Services.Repositories.Forms
             var consultationRequestQuery = consultationRequestRepo.GetAllEntity();
             var count = (int)Math.Ceiling(consultationRequestQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await consultationRequestRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllConsultationRequestDto { IsRead = x.IsRead, Id = x.Id, UserFullName = x.UserFullName, UserEmail = x.UserEmail, UserPhoneNumber = x.UserPhoneNumber }).ToListAsync();
+            var list = await consultationRequestRepo.GetAllEntity().Paging(pager).Where(u => u.IsRemove == false).Select(x => new GetAllConsultationRequestDto { IsRead = x.IsRead, Id = x.Id, FirstName = x.FirstName,LastName=x.LastName, Email = x.UserEmail, PhoneNumber = x.UserPhoneNumber }).ToListAsync();
             var result = new ResFilterConsultationRequestDto();
             result.SetPaging(pager);
             return result.SetConsultationRequests(list);
@@ -172,12 +173,13 @@ namespace OurSite.Core.Services.Repositories.Forms
             {
                 var dto = new GetConsulationFormDto()
                 {
-                    Expration = consulationFrom.Expration,
+                    Content = consulationFrom.Content,
                     CreateDate = consulationFrom.CreateDate.ToString(),
                     LastUpdateDate = consulationFrom.LastUpdate.ToString(),
-                    UserEmail = consulationFrom.UserEmail,
-                    UserFullName = consulationFrom.UserFullName,
-                    UserPhoneNumber = consulationFrom.UserPhoneNumber,
+                    Email = consulationFrom.UserEmail,
+                    FirstName = consulationFrom.FirstName,
+                    LastName=consulationFrom.LastName,
+                    PhoneNumber = consulationFrom.UserPhoneNumber,
                     ItemSelected = new List<DTOs.CheckBoxDtos.CheckBoxDto?>(),
                     IsRead = consulationFrom.IsRead
                 };
