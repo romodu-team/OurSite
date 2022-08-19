@@ -18,7 +18,8 @@
     </div>
 
     <div class="d-flex justify-content-around align-items-center" *ngIf="authSer.userLoggedIn">
-        <mat-icon class="ms-4" (click)="authSer.logout()" style="cursor:pointer" mat-raised-button
+        <mat-icon class="ms-4" (click)="authSer.logout()" style="cursor:pointer" onMouseOver="this.style.color='red'"
+        onMouseOut="this.style.color='white'" mat-raised-button
         matTooltip="خروج از حساب کاربری"
         aria-label="Button that displays a tooltip when focused or hovered over">exit_to_app</mat-icon>
         <mat-icon [routerLink]="['/user']" style="cursor:pointer" mat-raised-button
@@ -48,7 +49,8 @@
         </div>
 
         <div class="d-flex justify-content-around align-items-center" *ngIf="authSer.userLoggedIn">
-            <mat-icon class="ms-4" (click)="authSer.logout()" style="cursor:pointer" mat-raised-button
+            <mat-icon class="ms-4" (click)="authSer.logout()" style="cursor:pointer;" onMouseOver="this.style.color='red'"
+            onMouseOut="this.style.color='white'" mat-raised-button
             matTooltip="خروج از حساب کاربری"
             aria-label="Button that displays a tooltip when focused or hovered over">exit_to_app</mat-icon>
             <mat-icon [routerLink]="['/user']" style="cursor:pointer" mat-raised-button
