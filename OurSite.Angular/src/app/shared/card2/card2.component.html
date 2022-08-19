@@ -1,5 +1,6 @@
 <div class="w-100  p-4 shadow rounded" dir="rtl" 
-style="transition: .3s ease-in-out;cursor: pointer; position: relative;" [class]="select">
+style="transition: .3s ease-in-out;cursor: pointer; position: relative;" [ngClass]="[select , cardShadow]"
+(mouseenter)="shadow()" (mouseleave)="inShadow()">
     <div (click)="onSelect()">
         <div class="d-flex me-4 alighn-items-center" *ngIf="!showDiscription" >
             <!-- <i class="fa fa-solid fa-list" style="font-size: 40px;"></i> -->

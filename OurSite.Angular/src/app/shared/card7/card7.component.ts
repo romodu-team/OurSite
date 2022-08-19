@@ -16,13 +16,16 @@ export class Card7Component implements OnInit {
   @Input() title:string = 'digikala'
 
   textHover:string = 'bg-white text-black'
+  shadowHover:string = 'shadow-sm'
 
   caredHover(){
     this.textHover = 'bg-primary text-white'
+    this.shadowHover = 'shadow-lg'
   }
 
   caredInHover(){
     this.textHover = 'bg-white text-black'
+    this.shadowHover = 'shadow-sm'
   }
 
 }

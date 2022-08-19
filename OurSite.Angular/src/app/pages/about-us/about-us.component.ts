@@ -12,4 +12,13 @@ export class AboutUsComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  filter:string = 'filter: brightness(100%);'
+
+  hover(){
+    this.filter = 'filter: brightness(65%);'
+  }
+  inHover(){
+    this.filter = 'filter: brightness(100%);'
+  }
+
 }

@@ -19,6 +19,15 @@ export class Card2Component implements OnInit {
   showDiscription:boolean = false
   arrowAnimation:string = 'cancle-arrow-animation'
   arrowLabel:string = 'show-arrow-label'
+  cardShadow:string = 'shadow-sm'
+
+  shadow(){
+    this.cardShadow = 'shadow-lg'
+  }
+
+  inShadow(){
+    this.cardShadow = 'shadow-sm'
+  }
   
   
   onSelect(){
@@ -38,6 +47,5 @@ export class Card2Component implements OnInit {
       this.arrowAnimation = 'cancle-arrow-animation'
       this.arrowLabel = 'show-arrow-label'
     }
-
   }
 }

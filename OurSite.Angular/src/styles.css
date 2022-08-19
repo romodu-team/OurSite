@@ -78,8 +78,13 @@ body{
 html, body { height: 100%; }
 body { margin: 0; font-family: Vazirmatn !important; }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Vazirmatn !important; }
-
-
+.my-lg{
+    margin: 6rem 0 6rem 0;
+}
+.mt-lg{
+    margin-top: 6rem;
+}
+.mb-lg{
+    margin-bottom: 6rem;
+}
 

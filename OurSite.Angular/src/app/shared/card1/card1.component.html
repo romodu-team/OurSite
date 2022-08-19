@@ -1,5 +1,5 @@
-<div class="p-4 rounded shadow-sm w-100" (mouseenter)="cardHover()"
- (mouseleave)="cardInHover()" [class]="[CardHover ,textHover]"
+<div class="p-4 rounded w-100" (mouseenter)="cardHover()"
+ (mouseleave)="cardInHover()" [class]="[CardHover ,textHover, shadowHover]"
   style="transition: .3s ease-in-out;cursor: pointer; position: relative;"
   [routerLink]="[link]">
     <div class="d-flex justify-content-end me-4" [class]="textHover">

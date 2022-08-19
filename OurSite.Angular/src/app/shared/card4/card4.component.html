@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between align-items-center w-100 p-1 rounded shadow my-4" dir="rtl" style="color: gray;">
+<div class="d-flex justify-content-between align-items-center w-100 p-1 rounded my-4" dir="rtl" style="color: gray; transition: .3s ease-in-out; cursor: pointer;" (mouseenter)="cardHover()" (mouseleave)="cardOffHover()" [class]="CardHover">
     <div class="col-3 pe-5">
         <img [src]="url" alt="" width="100px" height="100px">
     </div>
