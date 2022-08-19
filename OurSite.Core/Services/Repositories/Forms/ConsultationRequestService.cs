@@ -142,7 +142,7 @@ namespace OurSite.Core.Services.Repositories.Forms
                 Subject = "پیام تماس با ما جدید دریافت شد",
                 Body = $"متن پیام : فرم درخواست مشاوره جدید دریافت شد."
             };
-            await _mailService.SendEmailAsync(MailMessageDto);
+           // await _mailService.SendEmailAsync(MailMessageDto);
             return flag;
         }
 

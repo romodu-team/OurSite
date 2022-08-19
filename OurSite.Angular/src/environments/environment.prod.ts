@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  domain: 'https://localhost:5181/'
+  ROOT_PATH : 'https://localhost:5181/'
 };

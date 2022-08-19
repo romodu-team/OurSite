@@ -23,18 +23,15 @@ export class FormComponent implements OnInit {
   }
 
   submitForm(){
-    // let form = {
-    //   UserFullName: this.myForm.value.firstName + this.myForm.value.lastName,
-    //   UserEmail: this.myForm.value.email,
-    //   UserPhoneNumber: this.myForm.value.phone,
-    //   Expration: this.myForm.value.description
-    // }
     let formdata = new FormData()
-    formdata.append('UserFullName', this.myForm.value.firstName + this.myForm.value.lastName)
-    formdata.append('UserEmail', this.myForm.value.email)
-    formdata.append('UserPhoneNumber', this.myForm.value.phone)
-    formdata.append('Expration', this.myForm.value.description)
+    formdata.append('firstName', this.myForm.value.firstName)
+    formdata.append('lastName', this.myForm.value.lastName)
+    formdata.append('email', this.myForm.value.email)
+    formdata.append('phoneNumber', this.myForm.value.phone)
+    formdata.append('content', this.myForm.value.description)
     this.apiSer.postHomeForm(formdata)
+
+
   }
 
 }
