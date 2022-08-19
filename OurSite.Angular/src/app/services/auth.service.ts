@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment.prod';
+import { Location } from "@angular/common";
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,8 @@ import { environment } from 'src/environments/environment.prod';
 export class AuthService {
 
   constructor(private http:HttpClient,
-              private router:Router) { }
+              private router:Router,
+              private _loc:Location) { }
 
   userLoggedIn:boolean = false
 
@@ -32,8 +34,9 @@ export class AuthService {
 
         localStorage.setItem('userToken', data.data.token)
         localStorage.setItem('userId', data.data.userId)
+        localStorage.setItem('name', data.data.firstName + ' ' + data.data.lastName)
         this.userLoggedIn = true
-        this.router.navigate(['/user'])
+        this._loc.back()
       },
       err => {
         this.userLoggedIn = false
@@ -46,5 +49,11 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       resolve(this.userLoggedIn)
     })
+  }
+
+  logout(){
+    localStorage.clear()
+    this.router.navigate(['/'])
+    window.location.reload()
   }
 }

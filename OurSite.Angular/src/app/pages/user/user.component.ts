@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-user',
@@ -11,7 +12,7 @@ import { ApiService } from 'src/app/services/api.service';
 export class UserComponent implements OnInit {
 
   constructor(private apiSer:ApiService,
-              private router:Router) { }
+              private authSer:AuthService) { }
 
   userInformation!: Observable<any>
 
@@ -20,8 +21,7 @@ export class UserComponent implements OnInit {
   }
 
   logout(){
-    localStorage.clear()
-    this.router.navigate(['/'])
+    this.authSer.logout()
   }
 
 }

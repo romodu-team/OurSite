@@ -42,6 +42,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './pages/login/login.component';
 import { UserComponent } from './pages/user/user.component';
 import { AuthInterceptor } from './services/auth.interceptor';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -86,7 +87,8 @@ import { AuthInterceptor } from './services/auth.interceptor';
     MatExpansionModule,
     MatDialogModule,
     MatIconModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTooltipModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
