@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-card2',
@@ -21,6 +21,8 @@ export class Card2Component implements OnInit {
   arrowLabel:string = 'show-arrow-label'
   cardShadow:string = 'shadow-sm'
 
+  @Output() @Input() selected:boolean = false
+
   shadow(){
     this.cardShadow = 'shadow-lg'
   }
@@ -33,9 +35,12 @@ export class Card2Component implements OnInit {
   onSelect(){
     if(this.select == 'bg-white text-black'){
       this.select = 'bg-success text-white'
+      this.selected = true
     }else{
       this.select = 'bg-white text-black'
+      this.selected = false
     }
+    // console.log(this.selected);
   }
 
   onDiscription(){
