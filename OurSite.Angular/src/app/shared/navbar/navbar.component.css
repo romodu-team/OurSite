@@ -5,3 +5,6 @@ p{
 mat-icon{
     font-size: 30px;
 }
+p:hover{
+    color: #FFC93C;
+}
