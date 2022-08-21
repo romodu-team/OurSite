@@ -6,6 +6,7 @@ using OurSite.Core.DTOs.Payment;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.Payments;
+using OurSite.DataLayer.Interfaces;
 using System.Security.Claims;
 using System.Text;
 using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
@@ -18,8 +19,10 @@ namespace OurSite.WebApi.Controllers
     {
         private static readonly HttpClient client = new HttpClient();
         private IPayment Paymentservice;
-        public PaymentController(IPayment paymentservice)
+        private IGenericReopsitories<Payment> PaymentRepositories;
+        public PaymentController(IPayment paymentservice , IGenericReopsitories<Payment> PaymentRepositories)
         {
+            this.Paymentservice = paymentservice;
             this.Paymentservice = paymentservice;
         }
 
@@ -116,24 +119,24 @@ namespace OurSite.WebApi.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost("create-payment-by-admin")]
-         public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto prodto)
+         public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto paydto)
          {
-                var res = await Paymentservice.CreatePayment(prodto);
+                var res = await Paymentservice.CreatePayment(paydto);
                 switch (res)
                 {
                     case ResProject.Success:
-                        return JsonStatusResponse.Success("پروژه با موفقیت ایجاد شد.");
+                        return JsonStatusResponse.Success(message:"Payment creat sucessfully" , ReturnData: paydto);
                     case ResProject.Faild:
-                        return JsonStatusResponse.Error("ایجاد پروژه با خطا مواجه شد.");
+                        return JsonStatusResponse.Error("Payment creat Faild");
                     case ResProject.InvalidInput:
-                        return JsonStatusResponse.Error("فیلد‌های ثبت پروژه نمی‌تواند خالی باشد.");
+                        return JsonStatusResponse.Error("Fileds cant be empty");
                 case ResProject.NotFound:
-                    return JsonStatusResponse.NotFound("project to creat payment not found");
+                    return JsonStatusResponse.NotFound("Payment to creat payment not found");
                     default:
-                        return JsonStatusResponse.Error("ثبت پروژه با خطا مواجه شد. دقایقی دیگر مجدد تلاش نمایید.");
+                        return JsonStatusResponse.Error("Payment creat Faild. Try agian later.");
 
                 }
-                return JsonStatusResponse.Error("U must login");
+                return JsonStatusResponse.Error("U must be login");
 
          }
 
@@ -193,7 +196,7 @@ namespace OurSite.WebApi.Controllers
             switch (res)
             {
                 case ResProject.Success:
-                    return JsonStatusResponse.Success("The payment has been updated successfully");
+                    return JsonStatusResponse.Success(message: "The payment has been updated successfully" , ReturnData: Paydto);
                 case ResProject.Faild:
                     return JsonStatusResponse.Error("payment update failed. Try again ‌later.");
                 case ResProject.NotFound:
@@ -214,7 +217,7 @@ namespace OurSite.WebApi.Controllers
                 switch (delete)
                 {
                     case ResProject.Success:
-                        return JsonStatusResponse.Success("Payment delete successfully");
+                        return JsonStatusResponse.Success(message: "Payment delete successfully" , ReturnData: PayId);
                     case ResProject.Faild:
                         return JsonStatusResponse.Error("Payment delete failed.");
                     case ResProject.Error:
