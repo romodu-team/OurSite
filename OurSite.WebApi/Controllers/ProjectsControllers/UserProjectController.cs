@@ -40,13 +40,13 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                 switch (res)
                 {
                     case ResProject.Success:
-                        return JsonStatusResponse.Success("پروژه با موفقیت ایجاد شد.");
+                        return JsonStatusResponse.Success(message: "The project has been create successfully", ReturnData: prodto);
                     case ResProject.Faild:
-                        return JsonStatusResponse.Error("ایجاد پروژه با خطا مواجه شد.");
+                        return JsonStatusResponse.Error("Project Create failed. Try again later.");
                     case ResProject.InvalidInput:
-                        return JsonStatusResponse.Error("فیلد‌های ثبت پروژه نمی‌تواند خالی باشد.");
+                        return JsonStatusResponse.Error("Invalid input erorr");
                     default:
-                        return JsonStatusResponse.Error("ثبت پروژه با خطا مواجه شد. دقایقی دیگر مجدد تلاش نمایید.");
+                        return JsonStatusResponse.Error("An error has occurred. Try again later.");
 
                 }
             }
@@ -71,7 +71,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                 switch (remove)
                 {
                     case ResProject.Success:
-                        return JsonStatusResponse.Success("The project has been deleted successfully");
+                        return JsonStatusResponse.Success(message: "The project has been deleted successfully" , ReturnData: proId);
                     case ResProject.Error:
                         return JsonStatusResponse.Error("Project delete failed. Try again later.");
                     case ResProject.SitutionError:
