@@ -28,7 +28,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketPriorityService.CreatePriority(title, name);
             if (res)
-                return JsonStatusResponse.Success("ticket Priority has been created successfully");
+                return JsonStatusResponse.Success(message:"ticket Priority has been created successfully" , ReturnData: title);
             return JsonStatusResponse.Error("ticket Priority was not created");
         }
         /// <summary>
@@ -43,7 +43,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Success:
-                    return JsonStatusResponse.Success("ticket Priority has been deleted successfully");
+                    return JsonStatusResponse.Success(message:"ticket Priority has been deleted successfully" , ReturnData: PriorityId);
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Failure:
                     return JsonStatusResponse.Error("ticket Priority was not deleted");
                 case Core.DTOs.TicketDtos.ResDeleteOpration.RefrenceError:
@@ -79,7 +79,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketPriorityService.UpdatePriority(PriorityId, title, name);
             if (res)
-                return JsonStatusResponse.Success("ticket Priority has been updated successfully");
+                return JsonStatusResponse.Success(message:"ticket Priority has been updated successfully", ReturnData: PriorityId);
             return JsonStatusResponse.Error("ticket Priority was not updated");
         }
         /// <summary>
