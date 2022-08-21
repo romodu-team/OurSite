@@ -75,7 +75,7 @@ public class WorkSampleController: Controller
     {
         var res = await _workSampleCategoryService.AddCategory(Title,Name);
         if(res)
-            return JsonStatusResponse.Success("category has been added successfully");
+            return JsonStatusResponse.Success(message: "category has been added successfully" , ReturnData: Title);
         return JsonStatusResponse.Error("faild");
     }
     /// <summary>
@@ -89,7 +89,7 @@ public class WorkSampleController: Controller
     {
         var res = await _workSampleCategoryService.DeleteCategory(categoryId);
         if(res)
-            return JsonStatusResponse.Success("category has been deleted successfully");
+            return JsonStatusResponse.Success(message: "category has been deleted successfully" , ReturnData: categoryId);
         return JsonStatusResponse.Error("faild");
     }
     /// <summary>
@@ -105,7 +105,7 @@ public class WorkSampleController: Controller
     {
         var res = await _workSampleCategoryService.Editcategory(CategoryId,Title,Name);
         if(res)
-            return JsonStatusResponse.Success("category has been updated successfully");
+            return JsonStatusResponse.Success(message: "category has been updated successfully" , ReturnData: CategoryId);
         return JsonStatusResponse.Error("faild");
     }  
     /// <summary>
@@ -156,7 +156,7 @@ public class WorkSampleController: Controller
         switch (res)
         {
             case ResWorkSample.Success:
-                return JsonStatusResponse.Success("work sample has been deleted successfully");
+                return JsonStatusResponse.Success(message: "work sample has been deleted successfully" ,ReturnData: worksampleId);
             case ResWorkSample.Faild:
                 return JsonStatusResponse.Error("faild");
             default:
@@ -177,7 +177,7 @@ public class WorkSampleController: Controller
         switch (res)
         {
             case ResWorkSample.Success:
-                return JsonStatusResponse.Success("The Work sample has been successfully updated");
+                return JsonStatusResponse.Success(message: "The Work sample has been successfully updated" , ReturnData: request);
             case ResWorkSample.Faild:
                 return JsonStatusResponse.Error("Faild");
 
