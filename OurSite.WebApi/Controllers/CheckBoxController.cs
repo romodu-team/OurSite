@@ -26,7 +26,7 @@ public class ChcekBoxController:Controller
         {
             var res = await _CheckBoxService.CreateCheckBox(request.Title,request.IconName,request.Description,request.SiteSectionId);
             if (res)
-                return JsonStatusResponse.Success("CheckBox has been created successfully");
+                return JsonStatusResponse.Success(message:"CheckBox has been created successfully", ReturnData: request);
             return JsonStatusResponse.Error("CheckBox was not created");
         }
 
@@ -44,7 +44,7 @@ public class ChcekBoxController:Controller
             switch (res)
             {
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Success:
-                    return JsonStatusResponse.Success("CheckBox has been deleted successfully");
+                    return JsonStatusResponse.Success(message:"CheckBox has been deleted successfully" , ReturnData: CheckBoxId);
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Failure:
                     return JsonStatusResponse.Error("CheckBox was not deleted");
                 case Core.DTOs.TicketDtos.ResDeleteOpration.RefrenceError:
