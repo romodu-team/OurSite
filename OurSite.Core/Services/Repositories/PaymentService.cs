@@ -165,7 +165,7 @@ namespace OurSite.Core.Services.Repositories
                 {
                     Payment pay = new Payment()
                     {
-
+                        
                         Description = paydto.Description,
                         IsRemove = false,
                         Price = paydto.Price,
