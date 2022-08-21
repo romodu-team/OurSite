@@ -28,7 +28,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketStatusService.CreateStatus(title, name);
             if (res)
-                return JsonStatusResponse.Success("ticket Status has been created successfully");
+                return JsonStatusResponse.Success(message:"ticket Status has been created successfully" , ReturnData: title);
             return JsonStatusResponse.Error("ticket Status was not created");
         }
         /// <summary>
@@ -43,7 +43,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Success:
-                    return JsonStatusResponse.Success("ticket Status has been deleted successfully");
+                    return JsonStatusResponse.Success(message:"ticket Status has been deleted successfully" , ReturnData: StatusId);
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Failure:
                     return JsonStatusResponse.Error("ticket Status was not deleted");
                 case Core.DTOs.TicketDtos.ResDeleteOpration.RefrenceError:
@@ -77,7 +77,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketStatusService.UpdateStatus(StatusId, title, name);
             if (res)
-                return JsonStatusResponse.Success("ticket Status has been updated successfully");
+                return JsonStatusResponse.Success(message: "ticket Status has been updated successfully" , ReturnData: StatusId);
             return JsonStatusResponse.Error("ticket Status was not updated");
         }
         /// <summary>
