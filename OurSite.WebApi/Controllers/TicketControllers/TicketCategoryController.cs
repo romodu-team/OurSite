@@ -28,7 +28,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketCategoryService.CreateCategory(title, name);
             if (res)
-                return JsonStatusResponse.Success("ticket category has been created successfully");
+                return JsonStatusResponse.Success(message:"ticket category has been created successfully" , ReturnData: title);
             return JsonStatusResponse.Error("ticket category was not created");
         }
         /// <summary>
@@ -43,7 +43,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Success:
-                    return JsonStatusResponse.Success("ticket category has been deleted successfully");
+                    return JsonStatusResponse.Success(message:"ticket category has been deleted successfully", ReturnData: CategoryId);
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Failure:
                     return JsonStatusResponse.Error("ticket category was not deleted");
                 case Core.DTOs.TicketDtos.ResDeleteOpration.RefrenceError:
@@ -77,7 +77,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketCategoryService.UpdateCategory(CategoryId,title, name,parentId);
             if (res)
-                return JsonStatusResponse.Success("ticket category has been updated successfully");
+                return JsonStatusResponse.Success(message: "ticket category has been updated successfully" , ReturnData: CategoryId);
             return JsonStatusResponse.Error("ticket category was not updated");
         }
         /// <summary>
