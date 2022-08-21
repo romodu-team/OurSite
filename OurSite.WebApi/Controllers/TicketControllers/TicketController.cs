@@ -38,7 +38,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
                 switch (res.DiscussionStatus)
                 {
                     case ResOperation.notAllowed:
-                        return JsonStatusResponse.Error("The ticket status for this operation is not allowed");
+                        return JsonStatusResponse.Error(message: "The ticket status for this operation is not allowed", ReturnData: request);
                     case ResOperation.NotFound:
                         return JsonStatusResponse.NotFound("ticket not found");
                     case ResOperation.UserNotFound:
@@ -96,7 +96,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case ResOperation.Success:
-                    return JsonStatusResponse.Success("ticket has been deleted successfully");
+                    return JsonStatusResponse.Success(message: "ticket has been deleted successfully" , ReturnData: TicketId);
                 case ResOperation.Failure:
                     return JsonStatusResponse.Error("server error");
                 default:
@@ -116,7 +116,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case ResOperation.Success:
-                    return JsonStatusResponse.Success("Ticket status successfully edited");
+                    return JsonStatusResponse.Success(message : "Ticket status successfully edited" , ReturnData: TicketId);
                 case ResOperation.Failure:
                     return JsonStatusResponse.Error("server error");
                 case ResOperation.StatusNotFound:
