@@ -139,7 +139,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
             switch (res)
             {
                 case resUploadContract.Success:
-                    return JsonStatusResponse.Success(message: "contract file uploaded successfully" , ReturnData: );
+                    return JsonStatusResponse.Success(message: "contract file uploaded successfully");
                 case resUploadContract.projectNotFound:
                     return JsonStatusResponse.NotFound("project not found");
                 case resUploadContract.FileNotFound:
