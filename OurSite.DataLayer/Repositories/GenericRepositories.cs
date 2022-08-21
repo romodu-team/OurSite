@@ -89,6 +89,16 @@ namespace OurSite.DataLayer.Repositories
 
         }
 
+        public Task<Dictionary<string, string>> ReturnLastRecord(Tentity entity)
+        {
+            
+        }
+
+        public Task<Dictionary<string, string>> ReturnLastUpdateRecord(Tentity entity)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task SaveEntity()
         {
 
@@ -102,6 +112,10 @@ namespace OurSite.DataLayer.Repositories
 
             
         }
+
+
+
+        
     }
 }
 

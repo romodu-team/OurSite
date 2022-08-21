@@ -14,7 +14,9 @@ namespace OurSite.DataLayer.Interfaces
 		Task<TEntity> GetEntity(long Id);
 
 		Task<bool> RealDeleteEntity(long Id);
+		Task<TEntity> ReturnLastRecord(); //return data
+        Task<TEntity> ReturnLastUpdateRecord(TEntity entity);
 
-	}
+    }
 }
 
