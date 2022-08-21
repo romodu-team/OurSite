@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
     conmfrimPassword: new FormControl(''),
     mobile: new FormControl(''),
     email: new FormControl(''),
-    accountType: new FormControl(1)
+    accountType: new FormControl('null')
   })
 
   loginForm = new FormGroup({
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
       conmfrimPassword: this.registerForm.value.conmfrimPassword,
       mobile: this.registerForm.value.mobile,
       email: this.registerForm.value.email,
-      accountType: this.registerForm.value.accountType
+      accountType: +this.registerForm.value.accountType
     })
   }
 
