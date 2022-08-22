@@ -6,6 +6,7 @@ using OurSite.DataLayer.Entities.Comments;
 using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.ContactWithUs;
 using OurSite.DataLayer.Entities.ImageGalleries;
+using OurSite.DataLayer.Entities.NotificationModels;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Entities.RatingModel;
 using OurSite.DataLayer.Entities.Ticketing;
@@ -47,6 +48,7 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<TicketModel> Ticket { get; set; }
         public DbSet<TicketPriority> TicketPriorities { get; set; }
         public DbSet<TicketStatus> TicketStatuses { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

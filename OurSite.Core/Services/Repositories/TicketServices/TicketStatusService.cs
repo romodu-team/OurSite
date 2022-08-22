@@ -14,10 +14,10 @@ namespace OurSite.Core.Services.Repositories.TicketServices
     public class TicketStatusService : ITicketStatusService
     {
         #region constructor
-        private IGenericReopsitories<TicketStatus> _TicketStatusRepository;
-        private IGenericReopsitories<TicketModel> _ticketRepository;
+        private IGenericRepository<TicketStatus> _TicketStatusRepository;
+        private IGenericRepository<TicketModel> _ticketRepository;
 
-        public TicketStatusService(IGenericReopsitories<TicketStatus> ticketStatusRepository, IGenericReopsitories<TicketModel> ticketRepository)
+        public TicketStatusService(IGenericRepository<TicketStatus> ticketStatusRepository, IGenericRepository<TicketModel> ticketRepository)
         {
             _TicketStatusRepository = ticketStatusRepository;
             _ticketRepository = ticketRepository;

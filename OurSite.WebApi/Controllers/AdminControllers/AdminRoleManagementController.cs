@@ -31,6 +31,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         ///  API for Add new role by system administrator {Get request from body}
         /// </summary>
         /// <param name="request"></param>
+        /// <remarks>Role id should be null</remarks>
         /// <returns></returns>
         [HttpPost("add-role")]
         public async Task<IActionResult> AddRole([FromBody] RoleDto role)

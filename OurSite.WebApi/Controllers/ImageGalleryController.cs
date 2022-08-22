@@ -71,7 +71,7 @@ public class ImageGalleryController:Controller
                 return JsonStatusResponse.Success(message:"image has been successfully Deleted", ReturnData: ImageId);
             case ResDeleteImage.NotFound:
                 return JsonStatusResponse.Error("image not found");
-            case ResDeleteImage.Faild:
+            case ResDeleteFile.Faild:
                 return JsonStatusResponse.Error("server error");
 
 

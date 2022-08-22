@@ -14,25 +14,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using OurSite.Core.DTOs.NotificationDtos;
+using OurSite.Core.DTOs.UserDtos;
 
 namespace OurSite.Core.Services.Repositories.Forms
 {
     public class ContactWithUsService : IContactWithUsService
     {
         #region constructor
-        private readonly IGenericReopsitories<ContactWithUs> contactWithUsRepo;
+        private readonly IGenericRepository<ContactWithUs> contactWithUsRepo;
         private readonly IMailService mailService;
-        public ContactWithUsService(IGenericReopsitories<ContactWithUs> contactWithUsRepo,IMailService mailService)
+        private readonly INotificationService _notificationService;
+        private IAdminService _AdminService;
+        public ContactWithUsService(IAdminService AdminService,INotificationService notificationService,IGenericRepository<ContactWithUs> contactWithUsRepo,IMailService mailService)
         {
             this.contactWithUsRepo = contactWithUsRepo;
             this.mailService=mailService;
+            _notificationService=notificationService;
+            _AdminService=AdminService;
         }
-        
         
         #region Dispose
         public void Dispose()
         {
             contactWithUsRepo.Dispose();
+            _notificationService.Dispose();
         }
         #endregion
         #endregion
@@ -54,10 +60,20 @@ namespace OurSite.Core.Services.Repositories.Forms
                 await contactWithUsRepo.SaveEntity();
                 //send email for admin:you have new massage
                 var MailMessageDto= new MailRequestDto{
-                    ToEmail=form1.UserEmail,
+                    ToEmail="Support@romodu.com",
                     Subject="پیام تماس با ما جدید دریافت شد",
-                    Body=""};
+                    Body=$"متن پیام : {form1.Expration}"};
                 await mailService.SendEmailAsync(MailMessageDto);
+                //send notification to admins
+                var accounts = await _AdminService.GetAllAdmin(new ReqFilterUserDto { PageId=1,TakeEntity=1000});
+                if(accounts.Admins!=null && accounts.Admins.Count > 0)
+                {
+                    foreach (var admin in accounts.Admins)
+                    {
+                        await _notificationService.CreateNotification(new ReqCreateNotificationDto { AccountUUID = admin.UUID, Message = $"پیام تماس با ما جدید دریافت شد." });
+                    }
+                }
+       
                 return true;
             }
             catch

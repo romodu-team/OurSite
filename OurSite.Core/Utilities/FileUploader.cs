@@ -74,15 +74,15 @@ namespace OurSite.Core.Utilities
                 return new ResUploadDto { Status = resFileUploader.NoContent, FileName = null };
             }
         }
-        public static ResDeleteImage DeleteImage(string ImagePath)
+        public static ResDeleteFile DeleteFile(string FilePath)
         {
-            var FullPath=Directory.GetCurrentDirectory()+ImagePath;
-            var imageExist = File.Exists(FullPath); 
-            if(imageExist){
-                File.Delete(FullPath);
-                return ResDeleteImage.Success;
+
+            var FileExist = File.Exists(FilePath); 
+            if(FileExist){
+                File.Delete(FilePath);
+                return ResDeleteFile.Success;
             }  
-            return ResDeleteImage.NotFound;
+            return ResDeleteFile.NotFound;
         }
         public static async Task<ResUploadTicketAttachment> UploadTicketAttachment(string path, IFormFile file, int maxSizeMb)
         {

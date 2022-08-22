@@ -9,6 +9,7 @@ namespace OurSite.Core.DTOs.AdminDtos
     public class ResViewAdminDto
     {
         public long Id { get; set; }
+        public Guid UUID { get; set; }
         public DateTime CreateDate { get; set; }
         public bool IsRemove { get; set; }
         public DateTime LastUpdate { get; set; }

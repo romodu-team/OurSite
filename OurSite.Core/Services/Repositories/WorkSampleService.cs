@@ -12,12 +12,12 @@ namespace OurSite.Core.Services.Repositories;
 
 public class WorkSampleService : IWorkSampleService
 {
-    private IGenericReopsitories<WorkSample> _WorkSampleRepository;
-    private IGenericReopsitories<ProjectFeatures> _ProjectFeatureRepository;
-    private IGenericReopsitories<Like> _LikeRepository;
+    private IGenericRepository<WorkSample> _WorkSampleRepository;
+    private IGenericRepository<ProjectFeatures> _ProjectFeatureRepository;
+    private IGenericRepository<Like> _LikeRepository;
     private IimageGalleryService _ImageGalleryService;
     private IWorkSampleCategoryService _IworkSampleCategoryService;
-    public WorkSampleService(IGenericReopsitories<WorkSample> WorkSampleRepository, IGenericReopsitories<ProjectFeatures> ProjectFeatureRepository, IGenericReopsitories<Like> LikeRepository, IimageGalleryService ImageGalleryService, IWorkSampleCategoryService IworkSampleCategoryService)
+    public WorkSampleService(IGenericRepository<WorkSample> WorkSampleRepository, IGenericRepository<ProjectFeatures> ProjectFeatureRepository, IGenericRepository<Like> LikeRepository, IimageGalleryService ImageGalleryService, IWorkSampleCategoryService IworkSampleCategoryService)
     {
         _IworkSampleCategoryService = IworkSampleCategoryService;
         _ProjectFeatureRepository = ProjectFeatureRepository;

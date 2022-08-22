@@ -1,7 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.MailDtos;
+using OurSite.Core.DTOs.NotificationDtos;
 using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.TicketDtos;
+using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.Core.Services.Interfaces.TicketInterfaces;
 using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.Ticketing;
@@ -17,20 +21,24 @@ namespace OurSite.Core.Services.Repositories.TicketServices
     public class TicketService : ITicketService
     {
         #region constructor
-        private IGenericReopsitories<TicketModel> _TicketRepository;
-        private IGenericReopsitories<TicketDiscussion> _DiscussionRepository;
-        private IGenericReopsitories<TicketAttachment> _AttachmentRepository;
-        private IGenericReopsitories<TicketStatus> _TicketStatusRepository;
+        private IGenericRepository<TicketModel> _TicketRepository;
+        private IGenericRepository<TicketDiscussion> _DiscussionRepository;
+        private IGenericRepository<TicketAttachment> _AttachmentRepository;
+        private IGenericRepository<TicketStatus> _TicketStatusRepository;
         private IAdminService _AdminService;
         private IUserService _UserService;
-        public TicketService( IUserService UserService, IAdminService AdminService, IGenericReopsitories<TicketStatus> TicketStatusRepository, IGenericReopsitories<TicketModel> TicketRepository, IGenericReopsitories<TicketDiscussion> DiscussionRepository, IGenericReopsitories<TicketAttachment> AttachmentRepository)
+        private INotificationService _notificationService;
+        private IMailService _mailService;
+        public TicketService(IMailService mailService, INotificationService notificationService, IUserService UserService, IAdminService AdminService, IGenericRepository<TicketStatus> TicketStatusRepository, IGenericRepository<TicketModel> TicketRepository, IGenericRepository<TicketDiscussion> DiscussionRepository, IGenericRepository<TicketAttachment> AttachmentRepository)
         {
+            _mailService = mailService;
             _AttachmentRepository = AttachmentRepository;
             _DiscussionRepository = DiscussionRepository;
             _TicketRepository = TicketRepository;
             _TicketStatusRepository = TicketStatusRepository;
             _AdminService = AdminService;
             _UserService = UserService;
+            _notificationService = notificationService;
         }
 
 
@@ -106,7 +114,25 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                         {
                             await _DiscussionRepository.AddEntity(discussion);
                             await _DiscussionRepository.SaveEntity();
-
+                            //send notification and email
+                            //find accaount
+                            if (!request.IsAdmin)//if sender is user , send notificatin to admin
+                            {
+                                if (ticket.SupporterId != null)
+                                {
+                                    var account = await _AdminService.GetAdminById((long)ticket.SupporterId);
+                                    await _notificationService.CreateNotification(new ReqCreateNotificationDto { AccountUUID = account.UUID, Message = $"کاربر پاسخ جدیدی برای تیکت شماره {ticket.Id} ارسال کرد" });
+                                    await _mailService.SendEmailAsync(new MailRequestDto { ToEmail = account.Email, Subject = $"کاربر به تیکت شماره {ticket.Id} پاسخ داد.", Attachments = null, Body=$"{ticket.Title}\n{discussion.Content}\n{ticket.Id}\n{ticket.TicketStatus.Title}"});
+                                }
+                                
+                            }
+                            else // sender is admin ,send notification to User
+                            {
+                                var account = await _UserService.GetUserById((long)ticket.UserId);
+                                await _notificationService.CreateNotification(new ReqCreateNotificationDto { AccountUUID = account.UUID, Message = $"پشتیبان پاسخ جدیدی برای تیکت شماره {ticket.Id} ارسال کرد" } );
+                                if(account.Email!=null)
+                                    await _mailService.SendEmailAsync(new MailRequestDto { ToEmail = account.Email, Subject = $"پشتیبان به تیکت شماره {ticket.Id} پاسخ داد.", Attachments = null, Body = $"{ticket.Title}\n{discussion.Content}\n{ticket.Id}\n{ticket.TicketStatus.Title}" });
+                            }
                             //upload attachment
                             if (request.Attachment is not null)
                             {
@@ -171,6 +197,30 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                 {
                     await _TicketRepository.AddEntity(ticket);
                     await _TicketRepository.SaveEntity();
+                    //send notification and email
+                    //find accaount
+                    if (!request.IsAdmin)//if sender is user , send notificatin to  admins and send mail to site email
+                    {
+
+                        var accounts = await _AdminService.GetAllAdmin(new ReqFilterUserDto { PageId=1,TakeEntity=1000});
+                        if(accounts.Admins!=null && accounts.Admins.Count > 0)
+                        {
+                            foreach (var admin in accounts.Admins)
+                            {
+                                await _notificationService.CreateNotification(new ReqCreateNotificationDto { AccountUUID = admin.UUID, Message = $"تیکت جدید با نام {ticket.Title} دریافت شد." });
+                            }
+                        }
+
+                        await _mailService.SendEmailAsync(new MailRequestDto { ToEmail = "Support@romodu.com", Subject = $"تیکت جدید با نام {ticket.Title} دریافت شد.", Attachments = null, Body = $"عنوان تیکت:{ticket.Title}\nمتن تیکت:{request.Description}\nشماره تیکت:{ticket.Id}" });
+
+                    }
+                    else // sender is admin ,send notification to User
+                    {
+                        var account = await _UserService.GetUserById((long)ticket.UserId);
+                        await _notificationService.CreateNotification(new ReqCreateNotificationDto { AccountUUID = account.UUID, Message = $"تیکت جدید برای شما با موضوع {ticket.Title} ایجاد شد." });
+                        if (account.Email != null)
+                            await _mailService.SendEmailAsync(new MailRequestDto { ToEmail = account.Email, Subject = $"تیکت جدید برای شما با موضوع {ticket.Title} ایجاد شد.", Attachments = null, Body = $"عنوان تیکت:{ticket.Title}\nمتن تیکت:{request.Description}\nشماره تیکت:{ticket.Id}" });
+                    }
                     //create first discussion
                     var res = await CreateDiscussion(new ReqCreateDiscussion { Attachment = request.Attachment, Content = request.Description, TicketId = ticket.Id, SenderId = request.SenderId, IsAdmin = request.IsAdmin });
                     return new ResCreateDiscussionDto { AttachmentStatus = res.AttachmentStatus, DiscussionStatus = res.DiscussionStatus };
@@ -202,6 +252,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                     var attachment = await _AttachmentRepository.GetAllEntity().SingleOrDefaultAsync(a => a.TicketDiscussionId == item && a.IsRemove == false);
                     if (attachment != null)
                     {
+                        FileUploader.DeleteFile(PathTools.TicketAttachmentUploadPath + "\\" + attachment.FileName);
                         await _AttachmentRepository.DeleteEntity(attachment.Id);
 
                     }
@@ -317,7 +368,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                     Category = ticket.TicketCategory.Title,
                     CreateDate = ticket.CreateDate.ToShortDateString(),
                     LastUpdateDate = ticket.LastUpdate.ToShortDateString(),
-                    AssignedTo = String.Concat(ticket.Supporter.FirstName," ", ticket.Supporter.LastName),
+                    AssignedTo =ticket.Supporter != null? String.Concat(ticket.Supporter.FirstName," ", ticket.Supporter.LastName):"",
                     Name = ticket.Title,
                     UserEmail = ticket.User.Email,
                     UserFullname = String.Concat(ticket.User.FirstName, ticket.User.LastName),

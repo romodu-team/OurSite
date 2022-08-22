@@ -187,7 +187,7 @@ namespace OurSite.WebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var userId = User.FindFirst(ClaimTypes.Sid).Value;
                     var res = await userservice.UpDate(userdto, Convert.ToInt64(userId));
                     if (userdto.ProfilePhoto != null)
                     {
@@ -234,11 +234,10 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [Authorize]
         [HttpGet("View-Profile/{id}")]
         public async Task<IActionResult> ViewProfile([FromRoute]long id)
         {
-            var userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userid = User.FindFirst(ClaimTypes.Sid).Value;
             var userdto = await userservice.ViewProfile(Convert.ToInt64(userid));
             return JsonStatusResponse.Success(userdto, "موفق");
 

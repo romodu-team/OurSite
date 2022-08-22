@@ -28,7 +28,7 @@ namespace OurSite.DataLayer.Entities.BaseEntities
         [DisplayName("ایمیل")]
         public string? Email { get; set; }
 
-        [RegularExpression("09(1[0-9]|3[1-9]|2[1-9])-?[0-9]{3}-?[0-9]{4}",ErrorMessage = "شماره تماس وارد شده صحیح نیست")]
+        [RegularExpression("09(1[0-9]|3[1-9]|2[0-9]|9[0-9]|0[1-9]|4[1-9])-?[0-9]{3}-?[0-9]{4}",ErrorMessage = "شماره تماس وارد شده صحیح نیست")]
         [DisplayName("شماره همراه")]
         public string? Mobile { get; set; }
 

@@ -62,10 +62,14 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 #region addservices
-builder.Services.AddScoped(typeof(IGenericReopsitories<>), typeof(GenericRepositories<>));
+//test database
+builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
+//real database
+//builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
 builder.Services.Configure<MailSettingsDto>(builder.Configuration.GetSection("MailSettings"));
@@ -108,6 +112,7 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
 builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
 builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("viewUser", policy => policy.RequireClaim("viewUser"));
@@ -136,6 +141,7 @@ if (app.Environment.IsDevelopment())
     options.SerializeAsV2 = true); 
     app.UseSwaggerUI(options=>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
+
 }
 
 app.UseHttpsRedirection();
