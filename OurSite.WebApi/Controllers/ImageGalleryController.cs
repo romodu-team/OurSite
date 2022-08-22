@@ -38,7 +38,7 @@ public class ImageGalleryController:Controller
         switch (result)
         {
             case ResAddImageToGallery.Success:
-                return JsonStatusResponse.Success(message:"image has been successfully added" , ReturnData: request);
+                return JsonStatusResponse.Success(message:"image has been successfully added" , ReturnData: await imageGalleryService.ReturnImageAdress(request.WorkSampleId));
             case ResAddImageToGallery.ToBig:
                 return JsonStatusResponse.Error("image size is too big");
             case ResAddImageToGallery.Failure:
@@ -67,9 +67,9 @@ public class ImageGalleryController:Controller
         var result = await imageGalleryService.DeleteImageFromGallery(ImageId);
         switch (result)
         {
-            case ResDeleteImage.Success:
+            case ResDeleteFile.Success:
                 return JsonStatusResponse.Success(message:"image has been successfully Deleted", ReturnData: ImageId);
-            case ResDeleteImage.NotFound:
+            case ResDeleteFile.NotFound:
                 return JsonStatusResponse.Error("image not found");
             case ResDeleteFile.Faild:
                 return JsonStatusResponse.Error("server error");
