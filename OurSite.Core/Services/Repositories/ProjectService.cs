@@ -368,6 +368,16 @@ namespace OurSite.Core.Services.Repositories
             }
         }
 
+        public async Task<string> ReturnContract(long ProjectId)
+        {
+            var ContractName = await ProjectsRepository.GetAllEntity().Where(x => x.Id == ProjectId).Select(x => x.ContractFileName).SingleOrDefaultAsync();
+            if (ContractName is not null)
+            {
+                return String.Concat(PathTools.ContractUploadName, ContractName);
+            }
+            return null;
+        }
+
         #endregion
 
     }
