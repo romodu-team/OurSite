@@ -52,6 +52,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                 HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, admin.FirstName, admin.LastName }, "ورود با موفقیت انجام شد");
             }
+            HttpContext.Response.StatusCode = 400;
             return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
         }
         #endregion
@@ -82,9 +83,14 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             {
                 var res = await adminService.ResetPassword(request);
                 if (res)
+                {
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success("رمز عبور با موفقیت تغییر کرد");
+                }
+                HttpContext.Response.StatusCode = 500;
                 return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
             }
+            HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
         }
         #endregion
@@ -102,11 +108,14 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             switch (res)
             {
                 case ResLoginDto.Success:
+                HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success("ایمیل بازنشانی رمز عبور با موفقیت ارسال شد");
                 case ResLoginDto.IncorrectData:
+                HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("حساب کاربری یافت نشد");
 
                 default:
+                HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
             }
 
@@ -150,20 +159,25 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     }
                     switch (res)
                     {
+                        
                         case ResUpdate.Success:
+                        HttpContext.Response.StatusCode = 200;
                             return JsonStatusResponse.Success("پنل کاربری شما با موفقیت ویرایش شد.");
                         case ResUpdate.Error:
+                        HttpContext.Response.StatusCode = 500;
                             return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
                         case ResUpdate.NotFound:
+                        HttpContext.Response.StatusCode = 404;
                             return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
                         default:
+                        HttpContext.Response.StatusCode = 400;
                             return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
                     }
                 }
-
+                HttpContext.Response.StatusCode = 400;
                 return JsonStatusResponse.Error("فیلدهای وارد شده؛ اشتباه است");
             }
-
+            HttpContext.Response.StatusCode = 401;
             return JsonStatusResponse.NotFound("توکن شما نامعتبر است . مجدد وارد شوید");
 
         }

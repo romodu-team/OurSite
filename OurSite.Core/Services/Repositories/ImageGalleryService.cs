@@ -108,5 +108,14 @@ public class ImageGalleryService : IimageGalleryService
        return imagePaths;
     }
 
-    
+    public async Task<string> ReturnImageAdress(long WorkSampleId)
+    {
+        var ImageAdress = await ImageGalleryRepository.GetAllEntity().Where(x => x.SectionId == WorkSampleId).Select(x => x.ImagePath).SingleOrDefaultAsync();
+        if(ImageAdress is not null)
+        {
+            return ImageAdress;
+
+        }
+        return null;
+    }
 }

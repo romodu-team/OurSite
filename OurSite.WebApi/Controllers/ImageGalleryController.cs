@@ -38,7 +38,7 @@ public class ImageGalleryController:Controller
         switch (result)
         {
             case ResAddImageToGallery.Success:
-                return JsonStatusResponse.Success(message:"image has been successfully added" , ReturnData: request);
+                return JsonStatusResponse.Success(message:"image has been successfully added" , ReturnData: await imageGalleryService.ReturnImageAdress(request.WorkSampleId));
             case ResAddImageToGallery.ToBig:
                 return JsonStatusResponse.Error("image size is too big");
             case ResAddImageToGallery.Failure:
