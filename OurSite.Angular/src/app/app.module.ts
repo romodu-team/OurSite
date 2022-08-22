@@ -39,6 +39,7 @@ import { DemoFormComponent } from './shared/demo-form/demo-form.component';
 import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-detail-header.component';
 
 import {MatIconModule} from '@angular/material/icon';
+import { RegisterComponent } from './pages/register/register.component';
 
 
 @NgModule({
@@ -70,7 +71,8 @@ import {MatIconModule} from '@angular/material/icon';
 
     Card5Component,
     DemoFormComponent,
-    DemoDetailHeaderComponent
+    DemoDetailHeaderComponent,
+    RegisterComponent
 
   ],
   imports: [
