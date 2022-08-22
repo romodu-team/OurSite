@@ -16,7 +16,8 @@ public class CheckBoxService : ICheckBoxService
     private IGenericRepository<CheckBoxs> _CheckBoxRepository;
     private IGenericRepository<ItemSelected> _ConsultionItemSelectedRepository;
     private IGenericRepository<SelectedProjectPlan> _SelectedProjectPlanRepository;
-    public CheckBoxService(IGenericRepository<ItemSelected> ConsultionItemSelectedRepository,IGenericRepository<SelectedProjectPlan> SelectedProjectPlanRepository,IGenericRepository<CheckBoxs> CheckBoxRepository)
+    private IGenericRepository<Project> ProjectRepository;
+    public CheckBoxService(IGenericRepository<Project> ProjectRepository,IGenericRepository<ItemSelected> ConsultionItemSelectedRepository,IGenericRepository<SelectedProjectPlan> SelectedProjectPlanRepository,IGenericRepository<CheckBoxs> CheckBoxRepository)
     {
         _CheckBoxRepository=CheckBoxRepository;
         _ConsultionItemSelectedRepository=ConsultionItemSelectedRepository;

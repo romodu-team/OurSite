@@ -19,8 +19,8 @@ namespace OurSite.WebApi.Controllers
     {
         private static readonly HttpClient client = new HttpClient();
         private IPayment Paymentservice;
-        private IGenericReopsitories<Payment> PaymentRepositories;
-        public PaymentController(IPayment paymentservice , IGenericReopsitories<Payment> PaymentRepositories)
+        private IGenericRepository<Payment> PaymentRepositories;
+        public PaymentController(IPayment paymentservice , IGenericRepository<Payment> PaymentRepositories)
         {
             this.Paymentservice = paymentservice;
             this.Paymentservice = paymentservice;

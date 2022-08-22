@@ -27,9 +27,10 @@ namespace OurSite.Core.Services.Repositories
         private IGenericRepository<CheckBoxs> CheckBoxRepository;
         private IGenericRepository<SelectedProjectPlan> SelectedProjectRepository;
         private IUserService UserService;
+        private ICheckBoxService CheckBoxService;
         private INotificationService _notificationService;
         private IMailService _mailService;
-        public ProjectService(IMailService mailService,INotificationService notificationService,IGenericRepository<SelectedProjectPlan> SelectedProjectRepository,IGenericRepository<Project> ProjectsRepository,IGenericRepository<CheckBoxs> CheckBoxRepository, IUserService userService)
+        public ProjectService(ICheckBoxService CheckBoxService,IMailService mailService,INotificationService notificationService,IGenericRepository<SelectedProjectPlan> SelectedProjectRepository,IGenericRepository<Project> ProjectsRepository,IGenericRepository<CheckBoxs> CheckBoxRepository, IUserService userService)
         {
             this.ProjectsRepository = ProjectsRepository;
             this.CheckBoxRepository=CheckBoxRepository;
@@ -37,6 +38,7 @@ namespace OurSite.Core.Services.Repositories
             this.UserService = userService;
             _notificationService=notificationService;
             _mailService=mailService;
+            this.CheckBoxService=CheckBoxService;
         }
 
         public void Dispose()
@@ -45,7 +47,7 @@ namespace OurSite.Core.Services.Repositories
             CheckBoxRepository.Dispose();
             SelectedProjectRepository.Dispose();
             UserService.Dispose();
-            CheckBoxService.Dispose();
+           CheckBoxService.Dispose();
         }
         #endregion
 
