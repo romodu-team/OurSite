@@ -12,6 +12,7 @@ namespace OurSite.Core.Services.Interfaces.Projecta
         Task<GetProjectDto> GetProject(long ProjectId);
         Task<ResProject> CreateProject(CreateProjectDto prodto, long userId);
         Task<ResProject> DeleteProject(long ProId, bool IsAdmin);
+        Task<string> ReturnContract(long ProjectId);
 
         #region Admin
         Task<ResProject> EditProject(EditProjectDto prodto);
