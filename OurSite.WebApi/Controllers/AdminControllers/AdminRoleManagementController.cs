@@ -30,30 +30,31 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <summary>
         ///  API for Add new role by system administrator {Get request from body}
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="title"></param>
         /// <remarks>Role id should be null</remarks>
         /// <returns></returns>
         [HttpPost("add-role")]
-        public async Task<IActionResult> AddRole([FromBody] RoleDto role)
+        public async Task<IActionResult> AddRole([FromQuery] string title,[FromQuery]string name)
         {
-            var res = await roleService.AddRole(role);
+            var res = await roleService.AddRole(title,name);
             switch (res)
             {
                 case ResAddRole.Success:
+                    HttpContext.Response.StatusCode=201;
                     return JsonStatusResponse.Success("نقش با موفقیت اضافه شد");
-                    break;
                 case ResAddRole.Faild:
+                     HttpContext.Response.StatusCode=500;
                     return JsonStatusResponse.Error("اضافه کردن نقش جدید با خطا مواجه شد. مجددا تلاش نمایید.");
-                    break;
 
                 case ResAddRole.InvalidInput:
-                    return JsonStatusResponse.Error("فیلد‌های عنوان و تایتل نمی‌تواند خالی باشد.");
-                    break;
+                    HttpContext.Response.StatusCode=400;
+                    return JsonStatusResponse.InvalidInput();
                 case ResAddRole.Exist:
+                    HttpContext.Response.StatusCode=409;
                     return JsonStatusResponse.Error("این نقش قبلا اضافه شده است.");
                 default:
+                    HttpContext.Response.StatusCode=500;
                     return JsonStatusResponse.Error("عملیات با خطا مواجه شد.");
-                    break;
             }
         }
         #endregion
