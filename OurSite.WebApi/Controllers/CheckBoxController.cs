@@ -101,9 +101,10 @@ public class CheckBoxController : Controller
         var res = await _CheckBoxService.GetAllCheckBox(sectionId);
         if (res is not null && res.Count > 0)
         {
+            HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Success(res, "successfull");
         }
-            
-        return JsonStatusResponse.Error("no CheckBox found");
+        HttpContext.Response.StatusCode = 404;
+        return JsonStatusResponse.NotFound("no CheckBox found");
     }
 }
