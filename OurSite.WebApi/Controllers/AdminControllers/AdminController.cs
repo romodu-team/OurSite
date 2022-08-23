@@ -45,15 +45,19 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             {
                 var admin = await adminService.Login(reqLogin);
                 if (admin is null)
-                    return JsonStatusResponse.NotFound("اطلاعات کاربری اشتباه است");
+                {
+                    HttpContext.Response.StatusCode = 404;
+                    return JsonStatusResponse.NotFound("there isn't any admin mieh this information");
+                }
+                   
                 var role = await roleService.GetAdminRole(admin.Id);
 
                 var token =await authenticationHelper.GenerateAdminToken(admin, role, 3);
                 HttpContext.Response.StatusCode = 200;
-                return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, admin.FirstName, admin.LastName }, "ورود با موفقیت انجام شد");
+                return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, admin.FirstName, admin.LastName }, "Success");
             }
             HttpContext.Response.StatusCode = 400;
-            return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
+            return JsonStatusResponse.InvalidInput();
         }
         #endregion
 
