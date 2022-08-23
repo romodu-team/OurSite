@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Crypto;
 using OurSite.Core.DTOs;
 using OurSite.Core.DTOs.AdminDtos;
 using OurSite.Core.DTOs.UserDtos;
@@ -53,23 +54,26 @@ namespace OurSite.WebApi.Controllers
                         var user = await userservice.GetUserByUserPass(request.UserName, request.Password);
                         var token = authenticationHelper.GenerateUserToken(user, 3);
                         HttpContext.Response.StatusCode = 200;
-                        return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName }, "ورود با موفقیت انجام شد");
+                        return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName }, "login success");
                     case ResLoginDto.IncorrectData:
-
-                        return JsonStatusResponse.NotFound("نام کاربری یا رمز عبور اشتباه است");
+                        HttpContext.Response.StatusCode = 400;
+                        return JsonStatusResponse.NotFound("Username ot password is wrong");
 
                     case ResLoginDto.NotActived:
-                        return JsonStatusResponse.Error("حساب کاربری شما فعال نیست");
+                        HttpContext.Response.StatusCode = 401;
+                        return JsonStatusResponse.Error("You not verified");
 
                     case ResLoginDto.Error:
-                        return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
-                    default:
                         HttpContext.Response.StatusCode = 400;
-                        return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+                        return JsonStatusResponse.Error("try agian later");
+                    default:
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
 
                 }
             }
-            return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
+            HttpContext.Response.StatusCode = 400;
+            return JsonStatusResponse.InvalidInput();
         }
         #endregion
 
@@ -86,10 +90,15 @@ namespace OurSite.WebApi.Controllers
             {
                 var res = await userservice.ResetPassword(request);
                 if (res)
-                    return JsonStatusResponse.Success("رمز عبور با موفقیت تغییر کرد");
-                return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                {
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonStatusResponse.Success("Your password has been changed");
+                }
+                HttpContext.Response.StatusCode = 500;
+                return JsonStatusResponse.Error("try agian later");
             }
-            return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
+            HttpContext.Response.StatusCode = 400;
+            return JsonStatusResponse.InvalidInput();
         }
         #endregion
 
@@ -106,12 +115,15 @@ namespace OurSite.WebApi.Controllers
             switch (res)
             {
                 case ResLoginDto.Success:
-                    return JsonStatusResponse.Success("ایمیل بازنشانی رمز عبور با موفقیت ارسال شد");
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonStatusResponse.Success("Reset password link send to your email.");
                 case ResLoginDto.IncorrectData:
-                    return JsonStatusResponse.NotFound("حساب کاربری یافت نشد");
+                    HttpContext.Response.StatusCode = 404;
+                    return JsonStatusResponse.NotFound("account not found.");
 
                 default:
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                    HttpContext.Response.StatusCode = 400;
+                    return JsonStatusResponse.UnhandledError();
             }
 
         }
@@ -130,11 +142,14 @@ namespace OurSite.WebApi.Controllers
             switch (res)
             {
                 case ResActiveUser.Success:
-                    return JsonStatusResponse.Success("حساب کاربری شما با موفقیت فعال شد");
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonStatusResponse.Success("You account has been active");
                 case ResActiveUser.NotFoundOrActivated:
-                    return JsonStatusResponse.Success("لینک فعالسازی نامعتبر است یا حساب کاربری قبلا فعال شده است");
+                    HttpContext.Response.StatusCode = 400;
+                    return JsonStatusResponse.NotFound("Your account actived or active link invalid");
                 default:
-                    return JsonStatusResponse.Success("عملیات با شکست مواجه شد");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
         }
         #endregion
@@ -154,22 +169,26 @@ namespace OurSite.WebApi.Controllers
                 switch (add)
                 {
                     case RessingupDto.success:
-                        return JsonStatusResponse.Success("ثبت نام با موفقیت انجام شد");
+                        HttpContext.Response.StatusCode = 200;
+                        return JsonStatusResponse.Success("You singup successfully");
                     case RessingupDto.Failed:
-                        return JsonStatusResponse.Error("ثبت نام با خطا مواجه شد. مجدد ثبت نام کنید.");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.Error("Your singup failed");
                     case RessingupDto.Exist:
-                        return JsonStatusResponse.Error("نام کاربری یا ایمیل قبلا ثبت نام شده است");
+                        HttpContext.Response.StatusCode = 409;
+                        return JsonStatusResponse.Error("You singup before");
                     case RessingupDto.MobileExist:
-                        return JsonStatusResponse.Error("شماره همراه قبلا ثبت نام شده است");
+                        HttpContext.Response.StatusCode = 409;
+                        return JsonStatusResponse.Error("this phone number is exist");
                     default:
-                        HttpContext.Response.StatusCode = 400;
-                        return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
 
 
                 }
             }
-
-            return JsonStatusResponse.Error("فیلد‌های اجباری باید پر شوند");
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.InvalidInput();
         }
         #endregion
 
@@ -195,36 +214,47 @@ namespace OurSite.WebApi.Controllers
                         switch (resProfilePhoto)
                         {
                             case resFileUploader.Failure:
-                                return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+                                HttpContext.Response.StatusCode = 500;
+                                return JsonStatusResponse.Error("upload profile photot faild");
 
                             case resFileUploader.ToBig:
-                                return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+                                HttpContext.Response.StatusCode = 400;
+                                return JsonStatusResponse.Error("the upload file is too big");
 
                             case resFileUploader.NoContent:
-                                return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                                HttpContext.Response.StatusCode = 204;
+                                return JsonStatusResponse.InvalidInput();
                             case resFileUploader.InvalidExtention:
-                                return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                                HttpContext.Response.StatusCode = 400;
+                                return JsonStatusResponse.Error("photo format is not true");
                             default:
+                                HttpContext.Response.StatusCode = 500;
+                                return JsonStatusResponse.UnhandledError();
                                 break;
                         }
                     }
                     switch (res)
                     {
                         case ResUpdate.Success:
-                            return JsonStatusResponse.Success("پروفایل کاربری با موفقیت بروزرسانی شد");
+                            HttpContext.Response.StatusCode = 200;
+                            return JsonStatusResponse.UnhandledError();
+                            return JsonStatusResponse.Success("photo has been upload successfully");
                         case ResUpdate.Error:
-                            return JsonStatusResponse.Error("بروزرسانی پروفایل کاربری با خطا موجه شد. مجددا تلاش نمایید.");
+                            HttpContext.Response.StatusCode = 200;
+                            return JsonStatusResponse.Error("photo has been update successfully");
                         case ResUpdate.NotFound:
-                            return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
+                            HttpContext.Response.StatusCode = 500;
+                            return JsonStatusResponse.NotFound("server error");
                         default:
-                            return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+                            return JsonStatusResponse.UnhandledError();
                     }
 
                 }
-                return JsonStatusResponse.Error("اطلاعات ارسالی اشتباه است");
+                HttpContext.Response.StatusCode = 400;
+                return JsonStatusResponse.InvalidInput();
             }
-
-            return JsonStatusResponse.Error("مجدد وارد پنل کاربری خود شوید.");
+            HttpContext.Response.StatusCode = 401;
+            return JsonStatusResponse.Error("Login agian");
         }
         #endregion
 
@@ -239,7 +269,8 @@ namespace OurSite.WebApi.Controllers
         {
             var userid = User.FindFirst(ClaimTypes.Sid).Value;
             var userdto = await userservice.ViewProfile(Convert.ToInt64(userid));
-            return JsonStatusResponse.Success(userdto, "موفق");
+            HttpContext.Response.StatusCode = 200;
+            return JsonStatusResponse.Success(userdto, "success");
 
 
         }
