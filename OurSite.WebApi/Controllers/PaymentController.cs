@@ -124,17 +124,23 @@ namespace OurSite.WebApi.Controllers
                 switch (res)
                 {
                     case ResProject.Success:
-                        return JsonStatusResponse.Success(message:"Payment creat sucessfully" , ReturnData: paydto);
+                        HttpContext.Response.StatusCode = 201;
+                        return JsonStatusResponse.Success(message:"Payment create sucessfully" , ReturnData: paydto);
                     case ResProject.Faild:
+                        HttpContext.Response.StatusCode = 500;
                         return JsonStatusResponse.Error("Payment creat Faild");
                     case ResProject.InvalidInput:
-                        return JsonStatusResponse.Error("Fileds cant be empty");
+                        HttpContext.Response.StatusCode = 204;
+                        return JsonStatusResponse.InvalidInput();
                 case ResProject.NotFound:
-                    return JsonStatusResponse.NotFound("Payment to creat payment not found");
+                    HttpContext.Response.StatusCode = 404;
+                    return JsonStatusResponse.NotFound("Project to create payment not found");
                     default:
-                        return JsonStatusResponse.Error("Payment creat Faild. Try agian later.");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
 
                 }
+                HttpContext.Response.StatusCode = 401;
                 return JsonStatusResponse.Error("U must be login");
 
          }
@@ -156,9 +162,11 @@ namespace OurSite.WebApi.Controllers
             var pay = await Paymentservice.GetPayment(PayId);
             if(pay is not null)
             {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(message:"success" ,ReturnData:pay );
             }
-            return JsonStatusResponse.NotFound("payment not founf");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("payment not found");
         }
         #endregion
 
