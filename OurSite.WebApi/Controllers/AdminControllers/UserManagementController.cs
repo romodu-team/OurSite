@@ -34,10 +34,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var user = await userService.ViewUser(userid);
             if (user is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(message: "success", ReturnData: user);
-
-
-            return JsonStatusResponse.Error(message: "کاربر پیدا نشد");
+            }
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.Error("User not found");
         }
         #endregion
 
@@ -53,9 +55,11 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             var users = await userService.GetAlluser(filter);
             if (users.Users.Any())
             {
-                return JsonStatusResponse.Success(message: "موفق", ReturnData: users);
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "success", ReturnData: users);
             }
-            return JsonStatusResponse.NotFound(message: "کاربری یافت نشد");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("Users not found");
 
         }
         #endregion
