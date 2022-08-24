@@ -40,19 +40,24 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             switch (res)
             {
                 case ResAddRole.Success:
-                    return JsonStatusResponse.Success("نقش با موفقیت اضافه شد");
+                    HttpContext.Response.StatusCode = 201;
+                    return JsonStatusResponse.Success("Role added successfully");
                     break;
                 case ResAddRole.Faild:
-                    return JsonStatusResponse.Error("اضافه کردن نقش جدید با خطا مواجه شد. مجددا تلاش نمایید.");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.Error("Add Role failed. try agian later");
                     break;
 
                 case ResAddRole.InvalidInput:
-                    return JsonStatusResponse.Error("فیلد‌های عنوان و تایتل نمی‌تواند خالی باشد.");
+                    HttpContext.Response.StatusCode = 400;
+                    return JsonStatusResponse.InvalidInput();
                     break;
                 case ResAddRole.Exist:
+                    HttpContext.Response.StatusCode = 409;
                     return JsonStatusResponse.Error("این نقش قبلا اضافه شده است.");
                 default:
-                    return JsonStatusResponse.Error("عملیات با خطا مواجه شد.");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
                     break;
             }
         }
@@ -71,13 +76,17 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             switch (remove)
             {
                 case ResRole.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success("The project has been deleted successfully");
                 case ResRole.Error:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("Project delete failed. Try again later.");
                 case ResRole.NotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("Project not Found");
                 default:
-                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
         }
         #endregion
@@ -97,15 +106,20 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                 switch (res)
                 {
                     case ReqUpdateRoleDto.ResUpdateRole.Success:
-                        return JsonStatusResponse.Success("نقش با موفقیت بروزرسانی شد");
+                        HttpContext.Response.StatusCode = 200;
+                        return JsonStatusResponse.Success("Role has been Updated successfully");
                     case ReqUpdateRoleDto.ResUpdateRole.Error:
-                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.Error("Update rolde Failed");
                     case ReqUpdateRoleDto.ResUpdateRole.NotFound:
-                        return JsonStatusResponse.NotFound("نقش مورد نظر پیدا نشد");
+                        HttpContext.Response.StatusCode = 404;
+                        return JsonStatusResponse.NotFound("Role not found");
                     case ReqUpdateRoleDto.ResUpdateRole.Exist:
-                        return JsonStatusResponse.NotFound("نام نقش تکراری است");
+                        HttpContext.Response.StatusCode = 409;
+                        return JsonStatusResponse.Error("Role with this information is exist");
                     default:
-                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
             return JsonStatusResponse.Error("فیلد های اجباری باید پر شوند");
