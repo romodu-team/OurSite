@@ -41,14 +41,17 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                 {
                     case RessingupDto.success:
                         HttpContext.Response.StatusCode = 201;
-                        return JsonStatusResponse.Success("اطلاعات با موفقیت ثبت شد");
+                        return JsonStatusResponse.Success("Admin has been registered");
                     case RessingupDto.Exist:
-                        return JsonStatusResponse.Error("نام کاربری یا ایمیل تکراری است");
+                        HttpContext.Response.StatusCode = 409;
+                        return JsonStatusResponse.Error("Username or Email exist");
                     default:
-                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
-            return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
+            HttpContext.Response.StatusCode = 400;
+            return JsonStatusResponse.InvalidInput();
 
         }
         #endregion
