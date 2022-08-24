@@ -68,8 +68,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var res = await adminService.ChangeAdminStatus(adminId);
             if (res)
-                return JsonStatusResponse.Success("وضعیت ادمین تغییر کرد");
-            return JsonStatusResponse.Error("عملیات نا موفق بود");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("Admin status has been changed sucessfully");
+            }
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.Error("Admin status has not been changed");
         }
         #endregion
 
@@ -85,8 +89,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var res = await adminService.DeleteAdmin(adminId);
             if (res)
-                return JsonStatusResponse.Success("با موفقیت حذف شد");
-            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("Admin deleted");
+            }
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.Error("delete admin failed");
         }
         #endregion
 
