@@ -1,8 +1,8 @@
 .example-container {
+    position: absolute !important;
     width: 250px;
     height: 300px;
-    /* border: 1px solid rgba(0, 0, 0, 0.5); */
-    background-color: #F7F7F7;
+    background-color: transparent;
 }
   
 .example-sidenav-content {
