@@ -32,13 +32,14 @@ namespace OurSite.WebApi.Controllers.Forms
             if (ModelState.IsValid)
             {
                 await contactWithUsService.SendContactForm(sendContactForm);
-                return JsonStatusResponse.Success("درخواست شما با موفقیت ارسال شد");
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonStatusResponse.Success("Request send sucessfully");
             }
             else
             {
-                return JsonStatusResponse.Error("اطلاعات ارسال شده معتبر نمی‌باشد");
+                HttpContext.Response.StatusCode = 500;
+                return JsonStatusResponse.Error("send request failed");
             }
-   
 
         }
         #endregion
