@@ -11,5 +11,6 @@ export class AdminuserNavbarComponent implements OnInit {
 
   ngOnInit(): void {
   }
+  showFiller = false;
 
 }
