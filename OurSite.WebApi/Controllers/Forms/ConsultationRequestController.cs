@@ -54,25 +54,39 @@ namespace OurSite.WebApi.Controllers.Forms
                         {
                             var secondResponse = await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile,firstResponse.FileName);
                             if (secondResponse)
-                                return JsonStatusResponse.Success("درخواست با موفقیت ارسال گردید");
-                            return JsonStatusResponse.Error("درخواست شما ارسال نگردید");
+                            {
+                                HttpContext.Response.StatusCode = 200;
+                                return JsonStatusResponse.Success("Request has been success successfully");
+                            }
+                            HttpContext.Response.StatusCode = 400;
+                            return JsonStatusResponse.Error("send request failed.");
                         }
                     case resFileUploader.Failure:
-                        return JsonStatusResponse.Error("ارسال فایل با خطا مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.Error("send request faild, try agian later");
                     case resFileUploader.ToBig:
-                        return JsonStatusResponse.Error("حجم فایل انتخابی بیش از حد مجاز می‌باشد");
+                        HttpContext.Response.StatusCode = 413;
+                        return JsonStatusResponse.Error("The file size is large");
                     case resFileUploader.NoContent:
-                        return JsonStatusResponse.Error("فایلی برای ارسال انتخاب نشده است");
+                        HttpContext.Response.StatusCode = 204;
+                        return JsonStatusResponse.Error("File didn't choosed");
                     case resFileUploader.InvalidExtention:
-                        return JsonStatusResponse.Error("فرمت فایل انتخابی نامناسب می‌باشد");
+                        HttpContext.Response.StatusCode = 400;
+                        return JsonStatusResponse.InvalidInput();
                     default:
-                        return JsonStatusResponse.Error("ارسال فایل با خطا مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
             var res = await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile,null);
             if (res)
-                return JsonStatusResponse.Success("درخواست با موفقیت ارسال گردید");
-            return JsonStatusResponse.Error("درخواست شما ارسال نگردید");            
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("Request send sucessfully");
+            }
+                
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.Error("Request has not been send");            
             
         }
         #endregion
