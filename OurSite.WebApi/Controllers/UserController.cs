@@ -243,9 +243,10 @@ namespace OurSite.WebApi.Controllers
                             HttpContext.Response.StatusCode = 200;
                             return JsonStatusResponse.Error("photo has been update successfully");
                         case ResUpdate.NotFound:
-                            HttpContext.Response.StatusCode = 500;
+                            HttpContext.Response.StatusCode = 404;
                             return JsonStatusResponse.NotFound("server error");
                         default:
+                            HttpContext.Response.StatusCode = 500;
                             return JsonStatusResponse.UnhandledError();
                     }
 
