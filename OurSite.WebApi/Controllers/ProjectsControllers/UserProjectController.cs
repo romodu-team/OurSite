@@ -39,16 +39,21 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                 switch (res)
                 {
                     case ResProject.Success:
+                        HttpContext.Response.StatusCode = 200;
                         return JsonStatusResponse.Success(message: "The project has been create successfully", ReturnData: prodto);
                     case ResProject.Faild:
+                        HttpContext.Response.StatusCode = 500;
                         return JsonStatusResponse.Error("Project Create failed. Try again later.");
                     case ResProject.InvalidInput:
+                        HttpContext.Response.StatusCode = 400;
                         return JsonStatusResponse.Error("Invalid input erorr");
                     default:
-                        return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
 
                 }
             }
+            HttpContext.Response.StatusCode = 403;
             return JsonStatusResponse.Error("U must login");
             
         }
@@ -70,17 +75,23 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                 switch (remove)
                 {
                     case ResProject.Success:
+                        HttpContext.Response.StatusCode = 200;
                         return JsonStatusResponse.Success(message: "The project has been deleted successfully" , ReturnData: proId);
                     case ResProject.Error:
+                        HttpContext.Response.StatusCode = 500;
                         return JsonStatusResponse.Error("Project delete failed. Try again later.");
                     case ResProject.SitutionError:
+                        HttpContext.Response.StatusCode = 400;
                         return JsonStatusResponse.Error("Can't delete project at this time.");
                     case ResProject.NotFound:
+                        HttpContext.Response.StatusCode = 404;
                         return JsonStatusResponse.NotFound("Project not Found");
                     default:
-                        return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                        HttpContext.Response.StatusCode = 200;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
+            HttpContext.Response.StatusCode = 403;
             return JsonStatusResponse.Error("u didnt login. please login first");
 
         }
@@ -97,13 +108,14 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         {
             var res = await projectservice.GetProject(ProjectId);
             if (res is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(ReturnData: res, message: "Project find successfully");
-
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.Error("Project Not found");
         }
         #endregion
-
-
 
         #region Get project by user
         /// <summary>
@@ -117,8 +129,10 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
             var projects = await projectservice.GetAllProject(filter);
             if (projects.Projects is not null && projects.Projects.Count>0)
             {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: projects);
             }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound(message: "nist ke bekhorishi");
         }
         #endregion
