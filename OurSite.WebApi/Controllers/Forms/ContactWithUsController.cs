@@ -40,6 +40,8 @@ namespace OurSite.WebApi.Controllers.Forms
                 HttpContext.Response.StatusCode = 500;
                 return JsonStatusResponse.Error("send request failed");
             }
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.InvalidInput();
 
         }
         #endregion
@@ -57,9 +59,11 @@ namespace OurSite.WebApi.Controllers.Forms
             var contactWithUs = await contactWithUsService.GetAllContactWithUs(filter);
             if (contactWithUs.ContactWithUses is not null)
             {
-                return JsonStatusResponse.Success(message: "موفق", ReturnData: contactWithUs);
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "success", ReturnData: contactWithUs);
             }
-            return JsonStatusResponse.NotFound(message: "فرمی یافت نشد");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound(message: "from not found");
 
         }
         #endregion
@@ -69,8 +73,12 @@ namespace OurSite.WebApi.Controllers.Forms
         public async Task<IActionResult> AnswerToContactUSMessage([FromForm]string ToEmail,[FromForm]string subject,[FromForm]string Content,[FromForm]List<IFormFile>? Attachments)
         {
             var res = await contactWithUsService.AnswerToMessage(ToEmail,subject,Content,Attachments);
-            if(res)
+            if (res)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success("Email has been successfully sent");
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("The email was not sent");
         }
         #endregion
