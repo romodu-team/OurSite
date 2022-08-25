@@ -109,9 +109,13 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var res = await adminService.GetAdminById(adminId);
             if (res != null)
-                return JsonStatusResponse.Success(res, "موفق");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(res, "success");
+            }
+
             HttpContext.Response.StatusCode = 404;
-            return JsonStatusResponse.NotFound("پیدا نشد");
+            return JsonStatusResponse.NotFound("not found");
         }
         #endregion
 
@@ -127,11 +131,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             var list = await adminService.GetAllAdmin(filter);
             if (list.Admins.Any())
             {
-                return JsonStatusResponse.Success(message: "موفق", ReturnData: list);
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "success", ReturnData: list);
 
             }
-
-            return JsonStatusResponse.NotFound(message: "آدمینی پیدا نشد");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound(message: "not found");
         }
         #endregion
 
@@ -154,30 +159,39 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     switch (resProfilePhoto)
                     {
                         case resFileUploader.Failure:
-                            return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+                            HttpContext.Response.StatusCode = 500;
+                            return JsonStatusResponse.Error("photo not uploaded");
 
                         case resFileUploader.ToBig:
-                            return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
-
+                            HttpContext.Response.StatusCode = 413;
+                            return JsonStatusResponse.Error("file size is large");
                         case resFileUploader.NoContent:
-                            return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                            HttpContext.Response.StatusCode = 204;
+                            return JsonStatusResponse.Error("You didnt upload any file");
                         case resFileUploader.InvalidExtention:
-                            return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                            HttpContext.Response.StatusCode = 400;
+                            return JsonStatusResponse.Error("file format is incurrent");
                         default:
+                            HttpContext.Response.StatusCode = 500;
+                            return JsonStatusResponse.UnhandledError();
                             break;
                     }
                 }
                 switch (res)
                 {
                     case ResUpdate.Success:
-                        return JsonStatusResponse.Success("با موفقیت ویرایش شد");
+                        HttpContext.Response.StatusCode = 200;
+                        return JsonStatusResponse.Success("profile updated");
                     case ResUpdate.Error:
-                        return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.Error("update profile failed");
                     default:
-                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
-            return JsonStatusResponse.Error("اطلاعات وارد شده اشتباه است");
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.InvalidInput();
 
         }
         #endregion
