@@ -54,7 +54,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     break;
                 case ResAddRole.Exist:
                     HttpContext.Response.StatusCode = 409;
-                    return JsonStatusResponse.Error("این نقش قبلا اضافه شده است.");
+                    return JsonStatusResponse.Error("role exist");
                 default:
                     HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.UnhandledError();
@@ -122,7 +122,8 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                         return JsonStatusResponse.UnhandledError();
                 }
             }
-            return JsonStatusResponse.Error("فیلد های اجباری باید پر شوند");
+            HttpContext.Response.StatusCode = 400;
+            return JsonStatusResponse.InvalidInput();
         }
         #endregion
 
@@ -137,8 +138,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var role = await roleService.GetRoleById(RoleId);
             if (role is null)
-                return JsonStatusResponse.NotFound("نقش مورد نظر پیدا نشد");
-            return JsonStatusResponse.Success(role, "موفق");
+            {
+                HttpContext.Response.StatusCode = 404;
+                return JsonStatusResponse.NotFound("role not found");
+            }
+            HttpContext.Response.StatusCode = 200;
+            return JsonStatusResponse.Success(role, "success");
         }
         #endregion
 
@@ -153,8 +158,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var roles = await roleService.GetActiveRoles(filter);
             if (roles is null)
-                return JsonStatusResponse.NotFound("هیچ نقشی پیدا نشد");
-            return JsonStatusResponse.Success(roles, "موفق");
+            {
+                HttpContext.Response.StatusCode = 404;
+                return JsonStatusResponse.NotFound("role not found");
+            }
+            HttpContext.Response.StatusCode = 200;
+            return JsonStatusResponse.Success(roles, "success");
         }
         #endregion
 
@@ -174,18 +183,22 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             switch (res)
             {
                 case Core.DTOs.AdminDtos.ResUpdate.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success("role has been updated successfully ");
                 case Core.DTOs.AdminDtos.ResUpdate.NotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("admin not found");
-               
                 case Core.DTOs.AdminDtos.ResUpdate.Error:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("role has not been updated ");
 
                 case Core.DTOs.AdminDtos.ResUpdate.RoleNotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("role not found");
 
                 default:
-                    return JsonStatusResponse.Error("role has not been updated ");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
 
             }
         }
@@ -203,7 +216,11 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var permissions =await roleService.GetAllPermission(roleId);
             if (permissions.Any())
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(permissions, "success");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound("No permissons found");
         }
         #endregion
@@ -222,15 +239,20 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             switch (res)
             {
                 case resUpdatePermissionRole.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success("permissions of role has been updated successfully");
                 case resUpdatePermissionRole.RoleNotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("role not found");
                 case resUpdatePermissionRole.permissionNotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("one of the permissions not found");
                 case resUpdatePermissionRole.Error:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("server error");
                 default:
-                    return JsonStatusResponse.Error("server error");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
         }
         #endregion
