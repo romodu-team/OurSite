@@ -56,23 +56,10 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                 HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, admin.FirstName, admin.LastName }, "Success");
             }
-            HttpContext.Response.StatusCode = 400;
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.InvalidInput();
         }
         #endregion
-
-
-
-
-
-
-        //[Authorize]
-        //[HttpPost("logout")]
-        //public async Task<IActionResult> Logout()
-        //{
-        //    var Id = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //}
-
 
         #region Reset Password
         /// <summary>
@@ -89,10 +76,10 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                 if (res)
                 {
                     HttpContext.Response.StatusCode = 200;
-                    return JsonStatusResponse.Success("رمز عبور با موفقیت تغییر کرد");
+                    return JsonStatusResponse.Success("password has been changed successfully");
                 }
                 HttpContext.Response.StatusCode = 500;
-                return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                return JsonStatusResponse.Error("password has");
             }
             HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
@@ -120,7 +107,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
 
                 default:
                 HttpContext.Response.StatusCode = 500;
-                    return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                    return JsonStatusResponse.UnhandledError();
             }
 
         }
@@ -148,16 +135,21 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                         switch (resProfilePhoto)
                         {
                             case resFileUploader.Failure:
-                                return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+                                HttpContext.Response.StatusCode = 500;
+                                return JsonStatusResponse.Error("upload file failed");
 
                             case resFileUploader.ToBig:
-                                return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
+                                HttpContext.Response.StatusCode = 413;
+                                return JsonStatusResponse.Error("file size is large");
 
                             case resFileUploader.NoContent:
-                                return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                                HttpContext.Response.StatusCode = 204;
+                                return JsonStatusResponse.Error("profile photo empty");
                             case resFileUploader.InvalidExtention:
-                                return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                                return JsonStatusResponse.Error("file format is incurrent");
                             default:
+                                HttpContext.Response.StatusCode = 500;
+                                return JsonStatusResponse.UnhandledError();
                                 break;
                         }
                     }
@@ -166,23 +158,23 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                         
                         case ResUpdate.Success:
                         HttpContext.Response.StatusCode = 200;
-                            return JsonStatusResponse.Success("پنل کاربری شما با موفقیت ویرایش شد.");
+                            return JsonStatusResponse.Success("Profile photo changed");
                         case ResUpdate.Error:
                         HttpContext.Response.StatusCode = 500;
-                            return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
+                            return JsonStatusResponse.Error("change profile photo failed");
                         case ResUpdate.NotFound:
                         HttpContext.Response.StatusCode = 404;
-                            return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
+                            return JsonStatusResponse.NotFound("Admin not found");
                         default:
                         HttpContext.Response.StatusCode = 400;
-                            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                            return JsonStatusResponse.UnhandledError();
                     }
                 }
                 HttpContext.Response.StatusCode = 400;
-                return JsonStatusResponse.Error("فیلدهای وارد شده؛ اشتباه است");
+                return JsonStatusResponse.InvalidInput();
             }
             HttpContext.Response.StatusCode = 401;
-            return JsonStatusResponse.NotFound("توکن شما نامعتبر است . مجدد وارد شوید");
+            return JsonStatusResponse.Error("Login agian");
 
         }
         #endregion
