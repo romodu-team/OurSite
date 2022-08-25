@@ -104,9 +104,11 @@ namespace OurSite.WebApi.Controllers.Forms
             var consultationRequest = await consultationRequestService.GetAllConsultationRequest(filter);
             if (consultationRequest.ConsultationRequests is not null)
             {
-                return JsonStatusResponse.Success(message: "موفق", ReturnData: consultationRequest);
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "success", ReturnData: consultationRequest);
             }
-            return JsonStatusResponse.NotFound(message: "فرمی یافت نشد");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("consulation not found");
 
         }
         #endregion
@@ -123,10 +125,16 @@ namespace OurSite.WebApi.Controllers.Forms
         {
             var res = await consultationRequestService.GetConsulationForm(ConsultationFormId);
             if (res is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "success");
-            return JsonStatusResponse.NotFound("Consulation form not found");
+            }
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("consulation not found");
         }
         #endregion
+
+        #region change status consulations
         /// <summary>
         /// change read status of consultion form , Unread and read
         /// </summary>
@@ -135,10 +143,19 @@ namespace OurSite.WebApi.Controllers.Forms
         [HttpPut("Change-Consulation-Read-Status")]
         public async Task<IActionResult> ChangeReadStatus(long ConsulationId){
             var res= await consultationRequestService.ChangeReadStatus(ConsulationId);
-            if(res)
+            if (res)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success("The read status of the form has changed");
-            return JsonStatusResponse.Error("server error");
+            }
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("consulation not found");
         }
+        #endregion
+
+
+
+
         #endregion
     }
 }
