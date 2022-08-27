@@ -42,23 +42,18 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                 case ResAddRole.Success:
                     HttpContext.Response.StatusCode = 201;
                     return JsonStatusResponse.Success("Role added successfully");
-                    break;
                 case ResAddRole.Faild:
                     HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("Add Role failed. try agian later");
-                    break;
-
                 case ResAddRole.InvalidInput:
                     HttpContext.Response.StatusCode = 400;
                     return JsonStatusResponse.InvalidInput();
-                    break;
                 case ResAddRole.Exist:
                     HttpContext.Response.StatusCode = 409;
                     return JsonStatusResponse.Error("role exist");
                 default:
                     HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.UnhandledError();
-                    break;
             }
         }
         #endregion
