@@ -26,6 +26,7 @@ import { Card4Component } from './shared/card4/card4.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {MatSidenavModule} from '@angular/material/sidenav';
 import { Slider1Component } from './shared/slider1/slider1.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
@@ -202,7 +203,8 @@ import { FillterComponent } from './shared/fillter/fillter.component';
     MatDialogModule,
     MatIconModule,
     ReactiveFormsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSidenavModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

@@ -1,1 +1,18 @@
-<p>adminuser-header works!</p>
+<div class="w-100 bg-white px-4 d-flex " style="height: 68px;">
+        <div class="d-flex align-items-center text-secondary">
+            <img src="../../../assets/imgs/bill-gates-wealthiest-person.jpg" width="35px" class="rounded">
+            <div class="d-flex flex-column ms-3">
+                <small>خوش آمدید</small>
+                <small>سلام مبین</small>
+            </div>
+
+            <mat-icon class="ms-4" onMouseOver="this.style.color='#FFC93C'"
+            onMouseOut="this.style.color='grey'" matTooltip="ویرایش اطلاعات کاربری"
+            style="cursor:pointer">edit</mat-icon>
+
+            <mat-icon class="ms-4" (click)="authSer.logout()" style="cursor:pointer" onMouseOver="this.style.color='red'"
+            onMouseOut="this.style.color='grey'" mat-raised-button
+            matTooltip="خروج از حساب کاربری"
+            aria-label="Button that displays a tooltip when focused or hovered over">exit_to_app</mat-icon>
+        </div>
+</div>
