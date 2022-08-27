@@ -86,7 +86,7 @@ namespace OurSite.WebApi.Controllers.Forms
             }
                 
             HttpContext.Response.StatusCode = 500;
-            return JsonStatusResponse.Error("Request has not been send");            
+            return JsonStatusResponse.UnhandledError();            
             
         }
         #endregion
