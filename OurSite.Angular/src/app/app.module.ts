@@ -32,6 +32,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { Dialog1Component } from './pages/contact-us/dialog1/dialog1.component';
 import { Dialog2Component } from './pages/contact-us/dialog2/dialog2.component';
+import { LoginComponent } from './pages/login/login.component';
 
 
 import { Card5Component } from './shared/card5/card5.component';
@@ -39,68 +40,6 @@ import { DemoFormComponent } from './shared/demo-form/demo-form.component';
 import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-detail-header.component';
 
 import {MatIconModule} from '@angular/material/icon';
-import { ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './pages/login/login.component';
-import { UserComponent } from './pages/user/user.component';
-import { AuthInterceptor } from './services/auth.interceptor';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
-import { MainCardComponent } from './pages/admin/admin-dashboard/main-card/main-card.component';
-import { AdminManagmentComponent } from './pages/admin/admin-managment/admin-managment.component';
-import { AdminManagementModalComponent } from './pages/admin/admin-managment/admin-management-modal/admin-management-modal.component';
-import { AdminManagementEditComponent } from './pages/admin/admin-managment/admin-management-edit/admin-management-edit.component';
-import { AdminUserProjectComponent } from './pages/admin/admin-user-project/admin-user-project.component';
-import { AdminUserProjectModalComponent } from './pages/admin/admin-user-project/admin-user-project-modal/admin-user-project-modal.component';
-import { AdminUserProjectNewUserComponent } from './pages/admin/admin-user-project/admin-user-project-new-user/admin-user-project-new-user.component';
-import { AdminUserProjectEditUserComponent } from './pages/admin/admin-user-project/admin-user-project-edit-user/admin-user-project-edit-user.component';
-import { AdminProjectProjectComponent } from './pages/admin/admin-user-project/admin-project-project/admin-project-project.component';
-import { AdminProjectComponent } from './pages/admin/admin-project/admin-project.component';
-import { AdminProjectModalComponent } from './pages/admin/admin-project/admin-project-modal/admin-project-modal.component';
-import { AdminProjectEditComponent } from './pages/admin/admin-project/admin-project-edit/admin-project-edit.component';
-import { AdminProjectNewComponent } from './pages/admin/admin-project/admin-project-new/admin-project-new.component';
-import { AdminProjectFeaturesComponent } from './pages/admin/admin-project/admin-project-features/admin-project-features.component';
-import { AdminWorksampleComponent } from './pages/admin/admin-worksample/admin-worksample.component';
-import { AdminWorksampleCreateComponent } from './pages/admin/admin-worksample/admin-worksample-create/admin-worksample-create.component';
-import { AdminWorksampleEditComponent } from './pages/admin/admin-worksample/admin-worksample-edit/admin-worksample-edit.component';
-import { AdminWorksampleCategoryComponent } from './pages/admin/admin-worksample/admin-worksample-category/admin-worksample-category.component';
-import { AdminWorksampleCategoryCreateeditComponent } from './pages/admin/admin-worksample/admin-worksample-category/admin-worksample-category-createedit/admin-worksample-category-createedit.component';
-import { AdminCheckboxComponent } from './pages/admin/admin-checkbox/admin-checkbox.component';
-import { AdminCheckboxModalComponent } from './pages/admin/admin-checkbox/admin-checkbox-modal/admin-checkbox-modal.component';
-import { AdminRoleManagementComponent } from './pages/admin/admin-role-management/admin-role-management.component';
-import { AdminRoleManagementModalComponent } from './pages/admin/admin-role-management/admin-role-management-modal/admin-role-management-modal.component';
-import { AdminRoleManagementAccessComponent } from './pages/admin/admin-role-management/admin-role-management-access/admin-role-management-access.component';
-import { AdminPaymentComponent } from './pages/admin/admin-payment/admin-payment.component';
-import { AdminPaymentModalComponent } from './pages/admin/admin-payment/admin-payment-modal/admin-payment-modal.component';
-import { AdminTicketComponent } from './pages/admin/admin-ticket/admin-ticket.component';
-import { AdminTicketModalComponent } from './pages/admin/admin-ticket/admin-ticket-modal/admin-ticket-modal.component';
-import { AdminTicketTicketComponent } from './pages/admin/admin-ticket/admin-ticket-ticket/admin-ticket-ticket.component';
-import { AdminTicketPriovityComponent } from './pages/admin/admin-ticket/admin-ticket-priovity/admin-ticket-priovity.component';
-import { AdminTicketPriorityModalComponent } from './pages/admin/admin-ticket/admin-ticket-priovity/admin-ticket-priority-modal/admin-ticket-priority-modal.component';
-import { AdminTicketStatusComponent } from './pages/admin/admin-ticket/admin-ticket-status/admin-ticket-status.component';
-import { AdminTicketStatusModalComponent } from './pages/admin/admin-ticket/admin-ticket-status/admin-ticket-status-modal/admin-ticket-status-modal.component';
-import { AdminCounselingComponent } from './pages/admin/admin-counseling/admin-counseling.component';
-import { AdminCounselingModalComponent } from './pages/admin/admin-counseling/admin-counseling-modal/admin-counseling-modal.component';
-import { AdminCounselingCounselComponent } from './pages/admin/admin-counseling/admin-counseling-counsel/admin-counseling-counsel.component';
-import { AdminCountactComponent } from './pages/admin/admin-countact/admin-countact.component';
-import { AdminCountactCountactComponent } from './pages/admin/admin-countact/admin-countact-countact/admin-countact-countact.component';
-import { AdminCountactNewComponent } from './pages/admin/admin-countact/admin-countact-new/admin-countact-new.component';
-import { UesrDashboardComponent } from './pages/user/uesr-dashboard/uesr-dashboard.component';
-import { UesrProfileComponent } from './pages/user/uesr-profile/uesr-profile.component';
-import { UesrTicketComponent } from './pages/user/uesr-ticket/uesr-ticket.component';
-import { UserTicketModalComponent } from './pages/user/uesr-ticket/user-ticket-modal/user-ticket-modal.component';
-import { UserTicketTicketComponent } from './pages/user/uesr-ticket/user-ticket-ticket/user-ticket-ticket.component';
-import { UesrProjectComponent } from './pages/user/uesr-project/uesr-project.component';
-import { UserProjectProjectComponent } from './pages/user/uesr-project/user-project-project/user-project-project.component';
-import { UserProjectNewComponent } from './pages/user/uesr-project/user-project-new/user-project-new.component';
-import { Card8Component } from './shared/card8/card8.component';
-import { Card9Component } from './shared/card9/card9.component';
-import { Card10Component } from './shared/card10/card10.component';
-import { Card11Component } from './shared/card11/card11.component';
-import { Card12Component } from './shared/card12/card12.component';
-import { Card13Component } from './shared/card13/card13.component';
-import { AdminuserHeaderComponent } from './shared/adminuser-header/adminuser-header.component';
-import { AdminuserNavbarComponent } from './shared/adminuser-navbar/adminuser-navbar.component';
-import { FillterComponent } from './shared/fillter/fillter.component';
 
 
 @NgModule({
@@ -128,69 +67,11 @@ import { FillterComponent } from './shared/fillter/fillter.component';
     ContactUsComponent,
     Dialog1Component,
     Dialog2Component,
+    LoginComponent,
 
     Card5Component,
     DemoFormComponent,
-    DemoDetailHeaderComponent,
-    LoginComponent,
-    UserComponent,
-    AdminDashboardComponent,
-    MainCardComponent,
-    AdminManagmentComponent,
-    AdminManagementModalComponent,
-    AdminManagementEditComponent,
-    AdminUserProjectComponent,
-    AdminUserProjectModalComponent,
-    AdminUserProjectNewUserComponent,
-    AdminUserProjectEditUserComponent,
-    AdminProjectProjectComponent,
-    AdminProjectComponent,
-    AdminProjectModalComponent,
-    AdminProjectEditComponent,
-    AdminProjectNewComponent,
-    AdminProjectFeaturesComponent,
-    AdminWorksampleComponent,
-    AdminWorksampleCreateComponent,
-    AdminWorksampleEditComponent,
-    AdminWorksampleCategoryComponent,
-    AdminWorksampleCategoryCreateeditComponent,
-    AdminCheckboxComponent,
-    AdminCheckboxModalComponent,
-    AdminRoleManagementComponent,
-    AdminRoleManagementModalComponent,
-    AdminRoleManagementAccessComponent,
-    AdminPaymentComponent,
-    AdminPaymentModalComponent,
-    AdminTicketComponent,
-    AdminTicketModalComponent,
-    AdminTicketTicketComponent,
-    AdminTicketPriovityComponent,
-    AdminTicketPriorityModalComponent,
-    AdminTicketStatusComponent,
-    AdminTicketStatusModalComponent,
-    AdminCounselingComponent,
-    AdminCounselingModalComponent,
-    AdminCounselingCounselComponent,
-    AdminCountactComponent,
-    AdminCountactCountactComponent,
-    AdminCountactNewComponent,
-    UesrDashboardComponent,
-    UesrProfileComponent,
-    UesrTicketComponent,
-    UserTicketModalComponent,
-    UserTicketTicketComponent,
-    UesrProjectComponent,
-    UserProjectProjectComponent,
-    UserProjectNewComponent,
-    Card8Component,
-    Card9Component,
-    Card10Component,
-    Card11Component,
-    Card12Component,
-    Card13Component,
-    AdminuserHeaderComponent,
-    AdminuserNavbarComponent,
-    FillterComponent
+    DemoDetailHeaderComponent
 
   ],
   imports: [
