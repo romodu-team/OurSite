@@ -54,7 +54,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
                         HttpContext.Response.StatusCode = 404;
                         return JsonStatusResponse.NotFound("ticket sender not found");
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.Success:
-                        HttpContext.Response.StatusCode = 200;
+                        HttpContext.Response.StatusCode = 201;
                         return JsonStatusResponse.Success(message: "ticket has been created successfully , attachment uploaded", ReturnData: request);
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.NoContent:
                         HttpContext.Response.StatusCode = 204;
@@ -115,10 +115,13 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case ResOperation.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(message: "ticket has been deleted successfully" , ReturnData: TicketId);
                 case ResOperation.Failure:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("server error");
                 default:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.UnhandledError();
             }
         }
@@ -135,15 +138,20 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case ResOperation.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(message : "Ticket status successfully edited" , ReturnData: TicketId);
                 case ResOperation.Failure:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("server error");
                 case ResOperation.StatusNotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("status not found");
                 case ResOperation.NotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("ticket not found");
 
                 default:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.UnhandledError();
             }
         }
@@ -158,7 +166,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketService.GetTicketAssignedToAdmin(adminId, request);
             if (res.Tickets != null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "successfully");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound("No tickets found");
         }
         /// <summary>
@@ -172,7 +184,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketService.GetUserTickets(UserId, request);
             if (res.Tickets is not null && res.Tickets.Count > 0)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "successfully");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound("No tickets found");
         }
         /// <summary>
@@ -185,7 +201,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketService.GetAllTickets(request);
             if (res.Tickets != null && res.Tickets.Count > 0)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "successfully");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound("No tickets found");
         }
         /// <summary>
@@ -198,9 +218,12 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketService.GetTicket(TicketId);
             if (res is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "Success");
-            else
-                return JsonStatusResponse.NotFound("Ticket not found");
+            }
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("Ticket not found");
         }
         /// <summary>
         /// Getting reports about tickets
@@ -211,9 +234,12 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketService.TicketReport();
             if (res is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "Success");
-            else
-                return JsonStatusResponse.NotFound("ticket not found");
+            }
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("ticket not found");
         }
         /// <summary>
         /// create a discussion for a ticket
@@ -231,21 +257,29 @@ namespace OurSite.WebApi.Controllers.TicketControllers
                 switch (res.DiscussionStatus)
                 {
                     case ResOperation.notAllowed:
+                        HttpContext.Response.StatusCode = 400;
                         return JsonStatusResponse.Error("The ticket status for this operation is not allowed");
                     case ResOperation.NotFound:
+                        HttpContext.Response.StatusCode = 404;
                         return JsonStatusResponse.NotFound("ticket not found");
                     case ResOperation.UserNotFound:
+                        HttpContext.Response.StatusCode = 404;
                         return JsonStatusResponse.NotFound("User not found");
                     case ResOperation.SenderNotFound:
+                        HttpContext.Response.StatusCode = 404;
                         return JsonStatusResponse.NotFound("ticket sender not found");
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.Success:
-                        return JsonStatusResponse.Success("discussion has been created successfully , attachment uploaded");
+                        HttpContext.Response.StatusCode = 201;
+                        return JsonStatusResponse.Success(message:"discussion has been created successfully , attachment uploaded" , ReturnData: request);
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.NoContent:
-                        return JsonStatusResponse.Success("discussion has been created successfully , No attachment found");
+                        HttpContext.Response.StatusCode = 201;
+                        return JsonStatusResponse.Success(message:"discussion has been created successfully , No attachment found" , ReturnData: request);
                     case ResOperation.Failure when res.AttachmentStatus == resFileUploader.Failure:
+                        HttpContext.Response.StatusCode = 500;
                         return JsonStatusResponse.Error("server error");
                     default:
-                        return JsonStatusResponse.Error("server error while uploading attachment");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
             else
@@ -263,10 +297,13 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case ResOperation.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success("discussions has been deleted successfully");
                 case ResOperation.Failure:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("server error");
                 default:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.UnhandledError();
             }
         }
