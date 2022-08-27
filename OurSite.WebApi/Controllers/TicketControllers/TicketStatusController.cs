@@ -28,7 +28,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketStatusService.CreateStatus(title, name);
             if (res)
-                return JsonStatusResponse.Success(message:"ticket Status has been created successfully" , ReturnData: title);
+            {
+                HttpContext.Response.StatusCode = 201;
+                return JsonStatusResponse.Success(message: "ticket Status has been created successfully", ReturnData: title);
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("ticket Status was not created");
         }
         /// <summary>
@@ -43,13 +47,17 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(message:"ticket Status has been deleted successfully" , ReturnData: StatusId);
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Failure:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("ticket Status was not deleted");
                 case Core.DTOs.TicketDtos.ResDeleteOpration.RefrenceError:
+                    HttpContext.Response.StatusCode = 409;
                     return JsonStatusResponse.Error("You cannot delete this Status because there is an existing ticket with this Status");
                 default:
-                    return JsonStatusResponse.Error("ticket Status was not deleted");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
         }
         /// <summary>
@@ -62,7 +70,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketStatusService.GetStatus(StatusId);
             if (res is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "successfull");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.Error("ticket Status not found");
         }
         /// <summary>
@@ -77,7 +89,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketStatusService.UpdateStatus(StatusId, title, name);
             if (res)
-                return JsonStatusResponse.Success(message: "ticket Status has been updated successfully" , ReturnData: StatusId);
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "ticket Status has been updated successfully", ReturnData: StatusId);
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("ticket Status was not updated");
         }
         /// <summary>
@@ -89,7 +105,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketStatusService.GetAllStatus();
             if (res is not null && res.Count > 0)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "successfull");
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("no ticket Status found");
         }
     }
