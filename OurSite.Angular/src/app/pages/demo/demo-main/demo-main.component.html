@@ -5,14 +5,14 @@
     <div style="color: gray;" class="p-5">
       <div>
         <p style="font-size: small;">نمونه کارها شامل لینک هستند و شما می توانید به صورت انلاین آت ها را مشاهده کنید.</p>
-        <div class="shadow d-flex justify-content-around rounded p-2 bg-white">
+        <div class="shadow d-flex justify-content-around rounded p-4 bg-white">
           <label for="" class="ms-4">سایت های آنلاین</label>
           <mat-slide-toggle></mat-slide-toggle>
         </div>
       </div>
       <div class="mt-4">
         <p class="mt-2">مشاهده بر اساس</p>
-        <div class="shadow d-flex flex-column rounded bg-white">
+        <div class="shadow d-flex flex-column rounded bg-white py-3">
           <div class="d-flex justify-content-around rounded p-2 bg-white">
             <label for="" class="ms-4">زمان</label>
             <mat-slide-toggle></mat-slide-toggle>
@@ -31,7 +31,7 @@
       </div>
       <div>
 
-        <div class="mt-5">
+        <div class="mt-4 shadow">
             <mat-accordion (click)="openPannel()">
               <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" style="color: gray;">
                 <mat-expansion-panel-header>
@@ -55,8 +55,8 @@
 
 
 
-    <div class="my-5 col-9">
-      <h4 class="text-secondary mb-5">نمونه کار طراحی سایت</h4>
+    <div class="col-9">
+      <h4 class="text-secondary my-5">نمونه کار طراحی سایت</h4>
       <app-card4 *ngFor="let card of cards$|async" [title]="card.title" [like]="card.like" [siteLink]="card.url">
       </app-card4>
     </div>

@@ -12,9 +12,18 @@ export class Card4Component implements OnInit {
   ngOnInit(): void {
   }
 
+  CardHover:string = 'shadow-sm'
+
   @Input() url:string = '../../../assets/imgs/Logo-Nicode copy-fin3.png'
   @Input() title:string = 'تیم سیپا'
   @Input() siteLink:string = 'www.nicode.com'
   @Input() like:string = '999'
+
+  cardHover(){
+    this.CardHover = 'shadow'
+  }
+  cardOffHover(){
+    this.CardHover = 'shadow-sm'
+  }
 
 }

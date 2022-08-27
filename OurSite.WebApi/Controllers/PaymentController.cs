@@ -115,7 +115,6 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="paydto"></param>
         /// <returns></returns>
-        [Authorize]
         [HttpPost("create-payment-by-admin")]
          public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto prodto)
          {

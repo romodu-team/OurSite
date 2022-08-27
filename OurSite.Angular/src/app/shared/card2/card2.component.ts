@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-card2',
@@ -19,14 +19,28 @@ export class Card2Component implements OnInit {
   showDiscription:boolean = false
   arrowAnimation:string = 'cancle-arrow-animation'
   arrowLabel:string = 'show-arrow-label'
+  cardShadow:string = 'shadow-sm'
+
+  @Output() @Input() selected:boolean = false
+
+  shadow(){
+    this.cardShadow = 'shadow-lg'
+  }
+
+  inShadow(){
+    this.cardShadow = 'shadow-sm'
+  }
   
   
   onSelect(){
     if(this.select == 'bg-white text-black'){
       this.select = 'bg-success text-white'
+      this.selected = true
     }else{
       this.select = 'bg-white text-black'
+      this.selected = false
     }
+    // console.log(this.selected);
   }
 
   onDiscription(){
@@ -38,6 +52,5 @@ export class Card2Component implements OnInit {
       this.arrowAnimation = 'cancle-arrow-animation'
       this.arrowLabel = 'show-arrow-label'
     }
-
   }
 }

@@ -19,18 +19,20 @@ export class Card1Component implements OnInit {
   CardHover:string = 'bg-white'
   textHover:string = 'text-black'
   lineHover:string = 'background-color:rgb(254, 159, 18);'
+  shadowHover:string = 'shadow-sm'
 
 
   cardHover(){
     this.CardHover = 'bg-primary'
     this.textHover = 'text-white'
     this.lineHover = 'background-color:white;'
+    this.shadowHover = 'shadow-lg'
   }
 
   cardInHover(){
     this.CardHover = 'bg-white'
     this.textHover = 'text-black'
     this.lineHover = 'background-color:rgb(254, 159, 18);'
-
+    this.shadowHover = 'shadow-sm'
   }
 }

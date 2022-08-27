@@ -1,3 +1,4 @@
+@import url('./assets/fonts/Vazirmatn-font-face.css');
 .btn-primary{
     background-color: #FFC93C;
     border: #FFC93C;
@@ -75,7 +76,15 @@ body{
 }
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Vazirmatn !important; }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; }
+.my-lg{
+    margin: 6rem 0 6rem 0;
+}
+.mt-lg{
+    margin-top: 6rem;
+}
+.mb-lg{
+    margin-bottom: 6rem;
+}
+

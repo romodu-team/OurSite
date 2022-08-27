@@ -8,9 +8,9 @@ using OurSite.OurSite.DataLayer.Entities.WorkSamples;
 namespace OurSite.OurSite.Core.Services.Repositories;
 public class WorkSampleCategoryService : IWorkSampleCategoryService
 {
-    private IGenericReopsitories<WorkSampleInCategory> _WorkSampleInCategoryReopsitory;
-    private IGenericReopsitories<WorkSampleCategory> _WorkSampleCategoryRepository;
-    public WorkSampleCategoryService(IGenericReopsitories<WorkSampleInCategory> WorkSampleInCategoryReopsitory,IGenericReopsitories<WorkSampleCategory> WorkSampleCategoryRepository)
+    private IGenericRepository<WorkSampleInCategory> _WorkSampleInCategoryReopsitory;
+    private IGenericRepository<WorkSampleCategory> _WorkSampleCategoryRepository;
+    public WorkSampleCategoryService(IGenericRepository<WorkSampleInCategory> WorkSampleInCategoryReopsitory,IGenericRepository<WorkSampleCategory> WorkSampleCategoryRepository)
     {
         _WorkSampleCategoryRepository=WorkSampleCategoryRepository;
         _WorkSampleInCategoryReopsitory=WorkSampleInCategoryReopsitory;

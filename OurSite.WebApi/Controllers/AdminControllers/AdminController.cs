@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs;
@@ -135,13 +136,13 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPut("update-admin-profile")]
-        public async Task<IActionResult> UpdateAdminBySelf([FromBody] ReqUpdateAdminDto req)
+        public async Task<IActionResult> UpdateAdminBySelf([FromForm] ReqUpdateAdminDto req)
         {
             if (User.Identity.IsAuthenticated)
             {
                 if (ModelState.IsValid)
                 {
-                    var Adminid = User.FindFirst(ClaimTypes.NameIdentifier);
+                    var Adminid = User.FindFirst(ClaimTypes.Sid);
                     var res = await adminService.UpdateAdmin(req, Convert.ToInt64(Adminid.Value));
                     if (req.ProfilePhoto != null)
                     {

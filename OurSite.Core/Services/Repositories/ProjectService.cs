@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using System;
 using Microsoft.EntityFrameworkCore;
 using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.CheckBoxDtos;
@@ -12,22 +13,29 @@ using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.Projects;
 using OurSite.DataLayer.Interfaces;
 using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
+using OurSite.Core.Services.Interfaces.Mail;
+using OurSite.Core.DTOs.NotificationDtos;
+using OurSite.Core.DTOs.MailDtos;
 
 namespace OurSite.Core.Services.Repositories
 {
     public class ProjectService : IProject
     {
         #region Cons&Dis
-        private IGenericReopsitories<Project> ProjectsRepository;
-        private IGenericReopsitories<CheckBoxs> CheckBoxRepository;
-        private IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository;
+        private IGenericRepository<Project> ProjectsRepository;
+        private IGenericRepository<CheckBoxs> CheckBoxRepository;
+        private IGenericRepository<SelectedProjectPlan> SelectedProjectRepository;
         private IUserService UserService;
-        public ProjectService(IGenericReopsitories<SelectedProjectPlan> SelectedProjectRepository,IGenericReopsitories<Project> ProjectsRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository, IUserService userService)
+        private INotificationService _notificationService;
+        private IMailService _mailService;
+        public ProjectService(IMailService mailService,INotificationService notificationService,IGenericRepository<SelectedProjectPlan> SelectedProjectRepository,IGenericRepository<Project> ProjectsRepository,IGenericRepository<CheckBoxs> CheckBoxRepository, IUserService userService)
         {
             this.ProjectsRepository = ProjectsRepository;
             this.CheckBoxRepository=CheckBoxRepository;
             this.SelectedProjectRepository=SelectedProjectRepository;
             this.UserService = userService;
+            _notificationService=notificationService;
+            _mailService=mailService;
         }
 
         public void Dispose()
@@ -225,7 +233,6 @@ namespace OurSite.Core.Services.Repositories
                     ProjectsQuery = ProjectsQuery.Where(x => x.Type == ProType.Appliction);
                     break;
                 case ProType.All:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity();
                     break;
                 default:
                     break;
@@ -240,7 +247,6 @@ namespace OurSite.Core.Services.Repositories
                     ProjectsQuery = ProjectsQuery.Where(x => x.IsRemove == false);
                     break;
                 case ProjectRemoveFilter.All:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity();
                     break;
                 default:
                     break;
@@ -263,7 +269,6 @@ namespace OurSite.Core.Services.Repositories
                     ProjectsQuery = ProjectsQuery.Where(x => x.Situation == situations.End);
                     break;
                 case situations.All:
-                    ProjectsQuery = ProjectsRepository.GetAllEntity();
                     break;
                 default:
                     break;
@@ -329,11 +334,18 @@ namespace OurSite.Core.Services.Repositories
             {
                 case resFileUploader.Success:
                     //save filename in database
+                    if (Project.ContractFileName != null)
+                        FileUploader.DeleteFile(PathTools.ContractUploadPath + "\\" + Project.ContractFileName);
                     Project.ContractFileName = resUpload.FileName;
                     try
                     {
                         ProjectsRepository.UpDateEntity(Project);
                         await ProjectsRepository.SaveEntity();
+                        //send notification and email to User
+                        var user =await UserService.GetUserById(Project.UserId);
+                        await _notificationService.CreateNotification(new ReqCreateNotificationDto{AccountUUID=user.UUID,Message=$"قرارداد جدید برای پروژه شماره  {Project.Id} ثبت شد."});
+                        if(user.Email != null)
+                            await _mailService.SendEmailAsync(new MailRequestDto{ToEmail=user.Email,Subject=$"قرارداد جدید برای پروژه شماره  {Project.Id} ثبت شد.",Body="متن اپلود قرارداد",Attachments=null});
                         return resUploadContract.Success;
                     }
                     catch (System.Exception)

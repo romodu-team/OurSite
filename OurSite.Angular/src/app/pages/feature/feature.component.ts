@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Observable , of } from 'rxjs';
+import { Card2Component } from 'src/app/shared/card2/card2.component';
 
 @Component({
   selector: 'app-feature',
@@ -17,46 +18,64 @@ export class FeatureComponent implements OnInit {
   chengCardStyle(){
     this.flag = !this.flag
   }
+
+  selectedOptions = new Set()
+
   
   Cards$:Observable<any[]> = of(
     [
       {
-        title:'lkjl.f',
+        title:'طراحی اقتصادی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'طراحی گرافیکی',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'هدر',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'فوتر',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'تیکت',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'دسترسی بالا',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'فروشگاه',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'بازی آنلاین',
         discription:'k,jgcqwuegdique'
       },
       {
-        title:'lkjl.f',
+        title:'پشتیبانی',
         discription:'k,jgcqwuegdique'
       },
     ]
   )
+
+  addFeature(title:string, discription:string){
+
+    if(!this.selectedOptions.has(title)){
+      this.selectedOptions.add(title)
+    }else{
+      this.selectedOptions.delete(title)
+    }
+    console.log(this.selectedOptions);
+  }
+
+  reset(){
+    this.selectedOptions.clear()
+    window.location.reload()
+  }
 
 }

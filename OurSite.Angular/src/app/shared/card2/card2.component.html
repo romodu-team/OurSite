@@ -1,18 +1,19 @@
 <div class="w-100  p-4 shadow rounded" dir="rtl" 
-style="transition: .3s ease-in-out;cursor: pointer; position: relative;" [class]="select">
+style="transition: .3s ease-in-out;cursor: pointer; position: relative;" [ngClass]="[select , cardShadow]"
+(mouseenter)="shadow()" (mouseleave)="inShadow()">
     <div (click)="onSelect()">
-        <div class="d-flex me-4" *ngIf="!showDiscription" >
+        <div class="d-flex me-4 alighn-items-center" *ngIf="!showDiscription" >
             <!-- <i class="fa fa-solid fa-list" style="font-size: 40px;"></i> -->
             <mat-icon style="font-size: 50px;">laptop_chromebook</mat-icon>
-            <h2 class="mx-3">{{ title }}</h2>
+            <h4 class="mx-3 mt-2 fw-normal">{{ title }}</h4>
         </div>
     
         <div class="my-4" *ngIf="!showDiscription">
-            <p>{{ discription }}</p>
+            <p class="fw-light">{{ discription }}</p>
         </div>
     
         <div *ngIf="showDiscription" style="max-height: 120px;overflow: hidden;">
-        <p>{{ more }}</p>
+        <p class="fw-light">{{ more }}</p>
         </div>
     </div>
 

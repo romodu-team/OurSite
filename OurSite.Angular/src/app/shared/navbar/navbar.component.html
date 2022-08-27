@@ -3,18 +3,28 @@
             style="background-color: transparent; position: absolute;" *ngIf="!dark">
     <div class="d-flex justify-content-center align-items-center">
         <img src="../../../assets/imgs/Logo-Nicode copy-fin3.png" alt="" width="65px">
-        <h4 class="mx-4"> تیــم نیــکد</h4>
+        <h4 class="mx-4 mt-3"> تیــم نیــکد</h4>
     </div>
-    <div class="d-flex justify-content-between align-items-center col-5">
+    <div class="d-flex justify-content-between align-items-center mt-3 col-5">
         <p [routerLink]="['/']">صفحه اصلی</p>
         <p [routerLink]="['/demo']">نمونه کارها</p>
         <p [routerLink]="['/feature']">امکانات</p>
         <p [routerLink]="['/about']">درباره ما</p>
         <p [routerLink]="['/contact']">تماس باما</p>
     </div>
-    <div class="d-flex justify-content-around align-items-center">
-        <button class="btn btn-primary mx-3">عضویت</button>
-        <button class="btn btn-outline-primary">ورود</button>
+    <div class="d-flex justify-content-around align-items-center" *ngIf="!authSer.userLoggedIn">
+        <button class="btn btn-primary mx-3" [routerLink]="['/login']">عضویت</button>
+        <button class="btn btn-outline-primary" [routerLink]="['/login']">ورود</button>
+    </div>
+
+    <div class="d-flex justify-content-around align-items-center" *ngIf="authSer.userLoggedIn">
+        <mat-icon class="ms-4" (click)="authSer.logout()" style="cursor:pointer" onMouseOver="this.style.color='red'"
+        onMouseOut="this.style.color='white'" mat-raised-button
+        matTooltip="خروج از حساب کاربری"
+        aria-label="Button that displays a tooltip when focused or hovered over">exit_to_app</mat-icon>
+        <mat-icon [routerLink]="['/user']" style="cursor:pointer" mat-raised-button
+        [matTooltip]="name"
+        aria-label="Button that displays a tooltip when focused or hovered over">account_circle</mat-icon>
     </div>
 </div>
 
@@ -24,18 +34,28 @@
                 w-100 text-white container " dir="rtl" style="background-color: transparent;">
         <div class="d-flex justify-content-center align-items-center">
             <img src="../../../assets/imgs/Logo-Nicode copy-fin3.png" alt="" width="65px">
-            <h4 class="mx-4"> تیــم نیــکد</h4>
+            <h4 class="mx-4 mt-3"> تیــم نیــکد</h4>
         </div>
-        <div class="d-flex justify-content-between align-items-center col-5">
+        <div class="d-flex justify-content-between align-items-center mt-3 col-5">
             <p [routerLink]="['/']">صفحه اصلی</p>
             <p [routerLink]="['/demo']">نمونه کارها</p>
             <p [routerLink]="['/feature']">امکانات</p>
             <p [routerLink]="['/about']">درباره ما</p>
             <p [routerLink]="['/contact']">تماس باما</p>
         </div>
-        <div class="d-flex justify-content-around align-items-center">
-            <button class="btn btn-primary mx-3">عضویت</button>
-            <button class="btn btn-outline-primary">ورود</button>
+        <div class="d-flex justify-content-around align-items-center" *ngIf="!authSer.userLoggedIn">
+            <button class="btn btn-primary mx-3" [routerLink]="['/login']">عضویت</button>
+            <button class="btn btn-outline-primary" [routerLink]="['/login']">ورود</button>
+        </div>
+
+        <div class="d-flex justify-content-around align-items-center" *ngIf="authSer.userLoggedIn">
+            <mat-icon class="ms-4" (click)="authSer.logout()" style="cursor:pointer;" onMouseOver="this.style.color='red'"
+            onMouseOut="this.style.color='white'" mat-raised-button
+            matTooltip="خروج از حساب کاربری"
+            aria-label="Button that displays a tooltip when focused or hovered over">exit_to_app</mat-icon>
+            <mat-icon [routerLink]="['/user']" style="cursor:pointer" mat-raised-button
+            [matTooltip]="name"
+            aria-label="Button that displays a tooltip when focused or hovered over">account_circle</mat-icon>
         </div>
     </div>
 </div>

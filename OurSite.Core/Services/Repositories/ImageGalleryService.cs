@@ -12,9 +12,9 @@ namespace OurSite.Core.Services.Repositories;
 
 public class ImageGalleryService : IimageGalleryService
 {
-    private IGenericReopsitories<ImageGallery> ImageGalleryRepository;
-    private IGenericReopsitories<WorkSample> WorkSampleRepository;
-    public ImageGalleryService(IGenericReopsitories<WorkSample> WorkSampleRepository,IGenericReopsitories<ImageGallery> ImageGalleryRepository)
+    private IGenericRepository<ImageGallery> ImageGalleryRepository;
+    private IGenericRepository<WorkSample> WorkSampleRepository;
+    public ImageGalleryService(IGenericRepository<WorkSample> WorkSampleRepository,IGenericRepository<ImageGallery> ImageGalleryRepository)
     {
         this.ImageGalleryRepository=ImageGalleryRepository;
         this.WorkSampleRepository=WorkSampleRepository;
@@ -79,19 +79,20 @@ public class ImageGalleryService : IimageGalleryService
       
     }
 
-    public async Task<ResDeleteImage> DeleteImageFromGallery(long ImageId)
+    public async Task<ResDeleteFile> DeleteImageFromGallery(long ImageId)
     {
         //check if image is exist
         var image = await ImageGalleryRepository.GetEntity(ImageId);
         if(image is null)
-            return ResDeleteImage.NotFound;
+            return ResDeleteFile.NotFound;
         //check if image successfully deleted
+        FileUploader.DeleteFile(PathTools.ImageGallery + "\\" + image.ImageName);
         bool res = await ImageGalleryRepository.DeleteEntity(image.Id);
         if(res){
             await ImageGalleryRepository.SaveEntity();
-            return ResDeleteImage.Success;
+            return ResDeleteFile.Success;
         }
-        return ResDeleteImage.Faild;
+        return ResDeleteFile.Faild;
     }
 
 

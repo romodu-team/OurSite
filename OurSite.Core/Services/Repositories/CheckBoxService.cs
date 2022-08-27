@@ -13,10 +13,10 @@ namespace OurSite.Core.Services.Repositories;
 public class CheckBoxService : ICheckBoxService
 {
     #region Constructor
-    private IGenericReopsitories<CheckBoxs> _CheckBoxRepository;
-    private IGenericReopsitories<ItemSelected> _ConsultionItemSelectedRepository;
-    private IGenericReopsitories<SelectedProjectPlan> _SelectedProjectPlanRepository;
-    public CheckBoxService(IGenericReopsitories<ItemSelected> ConsultionItemSelectedRepository,IGenericReopsitories<SelectedProjectPlan> SelectedProjectPlanRepository,IGenericReopsitories<CheckBoxs> CheckBoxRepository)
+    private IGenericRepository<CheckBoxs> _CheckBoxRepository;
+    private IGenericRepository<ItemSelected> _ConsultionItemSelectedRepository;
+    private IGenericRepository<SelectedProjectPlan> _SelectedProjectPlanRepository;
+    public CheckBoxService(IGenericRepository<ItemSelected> ConsultionItemSelectedRepository,IGenericRepository<SelectedProjectPlan> SelectedProjectPlanRepository,IGenericRepository<CheckBoxs> CheckBoxRepository)
     {
         _CheckBoxRepository=CheckBoxRepository;
         _ConsultionItemSelectedRepository=ConsultionItemSelectedRepository;
@@ -83,9 +83,9 @@ public class CheckBoxService : ICheckBoxService
         _SelectedProjectPlanRepository.Dispose();
     }
 
-    public async Task<List<CheckBoxDto>> GetAllCheckBox()
+    public async Task<List<CheckBoxDto>> GetAllCheckBox(string sectionId)
     {
-        var CheckBoxs = await _CheckBoxRepository.GetAllEntity().Where(p => p.IsRemove == false).Select(p=>new CheckBoxDto {Title=p.CheckBoxName,Description=p.Description,IconName=p.IconName,Id=p.Id,SiteSectionName=p.sectionName == section.ConsultationForm?"فرم مشاوره":"پروژه"}).ToListAsync();
+        var CheckBoxs = await _CheckBoxRepository.GetAllEntity().Where(p => p.IsRemove == false && p.sectionName==(section)Convert.ToInt32(sectionId) ).Select(p=>new CheckBoxDto {Title=p.CheckBoxName,Description=p.Description,IconName=p.IconName,Id=p.Id,SiteSectionName=p.sectionName == section.ConsultationForm?"فرم مشاوره":"پروژه"}).ToListAsync();
             return CheckBoxs;
     }
 

@@ -1,8 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using OurSite.Core.DTOs.MailDtos;
+using OurSite.Core.DTOs.NotificationDtos;
 using OurSite.Core.DTOs.Paging;
 using OurSite.Core.DTOs.Payment;
 using OurSite.Core.DTOs.ProjectDtos;
+using OurSite.Core.Services.Interfaces;
+using OurSite.Core.Services.Interfaces.Mail;
 using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.DataLayer.Entities.Accounts;
@@ -16,14 +20,20 @@ namespace OurSite.Core.Services.Repositories
     public class PaymentService : IPayment
     {
         #region Cus&Dis
-        private IGenericReopsitories<Payment> PaymentRepositories;
-        private IGenericReopsitories<Admin> AdminRepositories;
-        private IGenericReopsitories<Project> ProjectRepositories;
-        public PaymentService(IGenericReopsitories<Payment> PaymentRepositories, IGenericReopsitories<Admin> AdminRepositories, IGenericReopsitories<Project> ProjectRepositories)
+        private IGenericRepository<Payment> PaymentRepositories;
+        private IGenericRepository<Admin> AdminRepositories;
+        private IGenericRepository<Project> ProjectRepositories;
+        private INotificationService _notificationService;
+        private IMailService _mailService;
+        private IUserService _userService;
+        public PaymentService(IUserService userService, IGenericRepository<Payment> PaymentRepositories, IGenericRepository<Admin> AdminRepositories, IGenericRepository<Project> ProjectRepositories, IMailService mailService, INotificationService notificationService)
         {
+            _userService = userService;
             this.PaymentRepositories = PaymentRepositories;
             this.AdminRepositories = AdminRepositories;
             this.ProjectRepositories = ProjectRepositories;
+            _mailService = mailService;
+            _notificationService = notificationService;
         }
 
         public void Dispose()
@@ -178,6 +188,10 @@ namespace OurSite.Core.Services.Repositories
                     {
                         await PaymentRepositories.AddEntity(pay);
                         await PaymentRepositories.SaveEntity();
+                        var account =await _userService.GetUserById(project.UserId);
+                        await _notificationService.CreateNotification(new ReqCreateNotificationDto { AccountUUID = account.UUID, Message = $"فاکتور جدید برای پروژه {project.Name} ایجاد شد . شماره فاکتور {pay.Id}" });
+                        if (account.Email != null)
+                            await _mailService.SendEmailAsync(new MailRequestDto { ToEmail = account.Email, Subject = $"فاکتور جدید برای پروژه {project.Name} ایجاد شد . شماره فاکتور {pay.Id}", Body = $"{pay.Id}\t{pay.Titel}\t{pay.Description}\t{pay.Price}\t{pay.status.Value}" });
                         return ResProject.Success; //pay added
 
                     }

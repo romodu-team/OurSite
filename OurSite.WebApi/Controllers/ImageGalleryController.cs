@@ -67,11 +67,11 @@ public class ImageGalleryController:Controller
         var result = await imageGalleryService.DeleteImageFromGallery(ImageId);
         switch (result)
         {
-            case ResDeleteImage.Success:
+            case ResDeleteFile.Success:
                 return JsonStatusResponse.Success("image has been successfully Deleted");
-            case ResDeleteImage.NotFound:
+            case ResDeleteFile.NotFound:
                 return JsonStatusResponse.Error("image not found");
-            case ResDeleteImage.Faild:
+            case ResDeleteFile.Faild:
                 return JsonStatusResponse.Error("server error");
 
 

@@ -4,6 +4,8 @@ namespace OurSite.Core.DTOs.AdminDtos
     public class GetAllAdminDto
     {
         public long AdminId { get; set; }
+        public Guid UUID { get; set; }
+
         public string UserName { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }
