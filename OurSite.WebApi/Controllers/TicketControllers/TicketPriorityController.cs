@@ -28,7 +28,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketPriorityService.CreatePriority(title, name);
             if (res)
-                return JsonStatusResponse.Success(message:"ticket Priority has been created successfully" , ReturnData: title);
+            {
+                HttpContext.Response.StatusCode = 201;
+                return JsonStatusResponse.Success(message: "ticket Priority has been created successfully", ReturnData: title);
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("ticket Priority was not created");
         }
         /// <summary>
@@ -43,13 +47,17 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(message:"ticket Priority has been deleted successfully" , ReturnData: PriorityId);
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Failure:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("ticket Priority was not deleted");
                 case Core.DTOs.TicketDtos.ResDeleteOpration.RefrenceError:
+                    HttpContext.Response.StatusCode = 409;
                     return JsonStatusResponse.Error("You cannot delete this priority because there is an existing ticket with this priority");
                 default:
-                    return JsonStatusResponse.Error("ticket Priority was not deleted");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
             
             
@@ -64,9 +72,15 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketPriorityService.GetPriority(PriorityId);
             if (res is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "successfull");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.Error("ticket Priority not found");
         }
+
+
         /// <summary>
         /// update ticket Priority , title and name are optional
         /// </summary>
@@ -79,8 +93,12 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketPriorityService.UpdatePriority(PriorityId, title, name);
             if (res)
-                return JsonStatusResponse.Success(message:"ticket Priority has been updated successfully", ReturnData: PriorityId);
-            return JsonStatusResponse.Error("ticket Priority was not updated");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "ticket Priority has been updated successfully", ReturnData: PriorityId);
+            }
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.UnhandledError();
         }
         /// <summary>
         /// get list of ticket Priorities
@@ -91,7 +109,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketPriorityService.GetAllPriority();
             if (res is not null && res.Count > 0)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "successfull");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.Error("no ticket Priority found");
         }
     }

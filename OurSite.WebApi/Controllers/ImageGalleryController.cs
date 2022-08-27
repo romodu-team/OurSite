@@ -38,24 +38,34 @@ public class ImageGalleryController:Controller
         switch (result)
         {
             case ResAddImageToGallery.Success:
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(message:"image has been successfully added" , ReturnData: await imageGalleryService.ReturnImageAdress(request.WorkSampleId));
             case ResAddImageToGallery.ToBig:
+                HttpContext.Response.StatusCode = 413;
                 return JsonStatusResponse.Error("image size is too big");
             case ResAddImageToGallery.Failure:
+                HttpContext.Response.StatusCode = 500;
                 return JsonStatusResponse.Error("server error");
             case ResAddImageToGallery.InvalidExtention:
+                HttpContext.Response.StatusCode = 400;
                 return JsonStatusResponse.Error("image extention file is invalid");
             case ResAddImageToGallery.NoContent:
+                HttpContext.Response.StatusCode = 204;
                 return JsonStatusResponse.Error("image file not found");
             case ResAddImageToGallery.worksampleNotFound:
+                HttpContext.Response.StatusCode = 404;
                 return JsonStatusResponse.Error("worksample not found");
             case ResAddImageToGallery.SiteSectionNotValid:
+                HttpContext.Response.StatusCode = 400;
                 return JsonStatusResponse.Error("Site Section is Not Valid");
 
             default:
-                return JsonStatusResponse.Error("server error");
+                HttpContext.Response.StatusCode = 500;
+                return JsonStatusResponse.UnhandledError();
         }
     }
+
+
     /// <summary>
     /// Delete a image from a site section by image id(its not physical delete)
     /// </summary>
@@ -68,18 +78,25 @@ public class ImageGalleryController:Controller
         switch (result)
         {
             case ResDeleteFile.Success:
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(message:"image has been successfully Deleted", ReturnData: ImageId);
             case ResDeleteFile.NotFound:
+                HttpContext.Response.StatusCode = 404;
                 return JsonStatusResponse.Error("image not found");
             case ResDeleteFile.Faild:
+                HttpContext.Response.StatusCode = 500;
                 return JsonStatusResponse.Error("server error");
 
 
 
             default:
-                return JsonStatusResponse.Error("server error");
+                HttpContext.Response.StatusCode = 500;
+                return JsonStatusResponse.UnhandledError();
         }
     }
+
+
+
     /// <summary>
     /// Get all the active images of a section of the site by section Id
     /// return list of images
@@ -92,11 +109,18 @@ public class ImageGalleryController:Controller
     {
         if(section==SiteSections.WorkSamples){
             var result = await imageGalleryService.GetActiveGalleryByWorkSampleId(SectionId);
-            if(result.Any())
-                return JsonStatusResponse.Success(result,"successfull");
+            if (result.Any())
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(result, "successfull");
+            }
             else
+            {
+                HttpContext.Response.StatusCode = 404;
                 return JsonStatusResponse.Error("there is no image");
+            }
         }
+        HttpContext.Response.StatusCode = 400;
         return JsonStatusResponse.Error("site section invalid");
     }
 }

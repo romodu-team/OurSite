@@ -50,19 +50,21 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                     await _notificationService.CreateNotification(new ReqCreateNotificationDto { AccountUUID = user.UUID, Message = $"پروژه جدید با نام {prodto.Name}برای شما ایجاد شد" });
                     if (user.Email != null)
                         await _mailService.SendEmailAsync(new MailRequestDto { ToEmail = user.Email, Subject = $"پروژه جدید با نام {prodto.Name}برای شما ایجاد شد", Body = "جزییات پروژه" });
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(message: "Project creat sucessfully" , ReturnData: prodto);
                 case ResProject.Faild:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("Project creat Faild");
                 case ResProject.InvalidInput:
+                    HttpContext.Response.StatusCode = 400;
                     return JsonStatusResponse.Error("Fileds cant be empty");
                 default:
-                    return JsonStatusResponse.Error("Project creat Faild. Try agian later.");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
                     
             }
         }
         #endregion
-
-
 
         #region Edit Project
         /// <summary>
@@ -77,18 +79,20 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
             switch (res)
             {
                 case ResProject.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(message:"The project has been updated successfully" , ReturnData: prodto);
                 case ResProject.Faild:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("Project update failed. Try again ‌later.");
                 case ResProject.NotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.Error("Invalid input");
                 default:
-                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
         }
         #endregion
-
-
 
         #region Delete project
         /// <summary>
@@ -105,20 +109,24 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
                 switch (remove)
                 {
                     case ResProject.Success:
+                        HttpContext.Response.StatusCode = 200;
                         return JsonStatusResponse.Success(message: "The project has been deleted successfully" , ReturnData: ProId);
                     case ResProject.Error:
+                        HttpContext.Response.StatusCode = 500;
                         return JsonStatusResponse.Error("Project delete failed. Try again later.");
                     case ResProject.NotFound:
+                        HttpContext.Response.StatusCode = 404;
                         return JsonStatusResponse.NotFound("Project not Found");
                     default:
-                        return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
+            HttpContext.Response.StatusCode = 403;
             return JsonStatusResponse.Error("u didnt login. please login first");
 
         }
         #endregion
-
 
         #region View project
         /// <summary>
@@ -131,12 +139,14 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         {
             var res = await projectservice.GetProject(ProjectId);
             if (res is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(ReturnData: res, message: "Project find successfully");
-
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.Error("Project Not found");
         }
         #endregion
-
 
         #region Upload contract File
         /// <summary>
@@ -153,21 +163,28 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
             switch (res)
             {
                 case resUploadContract.Success:
-                   var contract = await projectservice.ReturnContract(request.ProjectId);
+                    HttpContext.Response.StatusCode = 200;
+                    var contract = await projectservice.ReturnContract(request.ProjectId);
                     return JsonStatusResponse.Success(message: "contract file uploaded successfully" , ReturnData: contract);
                 case resUploadContract.projectNotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("project not found");
                 case resUploadContract.FileNotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.NotFound("contract file not found");
                 case resUploadContract.Error:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("server error");
                 case resUploadContract.TooBig:
+                    HttpContext.Response.StatusCode = 413;
                     return JsonStatusResponse.Error("contract file is very big");
                 case resUploadContract.FileExtentionError:
+                    HttpContext.Response.StatusCode = 409;
                     return JsonStatusResponse.Error("contract file extention invalid");
 
                 default:
-                    return JsonStatusResponse.Error("server error");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
         }
 
@@ -185,8 +202,10 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
             var projects = await projectservice.GetAllProject(filter);
             if (projects.Projects is not null && projects.Projects.Count > 0)
             {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: projects);
             }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound(message: "nist ke bekhorishi");
         }
         #endregion

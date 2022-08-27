@@ -17,6 +17,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         }
 
         #endregion
+       
         /// <summary>
         /// create a category for tickets
         /// </summary>
@@ -28,9 +29,17 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketCategoryService.CreateCategory(title, name);
             if (res)
-                return JsonStatusResponse.Success(message:"ticket category has been created successfully" , ReturnData: title);
+            {
+                HttpContext.Response.StatusCode = 201;
+                return JsonStatusResponse.Success(message: "ticket category has been created successfully", ReturnData: title);
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("ticket category was not created");
         }
+
+
+
+
         /// <summary>
         /// delete ticket category
         /// </summary>
@@ -43,13 +52,17 @@ namespace OurSite.WebApi.Controllers.TicketControllers
             switch (res)
             {
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(message:"ticket category has been deleted successfully", ReturnData: CategoryId);
                 case Core.DTOs.TicketDtos.ResDeleteOpration.Failure:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("ticket category was not deleted");
                 case Core.DTOs.TicketDtos.ResDeleteOpration.RefrenceError:
+                    HttpContext.Response.StatusCode = 409;
                     return JsonStatusResponse.Error("You cannot delete this category because there is an existing ticket with this category");
                 default:
-                    return JsonStatusResponse.Error("ticket category was not deleted");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
         }
         /// <summary>
@@ -62,7 +75,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketCategoryService.GetCategory(CategoryId);
             if (res is not null)
-                return JsonStatusResponse.Success(res,"successfull");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(res, "successfull");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.Error("ticket category not found");
         }
         /// <summary>
@@ -77,7 +94,11 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         {
             var res = await _ticketCategoryService.UpdateCategory(CategoryId,title, name,parentId);
             if (res)
-                return JsonStatusResponse.Success(message: "ticket category has been updated successfully" , ReturnData: CategoryId);
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "ticket category has been updated successfully", ReturnData: CategoryId);
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("ticket category was not updated");
         }
         /// <summary>
@@ -88,8 +109,12 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         public async Task<IActionResult> GetAllCategories()
         {
             var res = await _ticketCategoryService.GetAllCategories();
-            if (res is not null && res.Count>0)
-                return JsonStatusResponse.Success(res,"successfull");
+            if (res is not null && res.Count > 0)
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(res, "successfull");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.Error("no ticket category found");
         }
     }

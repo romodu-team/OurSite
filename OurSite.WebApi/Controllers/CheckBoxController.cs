@@ -26,7 +26,11 @@ public class CheckBoxController : Controller
     {
         var res = await _CheckBoxService.CreateCheckBox(request.Title, request.IconName, request.Description, request.SiteSectionId);
         if (res)
+        {
+            HttpContext.Response.StatusCode = 201;
             return JsonStatusResponse.Success("CheckBox has been created successfully");
+        }
+        HttpContext.Response.StatusCode = 500;
         return JsonStatusResponse.Error("CheckBox was not created");
     }
     /// <summary>
@@ -41,13 +45,17 @@ public class CheckBoxController : Controller
         switch (res)
         {
             case Core.DTOs.TicketDtos.ResDeleteOpration.Success:
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success("CheckBox has been deleted successfully");
             case Core.DTOs.TicketDtos.ResDeleteOpration.Failure:
+                HttpContext.Response.StatusCode = 500;
                 return JsonStatusResponse.Error("CheckBox was not deleted");
             case Core.DTOs.TicketDtos.ResDeleteOpration.RefrenceError:
+                HttpContext.Response.StatusCode = 409;
                 return JsonStatusResponse.Error("You cannot delete this CheckBox because already in use");
             default:
-                return JsonStatusResponse.Error("CheckBox was not deleted");
+                HttpContext.Response.StatusCode = 500;
+                return JsonStatusResponse.UnhandledError();
         }
     }
     /// <summary>
@@ -60,8 +68,12 @@ public class CheckBoxController : Controller
     {
         var res = await _CheckBoxService.GetCheckBox(CheckBoxId);
         if (res is not null)
+        {
+            HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Success(res, "successfull");
-        return JsonStatusResponse.Error("CheckBox not found");
+        }
+        HttpContext.Response.StatusCode = 404;
+        return JsonStatusResponse.NotFound("CheckBox not found");
     }
     /// <summary>
     /// update CheckBox , Enter the fields you want to update
@@ -72,7 +84,11 @@ public class CheckBoxController : Controller
     {
         var res = await _CheckBoxService.UpdateCheckBox(request.CheckBoxId, request.Title, request.IconName, request.Description, (int?)request.SiteSectionId);
         if (res)
+        {
+            HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Success("CheckBox has been updated successfully");
+        }
+        HttpContext.Response.StatusCode = 500;
         return JsonStatusResponse.Error("CheckBox was not updated");
     }
     /// <summary>
@@ -84,7 +100,11 @@ public class CheckBoxController : Controller
     {
         var res = await _CheckBoxService.GetAllCheckBox(sectionId);
         if (res is not null && res.Count > 0)
+        {
+            HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Success(res, "successfull");
-        return JsonStatusResponse.Error("no CheckBox found");
+        }
+        HttpContext.Response.StatusCode = 404;
+        return JsonStatusResponse.NotFound("no CheckBox found");
     }
 }
