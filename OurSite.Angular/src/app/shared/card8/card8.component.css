@@ -17,13 +17,15 @@
     border-radius: 50%;
     border: 4px #f6f6f6 solid;
     position: absolute;
-    z-index: 9 !important;
+    z-index: 11 !important;
     top: 13px;
     left: 13px;
     box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.351);
 
 }
-
-.top-span{
-    z-index: -1 !important;
+.pic2 {
+    position: absolute;
+    top: 50px;
+    z-index: 10;
+    background-color: white;
 }
