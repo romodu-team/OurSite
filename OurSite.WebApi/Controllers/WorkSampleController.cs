@@ -6,9 +6,9 @@ using OurSite.DataLayer.Entities.RatingModel;
 
 namespace OurSite.WebApi.Controllers.AdminControllers;
 
- [Route("api/[controller]")]
- [ApiController]
-public class WorkSampleController: Controller
+[Route("api/[controller]")]
+[ApiController]
+public class WorkSampleController : Controller
 {
     #region constructor
     private IWorkSampleService _workSampleService;
@@ -49,7 +49,7 @@ public class WorkSampleController: Controller
     /// <param name="WorkSampleId"></param>
     /// <returns></returns>
     [HttpGet("get-worksample/{WorkSampleId}")]
-    public async Task<IActionResult> GetWorkSample([FromRoute]long WorkSampleId)
+    public async Task<IActionResult> GetWorkSample([FromRoute] long WorkSampleId)
     {
         var res= await _workSampleService.GetWorkSample(WorkSampleId);
         if (res is null)
@@ -61,7 +61,7 @@ public class WorkSampleController: Controller
         return JsonStatusResponse.Success(res,"Success");
     }
     /// <summary>
-    /// Get the list of filtered orkSamples
+    /// Get the list of filtered workSamples
     /// </summary>
     /// <remarks>Orderby: DateAsc=0,DateDec=1,LikeAsc=2,LikeDec=3</remarks>
     /// <param name="request"></param>
@@ -88,12 +88,12 @@ public class WorkSampleController: Controller
     /// <param name="Name"></param>
     /// <returns></returns>
     [HttpPost("Create-WorkSample-Category")]
-    public async Task<IActionResult> CreateWorkSampleCategory([FromQuery]string Title,[FromQuery]string Name)
+    public async Task<IActionResult> CreateWorkSampleCategory([FromQuery] string Title, [FromQuery] string Name)
     {
-        var res = await _workSampleCategoryService.AddCategory(Title,Name);
+        var res = await _workSampleCategoryService.AddCategory(Title, Name);
         if (res)
         {
-            HttpContext.Response.StatusCode = 200;
+            HttpContext.Response.StatusCode = 201;
             return JsonStatusResponse.Success(message: "category has been added successfully", ReturnData: Title);
         }
         HttpContext.Response.StatusCode = 500;
@@ -106,7 +106,7 @@ public class WorkSampleController: Controller
     /// <param name="categoryId"></param>
     /// <returns></returns>
     [HttpDelete("delete-WorkSample-Category/{categoryId}")]
-    public async Task<IActionResult> DeleteWorkSampleCategory([FromRoute]long categoryId)
+    public async Task<IActionResult> DeleteWorkSampleCategory([FromRoute] long categoryId)
     {
         var res = await _workSampleCategoryService.DeleteCategory(categoryId);
         if (res)
@@ -126,7 +126,7 @@ public class WorkSampleController: Controller
     /// <param name="Name"></param>
     /// <returns></returns>
     [HttpPut("Update-WorkSample-Category")]
-    public async Task<IActionResult> CreateWorkSampleCategory([FromQuery] long CategoryId,[FromQuery]string? Title,[FromQuery]string? Name)
+    public async Task<IActionResult> UpdateWorkSampleCategory([FromQuery] long CategoryId, [FromQuery] string? Title, [FromQuery] string? Name)
     {
         var res = await _workSampleCategoryService.Editcategory(CategoryId,Title,Name);
         if (res)
@@ -136,7 +136,7 @@ public class WorkSampleController: Controller
         }
         HttpContext.Response.StatusCode = 500;
         return JsonStatusResponse.Error("faild");
-    }  
+    }
     /// <summary>
     /// Get list of categories
     /// </summary>
@@ -159,7 +159,7 @@ public class WorkSampleController: Controller
     /// <param name="categoryId"></param>
     /// <returns></returns>
     [HttpGet("Get-WorkSample-Category/{categoryId}")]
-    public async Task<IActionResult> GetAllWorkSampleCategories([FromRoute]long categoryId)
+    public async Task<IActionResult> GetAllWorkSampleCategories([FromRoute] long categoryId)
     {
         var res = await _workSampleCategoryService.GetCategory(categoryId);
         if (res is not null)
@@ -211,9 +211,9 @@ public class WorkSampleController: Controller
     /// <remarks>The file size must be less than 10 MB</remarks>
     /// <returns></returns>
     [HttpPut("update-workSample/{worksampleId}")]
-    public async Task<IActionResult> UpdateWorkSample([FromRoute]long worksampleId,[FromForm]EditWorkSampleDto request)
+    public async Task<IActionResult> UpdateWorkSample([FromRoute] long worksampleId, [FromForm] EditWorkSampleDto request)
     {
-        var res = await _workSampleService.EditWorkSample(worksampleId,request);
+        var res = await _workSampleService.EditWorkSample(worksampleId, request);
         switch (res)
         {
             case ResWorkSample.Success:
@@ -240,13 +240,13 @@ public class WorkSampleController: Controller
     /// <param name="workSampleId"></param>
     /// <returns></returns>
     [HttpGet("add-like")]
-    public async Task<IActionResult> AddLike([FromQuery]string userIp,[FromQuery] long workSampleId)
+    public async Task<IActionResult> AddLike([FromQuery] string userIp, [FromQuery] long workSampleId)
     {
         var like = await _workSampleService.AddLike(userIp, workSampleId);
         switch (like)
         {
             case ResLike.success:
-                HttpContext.Response.StatusCode = 200;
+                HttpContext.Response.StatusCode = 201;
                 return JsonStatusResponse.Success("Like Add Successfully");
             case ResLike.Faild:
                 HttpContext.Response.StatusCode = 500;

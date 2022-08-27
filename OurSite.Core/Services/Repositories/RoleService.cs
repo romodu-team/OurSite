@@ -45,17 +45,17 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Add new role for admin
-        public async Task<ResAddRole> AddRole(RoleDto role)
+        public async Task<ResAddRole> AddRole(string title,string name)
         {
 
-            if (!string.IsNullOrWhiteSpace(role.Name) && !string.IsNullOrWhiteSpace(role.Title))
+            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(title))
             {
-                if (!RoleRepository.GetAllEntity().Any(r => (r.Name == role.Name || r.Title == role.Title) && r.IsRemove == false))
+                if (!RoleRepository.GetAllEntity().Any(r => (r.Name == name || r.Title == title) && r.IsRemove == false))
                 {
                     Role newRole = new Role()
                     {
-                        Name = role.Name,
-                        Title = role.Title
+                        Name = name,
+                        Title = title
                     };
                     try
                     {

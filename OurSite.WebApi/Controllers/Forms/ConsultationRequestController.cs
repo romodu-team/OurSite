@@ -40,7 +40,7 @@ namespace OurSite.WebApi.Controllers.Forms
         /// <param name="sendConsultationFormWithFile"></param>
         /// <returns></returns>
         [HttpPost("send-form-with-file")]
-        public async Task<IActionResult> SendConsultationForm([FromBody] ConsultationRequestDto sendConsultationFormWithFile)
+        public async Task<IActionResult> SendConsultationForm([FromForm] ConsultationRequestDto sendConsultationFormWithFile)
         {
 
             if (sendConsultationFormWithFile.SubmittedFile != null)

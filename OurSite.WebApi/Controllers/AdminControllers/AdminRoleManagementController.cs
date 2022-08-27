@@ -30,13 +30,13 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <summary>
         ///  API for Add new role by system administrator {Get request from body}
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="title"></param>
         /// <remarks>Role id should be null</remarks>
         /// <returns></returns>
         [HttpPost("add-role")]
-        public async Task<IActionResult> AddRole([FromBody] RoleDto role)
+        public async Task<IActionResult> AddRole([FromQuery] string title,[FromQuery]string name)
         {
-            var res = await roleService.AddRole(role);
+            var res = await roleService.AddRole(title,name);
             switch (res)
             {
                 case ResAddRole.Success:
@@ -49,6 +49,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     HttpContext.Response.StatusCode = 400;
                     return JsonStatusResponse.InvalidInput();
                 case ResAddRole.Exist:
+                    HttpContext.Response.StatusCode=409;
                     HttpContext.Response.StatusCode = 409;
                     return JsonStatusResponse.Error("role exist");
                 default:
