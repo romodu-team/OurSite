@@ -249,9 +249,10 @@ public class WorkSampleController : Controller
     /// <param name="workSampleId"></param>
     /// <returns></returns>
     [HttpGet("add-like")]
-    public async Task<IActionResult> AddLike([FromQuery] string userIp, [FromQuery] long workSampleId)
+    public async Task<IActionResult> AddLike([FromQuery] long workSampleId)
     {
-        var like = await _workSampleService.AddLike(userIp, workSampleId);
+        var UserIP= Request.HttpContext.Connection.RemoteIpAddress.ToString();
+        var like = await _workSampleService.AddLike(UserIP, workSampleId);
         switch (like)
         {
             case ResLike.success:
