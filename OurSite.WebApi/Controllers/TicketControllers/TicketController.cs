@@ -42,7 +42,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
                 switch (res.DiscussionStatus)
                 {
                     case ResOperation.notAllowed:
-                        return JsonStatusResponse.Error(message: "The ticket status for this operation is not allowed", ReturnData: request);
+                        return JsonStatusResponse.Error(message: "The ticket status for this operation is not allowed");
                     case ResOperation.NotFound:
                         return JsonStatusResponse.NotFound("ticket not found");
                     case ResOperation.UserNotFound:
@@ -50,9 +50,9 @@ namespace OurSite.WebApi.Controllers.TicketControllers
                     case ResOperation.SenderNotFound:
                         return JsonStatusResponse.NotFound("ticket sender not found");
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.Success:
-                        return JsonStatusResponse.Success("ticket has been created successfully , attachment uploaded");
+                        return JsonStatusResponse.Success(request,"ticket has been created successfully , attachment uploaded");
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.NoContent:
-                        return JsonStatusResponse.Success("ticket has been created successfully , No attachment found");
+                        return JsonStatusResponse.Success(request,"ticket has been created successfully , No attachment found");
                     case ResOperation.Failure when res.AttachmentStatus == resFileUploader.Failure:
                         return JsonStatusResponse.Error("server error");
                     default:

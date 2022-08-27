@@ -132,7 +132,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("Update-another-Admin-profile")]
-        public async Task<IActionResult> UpdateAnotherAdmin([FromBody] ReqUpdateAdminDto req, long id)
+        public async Task<IActionResult> UpdateAnotherAdmin([FromForm] ReqUpdateAdminDto req, long id)
         {
             if (ModelState.IsValid)
             {
