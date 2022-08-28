@@ -140,13 +140,12 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Upload contract File
         /// <summary>
-        /// Api for Upload contract in projrct order {get request from body}
+        /// Api for Upload contract in projrct order {get request from form}
         /// </summary>
         /// <remarks>The size of the contract file must be less than 10 MB</remarks>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost]
-        [Route("Upload-Contract")]
+        [HttpPost("Upload-Contract")]
         public async Task<IActionResult> UploadContract([FromForm] ReqUploadContractDto request)
         {
             var res = await projectservice.UploadContract(request);
