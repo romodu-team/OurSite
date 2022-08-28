@@ -98,12 +98,19 @@ namespace OurSite.WebApi.Controllers
                  JsonConvert.DeserializeObject<ZarinPalVerifyResponse>(_responseString);
 
                 if (_zarinPalResponseModel.Status == 100)
+                {
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(_zarinPalResponseModel, "Payment was successful");
+                }
                 else
+                {
+                    HttpContext.Response.StatusCode = 409;
                     return JsonStatusResponse.Error("The transaction has already been verified");
+                }
             }
             else
             {
+                HttpContext.Response.StatusCode = 500;
                 return JsonStatusResponse.Error(message: "Transaction failed");
             }
                 
@@ -124,17 +131,23 @@ namespace OurSite.WebApi.Controllers
                 switch (res)
                 {
                     case ResProject.Success:
-                        return JsonStatusResponse.Success(message:"Payment creat sucessfully" , ReturnData: paydto);
+                        HttpContext.Response.StatusCode = 201;
+                        return JsonStatusResponse.Success(message:"Payment create sucessfully" , ReturnData: paydto);
                     case ResProject.Faild:
+                        HttpContext.Response.StatusCode = 500;
                         return JsonStatusResponse.Error("Payment creat Faild");
                     case ResProject.InvalidInput:
-                        return JsonStatusResponse.Error("Fileds cant be empty");
+                        HttpContext.Response.StatusCode = 204;
+                        return JsonStatusResponse.InvalidInput();
                 case ResProject.NotFound:
-                    return JsonStatusResponse.NotFound("Payment to creat payment not found");
+                    HttpContext.Response.StatusCode = 404;
+                    return JsonStatusResponse.NotFound("Project to create payment not found");
                     default:
-                        return JsonStatusResponse.Error("Payment creat Faild. Try agian later.");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
 
                 }
+                HttpContext.Response.StatusCode = 401;
                 return JsonStatusResponse.Error("U must be login");
 
          }
@@ -156,9 +169,11 @@ namespace OurSite.WebApi.Controllers
             var pay = await Paymentservice.GetPayment(PayId);
             if(pay is not null)
             {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(message:"success" ,ReturnData:pay );
             }
-            return JsonStatusResponse.NotFound("payment not founf");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("payment not found");
         }
         #endregion
 
@@ -175,8 +190,10 @@ namespace OurSite.WebApi.Controllers
             var Pay = await Paymentservice.GetAllPayments(filter);
             if (Pay.Pay.Any())
             {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(message: "bia bekhoresh", ReturnData: Pay);
             }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound(message: "nist ke bekhorishi");
         }
         #endregion
@@ -195,13 +212,17 @@ namespace OurSite.WebApi.Controllers
             switch (res)
             {
                 case ResProject.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success(message: "The payment has been updated successfully" , ReturnData: Paydto);
                 case ResProject.Faild:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("payment update failed. Try again ‌later.");
                 case ResProject.NotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.Error("Invalid input");
                 default:
-                    return JsonStatusResponse.Error("An error has occurred. Try again later.");
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
         }
         #endregion
@@ -216,16 +237,20 @@ namespace OurSite.WebApi.Controllers
                 switch (delete)
                 {
                     case ResProject.Success:
+                        HttpContext.Response.StatusCode = 200;
                         return JsonStatusResponse.Success(message: "Payment delete successfully" , ReturnData: PayId);
                     case ResProject.Faild:
+                        HttpContext.Response.StatusCode = 500;
                         return JsonStatusResponse.Error("Payment delete failed.");
                     case ResProject.Error:
-                        return JsonStatusResponse.Error("payment not found");
+                        HttpContext.Response.StatusCode = 404;
+                        return JsonStatusResponse.NotFound("payment not found");
                     default:
-                        return JsonStatusResponse.Error("An error has occurred. Try again later.");
-                        break;
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
+            HttpContext.Response.StatusCode = 403;
             return JsonStatusResponse.Error("u didnt login. please login first");
 
         }

@@ -26,11 +26,9 @@ public class WorkSampleController : Controller
     /// <remarks>ShortDescription and Content can contain html. ProjectName is required - The file size must be less than 10 MB</remarks>
     /// <returns></returns>
     [HttpPost("create-WorkSample")]
-    public async Task<IActionResult> CreateWorkSample([FromForm] CreateWorkSampleDto request)
-    {
-        if (ModelState.IsValid)
-        {
-            var res = await _workSampleService.CreateWorkSample(request);
+    public async Task<IActionResult> CreateWorkSample([FromForm]CreateWorkSampleDto request){
+        if(ModelState.IsValid){
+            var res =await _workSampleService.CreateWorkSample(request);
             if (res.WorkSampleID != -1)
             {
                 HttpContext.Response.StatusCode = 201;
@@ -41,13 +39,9 @@ public class WorkSampleController : Controller
                 HttpContext.Response.StatusCode = 500;
                 return JsonStatusResponse.Error(res, "server error");
             }
-
         }
-        {
-            HttpContext.Response.StatusCode = 400;
-            return JsonStatusResponse.Error("model state is not valid");
-        }
-
+        HttpContext.Response.StatusCode = 400;
+        return JsonStatusResponse.Error("model state is not valid");
     }
     /// <summary>
     /// Get a work sample. Returns not found or the instance
@@ -57,14 +51,14 @@ public class WorkSampleController : Controller
     [HttpGet("get-worksample/{WorkSampleId}")]
     public async Task<IActionResult> GetWorkSample([FromRoute] long WorkSampleId)
     {
-        var res = await _workSampleService.GetWorkSample(WorkSampleId);
+        var res= await _workSampleService.GetWorkSample(WorkSampleId);
         if (res is null)
         {
             HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound("Worksample NotFound");
         }
         HttpContext.Response.StatusCode = 200;
-        return JsonStatusResponse.Success(res, "Success");
+        return JsonStatusResponse.Success(res,"Success");
     }
     /// <summary>
     /// Get the list of filtered workSamples
@@ -81,13 +75,11 @@ public class WorkSampleController : Controller
             HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Success(res, "success");
         }
-
         else
         {
             HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.NotFound("No work samples found");
         }
-
     }
     /// <summary>
     /// create a category
@@ -136,7 +128,7 @@ public class WorkSampleController : Controller
     [HttpPut("Update-WorkSample-Category")]
     public async Task<IActionResult> UpdateWorkSampleCategory([FromQuery] long CategoryId, [FromQuery] string? Title, [FromQuery] string? Name)
     {
-        var res = await _workSampleCategoryService.Editcategory(CategoryId, Title, Name);
+        var res = await _workSampleCategoryService.Editcategory(CategoryId,Title,Name);
         if (res)
         {
             HttpContext.Response.StatusCode = 200;
@@ -159,7 +151,7 @@ public class WorkSampleController : Controller
             return JsonStatusResponse.Success(res, "Success");
         }
         HttpContext.Response.StatusCode = 404;
-        return JsonStatusResponse.NotFound("No categories found");
+        return JsonStatusResponse.Error("No categories found");
     }
     /// <summary>
     /// Get a category by id
@@ -202,12 +194,12 @@ public class WorkSampleController : Controller
         {
             case ResWorkSample.Success:
                 HttpContext.Response.StatusCode = 200;
-                return JsonStatusResponse.Success(message: "work sample has been deleted successfully", ReturnData: worksampleId);
+                return JsonStatusResponse.Success(message: "work sample has been deleted successfully" ,ReturnData: worksampleId);
             case ResWorkSample.Faild:
                 HttpContext.Response.StatusCode = 500;
                 return JsonStatusResponse.Error("faild");
             default:
-                HttpContext.Response.StatusCode = 500;
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.UnhandledError();
         }
     }
@@ -226,11 +218,10 @@ public class WorkSampleController : Controller
         {
             case ResWorkSample.Success:
                 HttpContext.Response.StatusCode = 200;
-                return JsonStatusResponse.Success(message: "The Work sample has been successfully updated", ReturnData: request);
+                return JsonStatusResponse.Success(message: "The Work sample has been successfully updated" , ReturnData: request);
             case ResWorkSample.Faild:
                 HttpContext.Response.StatusCode = 500;
                 return JsonStatusResponse.Error("Faild");
-
             case ResWorkSample.NotFound:
                 HttpContext.Response.StatusCode = 404;
                 return JsonStatusResponse.NotFound("Work sample Not found");
@@ -249,9 +240,10 @@ public class WorkSampleController : Controller
     /// <param name="workSampleId"></param>
     /// <returns></returns>
     [HttpGet("add-like")]
-    public async Task<IActionResult> AddLike([FromQuery] string userIp, [FromQuery] long workSampleId)
+    public async Task<IActionResult> AddLike([FromQuery] long workSampleId)
     {
-        var like = await _workSampleService.AddLike(userIp, workSampleId);
+        var UserIP= Request.HttpContext.Connection.RemoteIpAddress.ToString();
+        var like = await _workSampleService.AddLike(UserIP, workSampleId);
         switch (like)
         {
             case ResLike.success:

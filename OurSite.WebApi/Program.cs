@@ -24,6 +24,7 @@ using OurSite.Core.Services.Interfaces.Projecta;
 using OurSite.OurSite.Core.Services.Repositories;
 using OurSite.Core.Services.Interfaces.TicketInterfaces;
 using OurSite.Core.Services.Repositories.TicketServices;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -133,7 +134,11 @@ builder.Services.AddCors(options =>
 });
 #endregion
 var app = builder.Build();
-
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+    ForwardedHeaders.XForwardedProto
+});  
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -156,4 +161,5 @@ app.UseStaticFiles(new StaticFileOptions
            Path.Combine(builder.Environment.ContentRootPath, "upload")),
     RequestPath = "/upload"
 });
+
 app.Run();

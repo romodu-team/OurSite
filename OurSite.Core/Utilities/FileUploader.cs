@@ -24,7 +24,7 @@ namespace OurSite.Core.Utilities
 
                     string fileExtention = Path.GetExtension(file.FileName);
 
-                    string[] acceptedFileTypes = new string[7];
+                    string[] acceptedFileTypes = new string[10];
                     acceptedFileTypes[0] = ".pdf";
                     acceptedFileTypes[1] = ".doc";
                     acceptedFileTypes[2] = ".docx";
@@ -32,11 +32,13 @@ namespace OurSite.Core.Utilities
                     acceptedFileTypes[4] = ".jpeg";
                     acceptedFileTypes[5] = ".gif";
                     acceptedFileTypes[6] = ".png";
-
+                    acceptedFileTypes[7] = ".rar";
+                    acceptedFileTypes[8] = ".zip";
+                    acceptedFileTypes[9] = ".txt";
                     bool acceptFile = false;
 
                     //should we accept the file?
-                    for (int i = 0; i <= 6; i++)
+                    for (int i = 0; i <acceptedFileTypes.Length; i++)
                     {
                         if (fileExtention == acceptedFileTypes[i])
                         {
@@ -96,7 +98,7 @@ namespace OurSite.Core.Utilities
 
                     string fileExtention = Path.GetExtension(file.FileName);
 
-                    string[] acceptedFileTypes = new string[9];
+                    string[] acceptedFileTypes = new string[10];
                     acceptedFileTypes[0] = ".pdf";
                     acceptedFileTypes[1] = ".doc";
                     acceptedFileTypes[2] = ".docx";
@@ -106,7 +108,7 @@ namespace OurSite.Core.Utilities
                     acceptedFileTypes[6] = ".png";
                     acceptedFileTypes[7] = ".rar";
                     acceptedFileTypes[8] = ".zip";
-
+                    acceptedFileTypes[7] = ".txt";
                     bool acceptFile = false;
 
                     //should we accept the file?

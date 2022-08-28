@@ -31,9 +31,15 @@ namespace OurSite.WebApi.Controllers
         {
             var res = await _notificationService.CreateNotification(request);
             if (res)
+            {
+                HttpContext.Response.StatusCode = 201;
                 return JsonStatusResponse.Success("Notification has been created successfully");
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("Notification was not created");
         }
+
+
         /// <summary>
         /// delete Notifications
         /// </summary>
@@ -44,9 +50,16 @@ namespace OurSite.WebApi.Controllers
         {
             var res = await _notificationService.DeleteNotifications(notificationsId);
             if (res)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success("Notifications have been deleted successfully");
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("Notifications were not deleted");
         }
+
+
+
         /// <summary>
         /// get a Notification details
         /// </summary>
@@ -57,7 +70,11 @@ namespace OurSite.WebApi.Controllers
         {
             var res = await _notificationService.GetNotification(NotificationId);
             if (res is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "successfull");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.Error("Notification not found");
         }
         /// <summary>
@@ -72,14 +89,19 @@ namespace OurSite.WebApi.Controllers
             switch (res)
             {
                 case ResOperation.Success:
+                    HttpContext.Response.StatusCode = 200;
                     return JsonStatusResponse.Success("Notifications have been Updated successfully");
                 case ResOperation.Failure:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.Error("server error");
                 case ResOperation.NotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.Error("Notifications not found");
                 case ResOperation.UserNotFound:
+                    HttpContext.Response.StatusCode = 404;
                     return JsonStatusResponse.Error("Account not found");
                 default:
+                    HttpContext.Response.StatusCode = 500;
                     return JsonStatusResponse.UnhandledError();
             }
         }
@@ -92,7 +114,11 @@ namespace OurSite.WebApi.Controllers
         {
             var res = await _notificationService.GetAllNotificationOfAccount(accountUUId);
             if (res is not null && res.Count > 0)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(res, "successfull");
+            }
+            HttpContext.Response.StatusCode = 404;
             return JsonStatusResponse.Error("no notification found");
         }
         /// <summary>
@@ -105,7 +131,11 @@ namespace OurSite.WebApi.Controllers
         {
             var res = await _notificationService.MarkAsRead(notificationsId);
             if (res)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success("Success");
+            }
+            HttpContext.Response.StatusCode = 500;
             return JsonStatusResponse.Error("Error");
         }
     }
