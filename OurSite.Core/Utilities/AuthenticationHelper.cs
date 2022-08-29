@@ -24,14 +24,15 @@ namespace OurSite.Core.Utilities
         }
         public  string GenerateUserToken(User user,int Expire)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sajjadhaniehfaezeherfanmobinsinamehdi"));
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Wx7Xl6rPABrWvLbLaXoBcaLQ8nQJg7L1Dce3zfE0"));
             var signInCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
             var tokenOption = new JwtSecurityToken(
                 issuer: PathTools.Domain,
                 claims: new List<Claim>()
                 {
                                 new Claim(ClaimTypes.Name, String.Concat(user.FirstName,user.LastName)),
-                                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                                new Claim(ClaimTypes.NameIdentifier,user.UUID.ToString()),
+                                new Claim(ClaimTypes.Sid,user.Id.ToString()),
                                 new Claim(ClaimTypes.Role,"Customer")
 
                 },
@@ -71,8 +72,9 @@ namespace OurSite.Core.Utilities
 
             var claims= new List<Claim>()
             {
-                    new Claim("Id",admin.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier,admin.UUID.ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub,admin.Email),
+                    new Claim(ClaimTypes.Sid,admin.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email,admin.Email),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat,DateTime.Now.ToUniversalTime().ToString()),
@@ -84,10 +86,11 @@ namespace OurSite.Core.Utilities
                var userRoles = await _roleService.GetAdminRole(admin.Id);
 
             
-                claims.Add(new Claim(ClaimTypes.Role, userRoles.Name));
+              
                 
                 if (userRoles != null)
                 {
+                      claims.Add(new Claim(ClaimTypes.Role, userRoles.Name));
                     var roleClaim = await _roleService.GetSelectedPermissionOfRole(userRoles.Id);
                     foreach (var RoleClaim in roleClaim)
                     {

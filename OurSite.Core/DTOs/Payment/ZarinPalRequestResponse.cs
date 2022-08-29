@@ -11,5 +11,7 @@ namespace OurSite.Core.DTOs.Payment
     {
         public int Status { get; set; }
         public string Authority { get; set; }
+        public string Amount { get; set; }
+        public string GateWayUrl { get; set; }
     }
 }

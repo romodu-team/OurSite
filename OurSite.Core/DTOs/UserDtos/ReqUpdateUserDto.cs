@@ -12,6 +12,8 @@ namespace OurSite.Core.DTOs.UserDtos
         public string?LastName { get; set; }
         public string? NationalCode { get; set; }
         public string? Email { get; set; }
+        [RegularExpression("09(1[0-9]|3[1-9]|2[0-9]|9[0-9]|0[1-9]|4[1-9])-?[0-9]{3}-?[0-9]{4}",ErrorMessage = "شماره تماس وارد شده صحیح نیست")]
+
         public string? Mobile { get; set; }
         public gender? Gender { get; set; }
         public string? Address { get; set; }

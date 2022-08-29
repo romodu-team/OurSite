@@ -54,7 +54,7 @@ namespace OurSite.Core.Services.Repositories.Mail
             }
         }
 
-        public async Task SendEmailAsync(MailRequestDto mailRequest)
+        public async Task<bool> SendEmailAsync(MailRequestDto mailRequest)
         {
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
@@ -80,10 +80,20 @@ namespace OurSite.Core.Services.Repositories.Mail
             builder.HtmlBody = mailRequest.Body;
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();
-            smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
-            await smtp.SendAsync(email);
-            smtp.Disconnect(true);
+            try
+            {
+                smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+                smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+                await smtp.SendAsync(email);
+                smtp.Disconnect(true);
+                return true;
+            }
+            catch (System.Exception)
+            {
+                
+                return false;
+            }
+           
         }
 
         public async Task<bool> SendResetPasswordEmailAsync(SendEmailDto request)

@@ -8,8 +8,11 @@ namespace OurSite.Core.DTOs.ConsultationRequestDtos
 {
     public class GetAllConsultationRequestDto
     {
-        public string UserFullName { get; set; }
-        public string UserEmail { get; set; }
-        public string UserPhoneNumber { get; set; }
+        public long Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public bool IsRead { get; set; }
     }
 }

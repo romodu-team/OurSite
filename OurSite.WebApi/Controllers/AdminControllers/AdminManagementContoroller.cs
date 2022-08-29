@@ -24,6 +24,39 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         }
         #endregion
 
+
+        #region singup
+        /// <summary>
+        ///  API for Register new Admin by system administrator {Get request from body}
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] ReqRegisterAdminDto req)
+        {
+            if (ModelState.IsValid)
+            {
+                var res = await adminService.RegisterAdmin(req);
+                switch (res)
+                {
+                    case RessingupDto.success:
+                        HttpContext.Response.StatusCode = 201;
+                        return JsonStatusResponse.Success("Admin has been registered");
+                    case RessingupDto.Exist:
+                        HttpContext.Response.StatusCode = 409;
+                        return JsonStatusResponse.Error("Username or Email exist");
+                    default:
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
+                }
+            }
+            HttpContext.Response.StatusCode = 400;
+            return JsonStatusResponse.InvalidInput();
+
+        }
+        #endregion
+
+
         #region Change admin status
         /// <summary>
         ///  API for change status(is activity or not) Admin Panel {Get request from Route}
@@ -35,8 +68,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var res = await adminService.ChangeAdminStatus(adminId);
             if (res)
-                return JsonStatusResponse.Success("وضعیت ادمین تغییر کرد");
-            return JsonStatusResponse.Error("عملیات نا موفق بود");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("Admin status has been changed sucessfully");
+            }
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.Error("Admin status has not been changed");
         }
         #endregion
 
@@ -52,8 +89,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var res = await adminService.DeleteAdmin(adminId);
             if (res)
-                return JsonStatusResponse.Success("با موفقیت حذف شد");
-            return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("Admin deleted");
+            }
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.Error("delete admin failed");
         }
         #endregion
 
@@ -68,9 +109,13 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var res = await adminService.GetAdminById(adminId);
             if (res != null)
-                return JsonStatusResponse.Success(res, "موفق");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(res, "success");
+            }
+
             HttpContext.Response.StatusCode = 404;
-            return JsonStatusResponse.NotFound("پیدا نشد");
+            return JsonStatusResponse.NotFound("not found");
         }
         #endregion
 
@@ -86,11 +131,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             var list = await adminService.GetAllAdmin(filter);
             if (list.Admins.Any())
             {
-                return JsonStatusResponse.Success(message: "موفق", ReturnData: list);
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "success", ReturnData: list);
 
             }
-
-            return JsonStatusResponse.NotFound(message: "آدمینی پیدا نشد");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound(message: "not found");
         }
         #endregion
 
@@ -98,10 +144,11 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <summary>
         ///  API for Update Admin Profile by system administrator {Get request from body}
         /// </summary>
+        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("Update-another-Admin-profile")]
-        public async Task<IActionResult> UpdateAnotherAdmin([FromBody] ReqUpdateAdminDto req, long id)
+        public async Task<IActionResult> UpdateAnotherAdmin([FromForm] ReqUpdateAdminDto req, long id)
         {
             if (ModelState.IsValid)
             {
@@ -112,30 +159,39 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     switch (resProfilePhoto)
                     {
                         case resFileUploader.Failure:
-                            return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+                            HttpContext.Response.StatusCode = 500;
+                            return JsonStatusResponse.Error("photo not uploaded");
 
                         case resFileUploader.ToBig:
-                            return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
-
+                            HttpContext.Response.StatusCode = 413;
+                            return JsonStatusResponse.Error("file size is large");
                         case resFileUploader.NoContent:
-                            return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                            HttpContext.Response.StatusCode = 204;
+                            return JsonStatusResponse.Error("You didnt upload any file");
                         case resFileUploader.InvalidExtention:
-                            return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                            HttpContext.Response.StatusCode = 400;
+                            return JsonStatusResponse.Error("file format is incurrent");
                         default:
+                            HttpContext.Response.StatusCode = 500;
+                            return JsonStatusResponse.UnhandledError();
                             break;
                     }
                 }
                 switch (res)
                 {
                     case ResUpdate.Success:
-                        return JsonStatusResponse.Success("با موفقیت ویرایش شد");
+                        HttpContext.Response.StatusCode = 200;
+                        return JsonStatusResponse.Success("profile updated");
                     case ResUpdate.Error:
-                        return JsonStatusResponse.Error("خطا در هنگام انجام عملیات");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.Error("update profile failed");
                     default:
-                        return JsonStatusResponse.Error("عملیات با شکست مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
-            return JsonStatusResponse.Error("اطلاعات وارد شده اشتباه است");
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.InvalidInput();
 
         }
         #endregion

@@ -34,11 +34,6 @@ namespace OurSite.DataLayer.Entities.Access
         InvalidInput
     }
 
-    public enum Roles
-    {
-        SuperAdmin,
-        Admin,
-        Basic
-    }
+
 }
 

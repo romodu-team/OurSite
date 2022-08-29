@@ -19,9 +19,11 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResUpdate> UpdateAdmin(ReqUpdateAdminDto req,long id);
 
         Task<ResViewAdminDto> GetAdminById(long adminId);
+        Task<bool> IsAdminExistByUUId(Guid adminUUId);
         Task<RessingupDto> RegisterAdmin(ReqRegisterAdminDto req);
 
         Task<bool> IsAdminExist(string UserName, string Email);
+        Task<bool> IsAdminExist(long adminId);
         Task<bool> ResetPassword(ReqResetPassword request);
         Task<ResLoginDto> SendResetPassEmail(string EmailOrUserName);
         Task<Admin> GetAdminByEmailOrUserName(string EmailOrUserName);

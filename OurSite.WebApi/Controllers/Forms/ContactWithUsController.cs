@@ -19,40 +19,67 @@ namespace OurSite.WebApi.Controllers.Forms
         }
 
         #region Send ContactWithUs
-        #region form
+
         /// <summary>
-        ///  form contact with us {Get request from form}
+        /// Send contact with us form {Get request from form}
+        /// Returns : Success , Error
         /// </summary>
         /// <param name="sendContactForm"></param>
         /// <returns></returns>
-        [HttpPost("send-form")]
+        [HttpPost("send-contact-us")]
         public async Task<IActionResult> SendContactWithUsForm([FromForm] ContactWithUsDto sendContactForm)
         {
             if (ModelState.IsValid)
             {
                 await contactWithUsService.SendContactForm(sendContactForm);
-                return JsonStatusResponse.Success("درخواست شما با موفقیت ارسال شد");
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonStatusResponse.Success("Request send sucessfully");
             }
             else
             {
-                return JsonStatusResponse.Error("اطلاعات ارسال شده معتبر نمی‌باشد");
+                HttpContext.Response.StatusCode = 500;
+                return JsonStatusResponse.Error("send request failed");
             }
-            #endregion
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.InvalidInput();
 
         }
         #endregion
 
         #region ContactWithUs All Form
-        [HttpGet("view-all-ContactWithUs")] //Get user list
+        /// <summary>
+        /// Get all Contact With Us forms filtered by pagination
+        /// Returns: Success with Return Data ,NotFound
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("view-all-ContactWithUs")]
         public async Task<IActionResult> GetAllContactWithUs([FromQuery] ReqFilterContactWithUsDto filter)
         {
             var contactWithUs = await contactWithUsService.GetAllContactWithUs(filter);
-            if (contactWithUs.ContactWithUses.Any())
+            if (contactWithUs.ContactWithUses is not null)
             {
-                return JsonStatusResponse.Success(message: "موفق", ReturnData: contactWithUs);
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "success", ReturnData: contactWithUs);
             }
-            return JsonStatusResponse.NotFound(message: "فرمی یافت نشد");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound(message: "from not found");
 
+        }
+        #endregion
+
+        #region Answer To Contact us Message
+        [HttpPost("Send-Answer-ToUser")]
+        public async Task<IActionResult> AnswerToContactUSMessage([FromForm]string ToEmail,[FromForm]string subject,[FromForm]string Content,[FromForm]List<IFormFile>? Attachments)
+        {
+            var res = await contactWithUsService.AnswerToMessage(ToEmail,subject,Content,Attachments);
+            if (res)
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("Email has been successfully sent");
+            }
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.Error("The email was not sent");
         }
         #endregion
     }

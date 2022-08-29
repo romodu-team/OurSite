@@ -2,11 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
+using OurSite.DataLayer.Entities.Comments;
 using OurSite.DataLayer.Entities.ConsultationRequest;
 using OurSite.DataLayer.Entities.ContactWithUs;
-using OurSite.DataLayer.Entities.Departments;
+using OurSite.DataLayer.Entities.ImageGalleries;
+using OurSite.DataLayer.Entities.NotificationModels;
+using OurSite.DataLayer.Entities.Projects;
+using OurSite.DataLayer.Entities.RatingModel;
 using OurSite.DataLayer.Entities.Ticketing;
-using OurSite.DataLayer.Entities.TicketMessageing;
+using OurSite.DataLayer.Entities.WorkSamples;
+using OurSite.OurSite.DataLayer.Entities.WorkSamples;
 
 namespace OurSite.DataLayer.Contexts
 {
@@ -25,15 +30,26 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<AccounInRole> AccounInRoles { get; set; }
         public DbSet<ContactWithUs> contactWithUs { get; set; }
         public DbSet<ConsultationRequest> consultationRequest { get; set; }
-        public DbSet<Department> departments { get; set; }
-        public DbSet<Ticket> tickets { get; set; }
-        public DbSet<TicketMessage> ticketMessages { get; set; }
         public DbSet<ItemSelected> itemsSelecteds { get; set; }
         public DbSet<CheckBoxs> checkBoxes { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
-
-
+        public DbSet<SelectedProjectPlan> selectedProjectPlans { get; set; }
+        public DbSet<WorkSample> WorkSamples { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<ImageGallery> ImageGallery { get; set; }
+        public DbSet<ProjectFeatures> ProjectFeatures { get; set; }
+        public DbSet<WorkSampleCategory> WorkSampleCategories { get; set; }
+        public DbSet<WorkSampleInCategory> WorkSampleInCategories { get; set; }
+        public DbSet<TicketAttachment> TicketAttachments { get; set; }
+        public DbSet<TicketCategory> TicketCategories { get; set; }
+        public DbSet<TicketDiscussion> TicketDiscussions { get; set; }
+        public DbSet<TicketModel> Ticket { get; set; }
+        public DbSet<TicketPriority> TicketPriorities { get; set; }
+        public DbSet<TicketStatus> TicketStatuses { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,13 +62,6 @@ namespace OurSite.DataLayer.Contexts
             
             base.OnModelCreating(modelBuilder);
 
-
-            modelBuilder.Entity<Department>()
-              .HasData(
-               new Department { Id = 1, DepartmentName = "Financial", DepartmentTitle = "بخش مالی", CreateDate = DateTime.Now, LastUpdate = DateTime.Now },
-               new Department { Id = 2, DepartmentName = "Technical support", DepartmentTitle = "پشتیبانی فنی", CreateDate = DateTime.Now, LastUpdate = DateTime.Now },
-               new Department { Id = 3, DepartmentName = "Other", DepartmentTitle = "سایر", CreateDate = DateTime.Now, LastUpdate = DateTime.Now }
-               );
         }
     }
 }

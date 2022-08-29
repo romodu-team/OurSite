@@ -29,15 +29,17 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpGet("view-user/{id}")] //view user by admin
+        [HttpGet("view-user/{userid}")] //view user by admin
         public async Task<IActionResult> ViewUser([FromRoute] long userid)
         {
             var user = await userService.ViewUser(userid);
             if (user is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
                 return JsonStatusResponse.Success(message: "success", ReturnData: user);
-
-
-            return JsonStatusResponse.Error(message: "کاربر پیدا نشد");
+            }
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.Error("User not found");
         }
         #endregion
 
@@ -53,9 +55,11 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             var users = await userService.GetAlluser(filter);
             if (users.Users.Any())
             {
-                return JsonStatusResponse.Success(message: "موفق", ReturnData: users);
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "success", ReturnData: users);
             }
-            return JsonStatusResponse.NotFound(message: "کاربری یافت نشد");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("Users not found");
 
         }
         #endregion
@@ -71,8 +75,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var res = await userService.ChangeUserStatus(userId);
             if (res)
-                return JsonStatusResponse.Success("وضعیت کاربر تغییر کرد");
-            return JsonStatusResponse.Error("عملیات نا موفق بود");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("user status has been changed");
+            }
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.Error("user status has not been changed");
         }
         #endregion
 
@@ -90,16 +98,17 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             switch (add)
             {
                 case ResadduserDto.success:
-                    return JsonStatusResponse.Success("کاربر با موفقیت ادد شد");
-                    break;
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonStatusResponse.Success("user add successfully");
                 case ResadduserDto.Failed:
-                    return JsonStatusResponse.Error("فیلد مربوطه نمیتواند خالی باشد");
-                    break;
+                    HttpContext.Response.StatusCode = 400;
+                    return JsonStatusResponse.InvalidInput();
                 case ResadduserDto.Exist:
-                    return JsonStatusResponse.Error("نام کاربری وارد شده؛ وجود دارد.");
+                    HttpContext.Response.StatusCode = 409;
+                    return JsonStatusResponse.Error("username exist");
                 default:
-                    return JsonStatusResponse.Error("اضافه کردن کاربر با خطا مواجه شد. دوباره تلاش نمایید.");
-                    break;
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.UnhandledError();
             }
         }
 
@@ -110,6 +119,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         ///  API for update user by admin {Get request from form}
         /// </summary>
         /// <param name="request"></param>
+        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
         /// <returns></returns>
         [HttpPut("update-user-profile")]
         public async Task<IActionResult> UpdateUserByAdmin([FromForm] ReqUpdateUserDto userDto, long id)
@@ -125,35 +135,45 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                         switch (resProfilePhoto)
                         {
                             case resFileUploader.Failure:
-                                return JsonStatusResponse.Error("اپلود تصویر پروفایل با مشکل مواجه شد");
+                                HttpContext.Response.StatusCode = 500;
+                                return JsonStatusResponse.Error("update profile failed");
 
                             case resFileUploader.ToBig:
-                                return JsonStatusResponse.Error("حجم تصویر پروفایل انتخابی بیش از سقف مجاز است");
-
+                                HttpContext.Response.StatusCode = 413;
+                                return JsonStatusResponse.Error("the file is larg");
                             case resFileUploader.NoContent:
-                                return JsonStatusResponse.Error("تصویر پروفایل خالی است");
+                                HttpContext.Response.StatusCode = 204;
+                                return JsonStatusResponse.Error("no content in filed photo ");
                             case resFileUploader.InvalidExtention:
-                                return JsonStatusResponse.Error("پسوند فایل انتخابی مجاز نیست");
+                                HttpContext.Response.StatusCode = 400;
+                                return JsonStatusResponse.Error("photo format is inccurent");
                             default:
-                                break;
+                                HttpContext.Response.StatusCode = 500;
+                                return JsonStatusResponse.UnhandledError();
                         }
                     }
                     switch (res)
                     {
 
                         case ResUpdate.Success:
-                            return JsonStatusResponse.Success("پنل کاربری شما با موفقیت بروزرسانی شد");
+                            HttpContext.Response.StatusCode = 200;
+                            return JsonStatusResponse.Success("profile has been updated successfully");
                         case ResUpdate.Error:
-                            return JsonStatusResponse.Error("عملیات با خطا مواجه شد");
+                            HttpContext.Response.StatusCode = 500;
+                            return JsonStatusResponse.Error("profile has not been changed");
                         case ResUpdate.NotFound:
-                            return JsonStatusResponse.NotFound("ارتباط شما با سرور قطع شده است");
+                            HttpContext.Response.StatusCode = 403;
+                            return JsonStatusResponse.Error("login agian. your token is invalid");
                         default:
-                            break;
+                            HttpContext.Response.StatusCode = 500;
+                            return JsonStatusResponse.UnhandledError();
                     }
                 }
-                return JsonStatusResponse.Error("اطلاعات ارسالی شما اشتباه است");
+                HttpContext.Response.StatusCode = 400;
+                return JsonStatusResponse.InvalidInput();
             }
-            return JsonStatusResponse.Error("مجدد وارد پنل کاربری خود شوید.");
+            HttpContext.Response.StatusCode = 403;
+            return JsonStatusResponse.Error("login agian. your token is invalid");
 
         }
 
@@ -170,8 +190,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         {
             var check = await userService.DeleteUser(id);
             if (check)
-                return JsonStatusResponse.Success("کاربر با موفقیت حذف شد");
-            return JsonStatusResponse.Error("عملیات ناموفق بود. ");
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("user has been deleted successfully");
+            }
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.Error("user has not been deleted");
 
         }
         #endregion

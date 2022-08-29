@@ -9,6 +9,7 @@ namespace OurSite.Core.DTOs.UserDtos
     public class GetAllUserDto
     {
         public long UserId { get; set; }
+        public Guid UserUUID { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
         public bool IsActive { get; set; }

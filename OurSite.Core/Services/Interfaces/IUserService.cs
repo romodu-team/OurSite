@@ -12,6 +12,8 @@ namespace OurSite.Core.Services.Interfaces
     {
         Task<bool> IsUserActiveByUserName(string userName);
         Task<User> GetUserByUserPass(string username,string password);
+        Task<User> GetUserById(long UserId);
+        Task<bool> IsUserExistByUUId(Guid UserUUId);
         Task<ResLoginDto> LoginUser(ReqLoginDto login);
         Task<bool> ResetPassword(ReqResetPassword request);
         Task<User> GetUserByEmailOrUserName(string EmailOrUserName);
@@ -32,6 +34,7 @@ namespace OurSite.Core.Services.Interfaces
         Task<ResFilterUserDto> GetAlluser(ReqFilterUserDto filter);
         Task<bool> DeleteUser(long id);
         Task<ResadduserDto> AddUser(ReqAddUserAdminDto userDto);
+        Task<bool> IsUserExist(long userId);
         #endregion
 
 

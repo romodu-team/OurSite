@@ -23,17 +23,18 @@ using Microsoft.AspNetCore.Http;
 using OurSite.Core.Utilities.Extentions.Paging;
 using OurSite.Core.DTOs.Paging;
 using gender = OurSite.DataLayer.Entities.Accounts.gender;
+using OurSite.Core.Utilities.Extentions;
 
 namespace OurSite.Core.Services.Repositories
 {
     public class UserService : IUserService
     {
         #region constructor
-        private readonly IGenericReopsitories<User> userService;
-        private readonly IGenericReopsitories<AdditionalDataOfUser> additionalDataRepository;
+        private readonly IGenericRepository<User> userService;
+        private readonly IGenericRepository<AdditionalDataOfUser> additionalDataRepository;
         private IPasswordHelper passwordHelper;
         private IMailService mailService;
-        public UserService(IGenericReopsitories<AdditionalDataOfUser> additionalDataRepository, IGenericReopsitories<User> userService, IPasswordHelper passwordHelper, IMailService mailService)
+        public UserService(IGenericRepository<AdditionalDataOfUser> additionalDataRepository, IGenericRepository<User> userService, IPasswordHelper passwordHelper, IMailService mailService)
         {
             this.userService = userService;
             this.passwordHelper = passwordHelper;
@@ -46,6 +47,8 @@ namespace OurSite.Core.Services.Repositories
         public void Dispose()
         {
             userService?.Dispose();
+            additionalDataRepository.Dispose();
+            
         }
 
 
@@ -210,7 +213,10 @@ namespace OurSite.Core.Services.Repositories
         }
 
         #endregion
-
+        public async Task<bool> IsUserExist(long userId)
+        {
+            return await userService.GetAllEntity().AnyAsync(u => u.Id == userId && u.IsRemove==false && u.IsActive==true);
+        }
         #region Active User
         public async Task<ResActiveUser> ActiveUser(string activationCode)
         {
@@ -269,7 +275,7 @@ namespace OurSite.Core.Services.Repositories
                     if (!string.IsNullOrWhiteSpace(userdto.Address))
                         user.AdditionalDataOfUser.Address = userdto.Address;
                     if (!string.IsNullOrWhiteSpace(userdto.Birthday))
-                        user.AdditionalDataOfUser.Birthday = userdto.Birthday;
+                        user.AdditionalDataOfUser.Birthday = userdto.Birthday.AdDate();
                     if (!string.IsNullOrWhiteSpace(userdto.Phone))
                         user.AdditionalDataOfUser.Phone = userdto.Phone;
                     if (!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
@@ -291,7 +297,7 @@ namespace OurSite.Core.Services.Repositories
                     if (!string.IsNullOrWhiteSpace(userdto.Address))
                         addDataUser.Address = userdto.Address;
                     if (!string.IsNullOrWhiteSpace(userdto.Birthday))
-                        addDataUser.Birthday = userdto.Birthday;
+                        addDataUser.Birthday = userdto.Birthday.AdDate();
                     if (!string.IsNullOrWhiteSpace(userdto.Phone))
                         addDataUser.Phone = userdto.Phone;
                     if (!string.IsNullOrWhiteSpace(userdto.ShabaNumbers))
@@ -364,7 +370,7 @@ namespace OurSite.Core.Services.Repositories
                     userdto.Gender = (DTOs.UserDtos.gender?)user.AdditionalDataOfUser.Gender;
                     userdto.Address = user.AdditionalDataOfUser.Address;
                     userdto.Phone = user.AdditionalDataOfUser.Phone;
-                    userdto.Birthday = user.AdditionalDataOfUser.Birthday;
+                    userdto.Birthday = user.AdditionalDataOfUser.Birthday is not null? user.AdditionalDataOfUser.Birthday.Value.PersianDate():null;
                     userdto.ShabaNumbers = user.AdditionalDataOfUser.ShabaNumbers;
                     userdto.BusinessCode = user.AdditionalDataOfUser.BusinessCode;
                     userdto.RegistrationNumber = user.AdditionalDataOfUser.RegistrationNumber;
@@ -407,30 +413,37 @@ namespace OurSite.Core.Services.Repositories
         public async Task<bool> DeleteUser(long id)
         {
             bool flag = false;
-            var isdelete = await userService.DeleteEntity(id); //get id and return true that it means user deleted
-            flag = isdelete;
-            var additionalData =await additionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.UserId == id);
-            if (additionalData is not null)
+            var user= await userService.GetEntity(id);
+            if(user != null)
             {
-                var isdeleteAdd = await additionalDataRepository.DeleteEntity(additionalData.Id);
-                
-
-                flag = isdeleteAdd;
-            }
-            if (flag)
-            {
-                try
+                var isdelete = await userService.DeleteEntity(id); //get id and return true that it means user deleted
+                flag = isdelete;
+                if (user.ImageName != null)
+                    FileUploader.DeleteFile(PathTools.ProfilePhotos + "\\" + user.ImageName);
+                var additionalData = await additionalDataRepository.GetAllEntity().SingleOrDefaultAsync(u => u.UserId == id);
+                if (additionalData is not null)
                 {
-                    await userService.SaveEntity();
-                    await additionalDataRepository.SaveEntity();
-                }
-                catch (Exception ex)
-                {
-                    return false;
-                }
-            }
+                    var isdeleteAdd = await additionalDataRepository.DeleteEntity(additionalData.Id);
 
-            return flag;
+
+                    flag = isdeleteAdd;
+                }
+                if (flag)
+                {
+                    try
+                    {
+                        await userService.SaveEntity();
+                        await additionalDataRepository.SaveEntity();
+                    }
+                    catch (Exception ex)
+                    {
+                        return false;
+                    }
+                }
+
+                return flag;
+            }
+            return false;
 
         }
         #endregion
@@ -519,7 +532,7 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(usersQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list =await usersQuery.Paging(pager).Select(u=> new GetAllUserDto { Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
+            var list =await usersQuery.Paging(pager).Select(u=> new GetAllUserDto { UserUUID=u.UUID,Email=u.Email,FirstName=u.FirstName,LastName=u.LastName,IsActive=u.IsActive,UserId=u.Id,UserName=u.UserName,IsDelete=u.IsRemove}).ToListAsync();    //use the genric interface options and save values in variable
             
             var result = new ResFilterUserDto();
             result.SetPaging(pager);
@@ -538,6 +551,7 @@ namespace OurSite.Core.Services.Repositories
             if (user is not null)
             {
                 adminview.Id = user.Id;
+                adminview.UserUUID = user.UUID;
                 adminview.CreateDate = user.CreateDate;
                 adminview.IsRemove = user.IsRemove;
                 adminview.LastUpdate = user.LastUpdate;
@@ -554,7 +568,7 @@ namespace OurSite.Core.Services.Repositories
                     adminview.Gender = (gender?)user.AdditionalDataOfUser.Gender;
                     adminview.Address = user.AdditionalDataOfUser.Address;
                     adminview.Phone = user.AdditionalDataOfUser.Phone;
-                    adminview.Birthday = user.AdditionalDataOfUser.Birthday;
+                    adminview.Birthday = user.AdditionalDataOfUser.Birthday is not null? user.AdditionalDataOfUser.Birthday.Value.PersianDate():null;
                     adminview.ShabaNumbers = user.AdditionalDataOfUser.ShabaNumbers;
                     adminview.BusinessCode = user.AdditionalDataOfUser.BusinessCode;
                     adminview.RegistrationNumber = user.AdditionalDataOfUser.RegistrationNumber;
@@ -562,10 +576,19 @@ namespace OurSite.Core.Services.Repositories
             }
             return adminview;
         }
+
+
         #endregion
 
         #endregion
+        public async Task<bool> IsUserExistByUUId(Guid UserUUId)
+        {
+            return await userService.GetAllEntity().AnyAsync(a => a.UUID == UserUUId && a.IsRemove == false);
+        }
 
-
+        public Task<User> GetUserById(long UserId)
+        {
+            return userService.GetEntity(UserId);
+        }
     }
 }

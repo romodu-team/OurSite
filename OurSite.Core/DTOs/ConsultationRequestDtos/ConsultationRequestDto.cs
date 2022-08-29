@@ -12,29 +12,29 @@ namespace OurSite.Core.DTOs.ConsultationRequestDtos
     public class ConsultationRequestDto
     {
         [Required(ErrorMessage = "این فیلد اجباری است")]
-        [DisplayName("نام و نام خانوادگی")]
+        [DisplayName("نام")]
         [MaxLength(100, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
-        public string UserFullName { get; set; }
+        public string FirstName { get; set; }
+         [Required(ErrorMessage = "این فیلد اجباری است")]
+        [DisplayName("نام خانوادگی")]
+        [MaxLength(100, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
+        public string LastName { get; set; }
 
         [EmailAddress(ErrorMessage = "آدرس ایمیل معتبر نیست")]
-        [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("ایمیل")]
-        public string UserEmail { get; set; }
+        public string? Email { get; set; }
 
-        [RegularExpression("09(1[0-9]|3[1-9]|2[1-9])-?[0-9]{3}-?[0-9]{4}", ErrorMessage = "شماره تماس وارد شده صحیح نیست")]
+        [RegularExpression("09(1[0-9]|3[1-9]|2[0-9]|9[0-9]|0[1-9]|4[1-9])-?[0-9]{3}-?[0-9]{4}",ErrorMessage = "شماره تماس وارد شده صحیح نیست")]
         [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("شماره همراه")]
-        public string UserPhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "لطفا توضیحات را وارد کنید")]
-        public string Expration { get; set; }
-
-        [DisplayName("نام فایل ارسالی")]
-        public string? SubmittedFileName { get; set; }
+        public string Content { get; set; }
 
         [DisplayName("فایل ارسالی")]
         public IFormFile? SubmittedFile { get; set; }
 
-        public ICollection<ItemSelectedDto> ItemSelecteds { get; set; }
+        public List<string>? ItemSelectedsId { get; set; }
     }
 }

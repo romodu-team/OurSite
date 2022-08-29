@@ -26,57 +26,136 @@ namespace OurSite.WebApi.Controllers.Forms
 
         #region send form with file
         /// <summary>
-        /// send file in forms and tickets {Get request from form}
+        /// Registers a consultation form.The form can contain file and checkboxes
+        /// Note: Do not submit "SubmittedFileName" This is an unimportant field
+        /// Returns:
+        /// Success("درخواست با موفقیت ارسال گردید")
+        /// Error("ارسال فایل با خطا مواجه شد")
+        /// Error("فایلی برای ارسال انتخاب نشده است")
+        /// Error("حجم فایل انتخابی بیش از حد مجاز می‌باشد")
+        /// Error("فرمت فایل انتخابی نامناسب می‌باشد")
+        /// Error("فرمت فایل انتخابی نامناسب می‌باشد")
         /// </summary>
+        /// <remarks>The file size must be less than 10 MB</remarks>
         /// <param name="sendConsultationFormWithFile"></param>
         /// <returns></returns>
         [HttpPost("send-form-with-file")]
-        public async Task<IActionResult> SendConsultationForm([FromBody] ConsultationRequestDto sendConsultationFormWithFile)
+        public async Task<IActionResult> SendConsultationForm([FromForm] ConsultationRequestDto sendConsultationFormWithFile)
         {
 
             if (sendConsultationFormWithFile.SubmittedFile != null)
             {
-                string path = Directory.GetCurrentDirectory() + "\\wwwroot\\uploads\\";
-                var firstResponse = await FileUploader.UploadFile(path, sendConsultationFormWithFile.SubmittedFile, 10);
+                // string path = Directory.GetCurrentDirectory() + "\\wwwroot\\uploads\\";
+                var firstResponse = await FileUploader.UploadFile(PathTools.ConsultationFilePath, sendConsultationFormWithFile.SubmittedFile, 10);
 
                 switch (firstResponse.Status)
                 {
                     case resFileUploader.Success:
-                        sendConsultationFormWithFile.SubmittedFileName = firstResponse.FileName;
-                        break;
+                        {
+                            var secondResponse = await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile,firstResponse.FileName);
+                            if (secondResponse)
+                            {
+                                HttpContext.Response.StatusCode = 200;
+                                return JsonStatusResponse.Success("Request has been success successfully");
+                            }
+                            HttpContext.Response.StatusCode = 400;
+                            return JsonStatusResponse.Error("send request failed.");
+                        }
                     case resFileUploader.Failure:
-                        return JsonStatusResponse.Error("ارسال فایل با خطا مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.Error("send request faild, try agian later");
                     case resFileUploader.ToBig:
-                        return JsonStatusResponse.Error("حجم فایل انتخابی بیش از حد مجاز می‌باشد");
+                        HttpContext.Response.StatusCode = 413;
+                        return JsonStatusResponse.Error("The file size is large");
                     case resFileUploader.NoContent:
-                        return JsonStatusResponse.Error("فایلی برای ارسال انتخاب نشده است");
+                        HttpContext.Response.StatusCode = 204;
+                        return JsonStatusResponse.Error("File didn't choosed");
                     case resFileUploader.InvalidExtention:
-                        return JsonStatusResponse.Error("فرمت فایل انتخابی نامناسب می‌باشد");
+                        HttpContext.Response.StatusCode = 400;
+                        return JsonStatusResponse.InvalidInput();
                     default:
-                        return JsonStatusResponse.Error("ارسال فایل با خطا مواجه شد");
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
                 }
             }
-
-            var secondResponse = await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile);
-            if (secondResponse)
-                return JsonStatusResponse.Success("درخواست با موفقیت ارسال گردید");
-            return JsonStatusResponse.Error("درخواست شما ارسال نگردید");
+            var res = await consultationRequestService.SendConsultationForm(sendConsultationFormWithFile,null);
+            if (res)
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("Request send sucessfully");
+            }
+                
+            HttpContext.Response.StatusCode = 500;
+            return JsonStatusResponse.UnhandledError();            
+            
         }
         #endregion
 
         #region ConsultationRequest All Form
-        [HttpGet("view-all-ConsultationRequest")] //Get user list
+        /// <summary>
+        /// Get all Consultation forms filtered by pagination
+        /// Returns: Success with Return Data ,NotFound
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpGet("view-all-ConsultationRequest")]
         public async Task<IActionResult> GetAllConsultationRequest([FromQuery] ReqFilterConsultationRequestDto filter)
         {
             var consultationRequest = await consultationRequestService.GetAllConsultationRequest(filter);
-            if (consultationRequest.ConsultationRequests.Any())
+            if (consultationRequest.ConsultationRequests is not null)
             {
-                return JsonStatusResponse.Success(message: "موفق", ReturnData: consultationRequest);
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(message: "success", ReturnData: consultationRequest);
             }
-            return JsonStatusResponse.NotFound(message: "فرمی یافت نشد");
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("consulation not found");
 
         }
         #endregion
+
+        #region Get Consulation Form
+        /// <summary>
+        /// Getting a consultation form with ID
+        /// Returns: Success with data  , NotFound
+        /// </summary>
+        /// <param name="ConsultationFormId"></param>
+        /// <returns></returns>
+        [HttpGet("get-consulationFtom/{ConsultationFormId}")]
+        public async Task<IActionResult> GetConsulationForm([FromRoute] long ConsultationFormId)
+        {
+            var res = await consultationRequestService.GetConsulationForm(ConsultationFormId);
+            if (res is not null)
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success(res, "success");
+            }
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("consulation not found");
+        }
+        #endregion
+
+        #region change status consulations
+        /// <summary>
+        /// change read status of consultion form , Unread and read
+        /// </summary>
+        /// <param name="ConsulationId"></param>
+        /// <returns></returns>
+        [HttpPut("Change-Consulation-Read-Status")]
+        public async Task<IActionResult> ChangeReadStatus(long ConsulationId){
+            var res= await consultationRequestService.ChangeReadStatus(ConsulationId);
+            if (res)
+            {
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("The read status of the form has changed");
+            }
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("consulation not found");
+        }
+        #endregion
+
+
+
+
         #endregion
     }
 }

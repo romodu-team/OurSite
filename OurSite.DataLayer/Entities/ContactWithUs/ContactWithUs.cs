@@ -12,6 +12,7 @@ namespace OurSite.DataLayer.Entities.ContactWithUs
     public class ContactWithUs : BaseEntity
     {
 
+        #region Properties
         [Required(ErrorMessage = "این فیلد اجباری است")]
         [DisplayName("نام")]
         [MaxLength(50, ErrorMessage = "تعداد کاراکتر بیش از حد مجاز است")]
@@ -35,5 +36,6 @@ namespace OurSite.DataLayer.Entities.ContactWithUs
 
         [Required(ErrorMessage = "لطفا توضیحات را وارد کنید")]
         public string Expration { get; set; }
+        #endregion
     }
 }

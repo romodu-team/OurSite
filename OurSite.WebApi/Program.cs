@@ -19,9 +19,12 @@ using System.Text;
 using Microsoft.Extensions.FileProviders;
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
-using OurSite.Core.Security.Authorizations;
 using OurSite.Core.Services.Repositories.Forms;
 using OurSite.Core.Services.Interfaces.Projecta;
+using OurSite.OurSite.Core.Services.Repositories;
+using OurSite.Core.Services.Interfaces.TicketInterfaces;
+using OurSite.Core.Services.Repositories.TicketServices;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,10 +63,14 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 #region addservices
-builder.Services.AddScoped(typeof(IGenericReopsitories<>), typeof(GenericRepositories<>));
+//test database
+builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
+//real database
+//builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
 builder.Services.Configure<MailSettingsDto>(builder.Configuration.GetSection("MailSettings"));
@@ -73,7 +80,8 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IProject, ProjectService>();
-
+builder.Services.AddScoped<IPayment, PaymentService>();
+builder.Services.AddScoped<ICheckBoxService, CheckBoxService>();
 #endregion
 #region Autentication
 builder.Services.AddAuthentication(options=>
@@ -98,8 +106,14 @@ options.TokenValidationParameters = new TokenValidationParameters()
 builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IimageGalleryService, ImageGalleryService>();
+builder.Services.AddScoped<IWorkSampleService, WorkSampleService>();
+builder.Services.AddScoped<IWorkSampleCategoryService,WorkSampleCategoryService >();
 builder.Services.AddScoped<ITicketService, TicketService>();
-builder.Services.AddScoped<ITicketMessageService, TicketMessageService>();
+builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
+builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
+builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("viewUser", policy => policy.RequireClaim("viewUser"));
@@ -120,14 +134,19 @@ builder.Services.AddCors(options =>
 });
 #endregion
 var app = builder.Build();
-
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+    ForwardedHeaders.XForwardedProto
+});  
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(options =>
-    options.SerializeAsV2 = true); ;
+    options.SerializeAsV2 = true); 
     app.UseSwaggerUI(options=>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
+
 }
 
 app.UseHttpsRedirection();
@@ -142,4 +161,5 @@ app.UseStaticFiles(new StaticFileOptions
            Path.Combine(builder.Environment.ContentRootPath, "upload")),
     RequestPath = "/upload"
 });
+
 app.Run();
