@@ -1,51 +1,51 @@
 <section class="container mt-3" dir="rtl">
     <div class="d-flex">
-
-        <div class=" col-9" dir="rtl">
+<!-- edit inactive admin -->
+        <div class=" col-9" dir="rtl" *ngIf="number == 1">
             <label for="" class="text-secondary">نام</label>
-            <input type="text" class="form-control mt-2">
+            <input type="text" class="form-control mt-2" [disabled]=" isDisabled ">
     
             <label for="" class="mt-3 text-secondary">نام خانوادگی</label>
-            <input type="text" class="form-control mt-2 ">
+            <input type="text" class="form-control mt-2 " [disabled]=" isDisabled ">
     
             <label for="" class="mt-3 text-secondary">اسم مستعار</label>
-            <input type="text" class="form-control mt-2 ">
+            <input type="text" class="form-control mt-2 " [disabled]=" isDisabled ">
     
             <label for="" class="mt-3 text-secondary">پسورد</label>
-            <input type="text" class="form-control mt-2 ">
+            <input type="text" class="form-control mt-2 " [disabled]=" isDisabled ">
     
             <label for="" class="mt-3 text-secondary">تکرار پسورد</label>
-            <input type="text" class="form-control mt-2 ">
+            <input type="text" class="form-control mt-2 " [disabled]=" isDisabled ">
     
             <label for="" class="mt-3 text-secondary">موبایل</label>
-            <input type="text" class="form-control mt-2 ">
+            <input type="text" class="form-control mt-2 " [disabled]=" isDisabled ">
     
             <label for="" class="mt-3 text-secondary">ایمیل</label>
-            <input type="text" class="form-control mt-2 ">
+            <input type="text" class="form-control mt-2 " [disabled]=" isDisabled ">
 
-            <p class="my-4">نوع</p>
+            <p class="my-4 text-secondary">نوع</p>
 
             <div class="d-flex">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  [disabled]=" isDisabled ">
                     <label class="form-check-label" for="flexCheckDefault">
                       مدیر
                     </label>
                   </div>
                   <div class="form-check mx-5">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked  [disabled]=" isDisabled ">
                     <label class="form-check-label" for="flexCheckChecked">
                         نویسنده
                     </label>
                   </div>
                   <div class="form-check mx-5">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  [disabled]=" isDisabled ">
                     <label class="form-check-label" for="flexCheckDefault">
                         کاربر
                     </label>
                   </div>
                   <div class="form-check mx-5">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked  [disabled]=" isDisabled ">
                     <label class="form-check-label" for="flexCheckChecked">
                         ادمین
                     </label>
@@ -53,35 +53,136 @@
             </div>
 
             <div class="mt-5 mb-5" dir="ltr">
-                <button class="btn btn-dark px-4">خروج</button>
-                <button class="btn btn-danger mx-3 px-4">لغو</button>
-                <button class="btn btn-primary px-4">ثبت نهایی</button>
+                <button class="btn btn-dark px-4" >خروج</button>
+                <button class="btn btn-primary mx-3 px-4" (click)="next()" *ngIf="number==1">ویرایش</button>
+                <button class="btn btn-primary px-4 mx-3" (click)="next()" *ngIf="number !== 1">ثبت نهایی</button>
             </div>
 
         </div>
-    
-        <div class="col-3  d-flex flex-column mx-5 align-items-center">
-            <img class=" rounded mb-3 mt-5" src="../../../../../assets/imgs/bill-gates-wealthiest-person.jpg" alt="" width="80px">
-            <button class="btn btn-primary px-5">فایل پیوست پروفایل</button>
-            <p class="mt-3 fs-m-1">فایل پیوست نباید بیشتر از 3 مگابایت باشد</p>
+  <!--  edit active admin -->
+      <div class=" col-9" dir="rtl" *ngIf="number == 2">
+            <label for="" class="text-secondary">نام</label>
+            <input type="text" class="form-control mt-2">
+
+            <label for="" class="mt-3 text-secondary">نام خانوادگی</label>
+            <input type="text" class="form-control mt-2 ">
+
+            <label for="" class="mt-3 text-secondary">اسم مستعار</label>
+            <input type="text" class="form-control mt-2 ">
+
+            <label for="" class="mt-3 text-secondary">پسورد</label>
+            <input type="text" class="form-control mt-2 ">
+
+            <label for="" class="mt-3 text-secondary">تکرار پسورد</label>
+            <input type="text" class="form-control mt-2 ">
+
+            <label for="" class="mt-3 text-secondary">موبایل</label>
+            <input type="text" class="form-control mt-2 ">
+
+            <label for="" class="mt-3 text-secondary">ایمیل</label>
+            <input type="text" class="form-control mt-2 ">
+
+            <p class="my-4">نوع</p>
+
+        <div class="d-flex">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  مدیر
+                </label>
+              </div>
+              <div class="form-check mx-5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                <label class="form-check-label" for="flexCheckChecked">
+                    نویسنده
+                </label>
+              </div>
+              <div class="form-check mx-5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                    کاربر
+                </label>
+              </div>
+              <div class="form-check mx-5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                <label class="form-check-label" for="flexCheckChecked">
+                    ادمین
+                </label>
+              </div>
         </div>
 
+        <div class="mt-5 mb-5" dir="ltr">
+          <button class="btn btn-primary px-4" (click)="next()">ثبت نهایی</button>
+          <button class="btn btn-danger mx-3 px-4" (click)="past()" *ngIf="number == 2">لغو</button>
+          <button class="btn btn-dark px-4">خروج</button>
+        </div>
+
+      </div>
+
+      <!-- admin definition -->
+
+      <div class=" col-9" dir="rtl" *ngIf="number == 3">
+        <label for="" class="text-secondary">نام</label>
+        <input type="text" class="form-control mt-2">
+
+        <label for="" class="mt-3 text-secondary">نام خانوادگی</label>
+        <input type="text" class="form-control mt-2 ">
+
+        <label for="" class="mt-3 text-secondary">اسم مستعار</label>
+        <input type="text" class="form-control mt-2 ">
+
+        <label for="" class="mt-3 text-secondary">پسورد</label>
+        <input type="text" class="form-control mt-2 ">
+
+        <label for="" class="mt-3 text-secondary">تکرار پسورد</label>
+        <input type="text" class="form-control mt-2 ">
+
+        <label for="" class="mt-3 text-secondary">موبایل</label>
+        <input type="text" class="form-control mt-2 ">
+
+        <label for="" class="mt-3 text-secondary">ایمیل</label>
+        <input type="text" class="form-control mt-2 ">
+
+        <p class="my-4">نوع</p>
+
+        <div class="d-flex">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  مدیر
+                </label>
+              </div>
+              <div class="form-check mx-5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                <label class="form-check-label" for="flexCheckChecked">
+                    نویسنده
+                </label>
+              </div>
+              <div class="form-check mx-5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                    کاربر
+                </label>
+              </div>
+              <div class="form-check mx-5">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                <label class="form-check-label" for="flexCheckChecked">
+                    ادمین
+                </label>
+              </div>
+        </div>
+
+        <div class="mt-5 mb-5" dir="ltr">
+          <button class="btn btn-primary px-4 mx-3">ثبت نهایی</button>
+          <button class="btn btn-dark px-4">خروج</button>
+        </div>
+
+      </div>
+      
+              <div class="col-3  d-flex flex-column mx-5 align-items-center">
+                  <img class=" rounded mb-3 mt-5" src="../../../../../assets/imgs/bill-gates-wealthiest-person.jpg" alt="" width="80px">
+                  <button class="btn btn-primary px-5">فایل پیوست پروفایل</button>
+                  <p class="mt-3 fs-m-1">فایل پیوست نباید بیشتر از 3 مگابایت باشد</p>
+              </div>
     </div>
-
-
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section></section>
