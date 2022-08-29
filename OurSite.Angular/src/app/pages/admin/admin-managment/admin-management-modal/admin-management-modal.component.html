@@ -7,8 +7,8 @@
                     <img class="rounded" src="../../../../../assets/imgs/bill-gates-wealthiest-person.jpg" width="45px" alt="">
                 </div>
                 <div class="mx-2">
-                    <div>سینا پورجلال</div>
-                    <div>ادمین</div>
+                    <div class="fs-m-3 fw-bold">سینا پورجلال</div>
+                    <div class="fs-m-2">ادمین</div>
                 </div>
             </div>
 
@@ -19,20 +19,16 @@
 
         <!-- Section 2 -->
         <div class="col-6">
-            <div class="btn-group w-100">
-                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                  تغییر وضعیت کاربر
-                </button>
-                <ul class="dropdown-menu dropdown-menu-lg-end">
-                  <li><button class="dropdown-item" type="button">Action</button></li>
-                  <li><button class="dropdown-item" type="button">Another action</button></li>
-                  <li><button class="dropdown-item" type="button">Something else here</button></li>
-                </ul>
-              </div>
+            <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                <option selected>تغییر وضعیت کاربر :</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
 
               <div class="mt-4">
-                <label for="exampleFormControlInput1" class="form-label">  تغییر  آی دی :</label>
-                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+                <label for="exampleFormControlInput1" class="form-label fs-m-3">تغییر  آی دی :</label>
+                <input class="form-control form-control-sm" type="text" placeholder="id" aria-label=".form-control-sm example">
               </div>
         </div>
 
