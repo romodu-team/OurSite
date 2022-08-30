@@ -12,13 +12,9 @@ export class AdminManagementEditComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  flag:boolean = false
+  
   number: number = 1
   isDisabled : boolean = true;
-
-  edit(){
-    this.flag = true
-  }
 
   next(){
     this.number++
