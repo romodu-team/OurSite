@@ -40,7 +40,6 @@ import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-
 
 import {MatIconModule} from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './pages/login/login.component';
 import { UserComponent } from './pages/user/user.component';
 import { AuthInterceptor } from './services/auth.interceptor';
 import {MatTooltipModule} from '@angular/material/tooltip';
