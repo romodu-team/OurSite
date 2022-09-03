@@ -7,7 +7,7 @@ import { FeatureComponent } from './pages/feature/feature.component';
 import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/login/login.component';
 import { UserComponent } from './pages/user/user.component';
-import { AuthGuard } from './services/auth.guard';
+import { AuthGuard } from './shared/services/auth.guard';
 import { DemoFormComponent } from './shared/demo-form/demo-form.component';
 
 const routes: Routes = [

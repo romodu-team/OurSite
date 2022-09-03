@@ -43,7 +43,7 @@ import {MatIconModule} from '@angular/material/icon';
 import { RegisterComponent } from './pages/register/register.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserComponent } from './pages/user/user.component';
-import { AuthInterceptor } from './services/auth.interceptor';
+import { AuthInterceptor } from './shared/services/auth.interceptor';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
 import { MainCardComponent } from './pages/admin/admin-dashboard/main-card/main-card.component';
