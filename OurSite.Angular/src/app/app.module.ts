@@ -100,6 +100,8 @@ import { AdminuserHeaderComponent } from './shared/adminuser-header/adminuser-he
 import { AdminuserNavbarComponent } from './shared/adminuser-navbar/adminuser-navbar.component';
 import { FillterComponent } from './shared/fillter/fillter.component';
 import { AdminWelcomeComponent } from './pages/admin/admin-welcome/admin-welcome.component';
+import { AdminTicketCategoryComponent } from './pages/admin/admin-ticket/admin-ticket-category/admin-ticket-category.component';
+import { AdminNotificationsComponent } from './pages/admin/admin-notifications/admin-notifications.component';
 
 
 @NgModule({
@@ -187,7 +189,9 @@ import { AdminWelcomeComponent } from './pages/admin/admin-welcome/admin-welcome
     AdminuserHeaderComponent,
     AdminuserNavbarComponent,
     FillterComponent,
-    AdminWelcomeComponent
+    AdminWelcomeComponent,
+    AdminTicketCategoryComponent,
+    AdminNotificationsComponent
 
   ],
   imports: [
