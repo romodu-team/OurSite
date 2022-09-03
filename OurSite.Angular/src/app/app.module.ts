@@ -103,6 +103,7 @@ import { AdminuserHeaderComponent } from './shared/adminuser-header/adminuser-he
 import { AdminuserNavbarComponent } from './shared/adminuser-navbar/adminuser-navbar.component';
 import { FillterComponent } from './shared/fillter/fillter.component';
 import { Filter2Component } from './shared/filter2/filter2.component';
+import { Card14Component } from './shared/card14/card14.component';
 
 
 @NgModule({
@@ -194,7 +195,8 @@ import { Filter2Component } from './shared/filter2/filter2.component';
     AdminuserHeaderComponent,
     AdminuserNavbarComponent,
     FillterComponent,
-    Filter2Component
+    Filter2Component,
+    Card14Component
 
   ],
   imports: [
