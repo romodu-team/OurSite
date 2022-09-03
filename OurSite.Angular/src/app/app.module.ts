@@ -40,12 +40,10 @@ import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-
 
 import {MatIconModule} from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './pages/login/login.component';
 import { UserComponent } from './pages/user/user.component';
 import { AuthInterceptor } from './services/auth.interceptor';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
-import { MainCardComponent } from './pages/admin/admin-dashboard/main-card/main-card.component';
 import { AdminManagmentComponent } from './pages/admin/admin-managment/admin-managment.component';
 import { AdminManagementModalComponent } from './pages/admin/admin-managment/admin-management-modal/admin-management-modal.component';
 import { AdminManagementEditComponent } from './pages/admin/admin-managment/admin-management-edit/admin-management-edit.component';
@@ -101,6 +99,7 @@ import { Card13Component } from './shared/card13/card13.component';
 import { AdminuserHeaderComponent } from './shared/adminuser-header/adminuser-header.component';
 import { AdminuserNavbarComponent } from './shared/adminuser-navbar/adminuser-navbar.component';
 import { FillterComponent } from './shared/fillter/fillter.component';
+import { AdminWelcomeComponent } from './pages/admin/admin-welcome/admin-welcome.component';
 
 
 @NgModule({
@@ -120,7 +119,6 @@ import { FillterComponent } from './shared/fillter/fillter.component';
     Card6Component,
     Card7Component,
     AboutUsComponent,
-    Card7Component,
 
     DemoMainComponent,
     Card4Component,
@@ -132,10 +130,8 @@ import { FillterComponent } from './shared/fillter/fillter.component';
     Card5Component,
     DemoFormComponent,
     DemoDetailHeaderComponent,
-    LoginComponent,
     UserComponent,
     AdminDashboardComponent,
-    MainCardComponent,
     AdminManagmentComponent,
     AdminManagementModalComponent,
     AdminManagementEditComponent,
@@ -190,7 +186,8 @@ import { FillterComponent } from './shared/fillter/fillter.component';
     Card13Component,
     AdminuserHeaderComponent,
     AdminuserNavbarComponent,
-    FillterComponent
+    FillterComponent,
+    AdminWelcomeComponent
 
   ],
   imports: [

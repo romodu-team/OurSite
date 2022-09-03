@@ -12,4 +12,23 @@ export class AdminuserNavbarComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  First:boolean = false
+  rotateArrow:string = 'rotate-arrow-back'
+  openSubmenu:string = 'open-submenu-back'
+
+  first(){
+    this.First = !this.First
+    if(this.rotateArrow == 'rotate-arrow-back'){
+      this.rotateArrow = 'rotate-arrow'
+    }else{
+      this.rotateArrow = 'rotate-arrow-back'
+    }
+
+    if(this.openSubmenu == 'open-submenu'){
+      this.openSubmenu = 'open-submenu-back'
+    }else{
+      this.openSubmenu = 'open-submenu'
+    }
+  }
+
 }
