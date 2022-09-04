@@ -29,7 +29,7 @@ export class AdminuserNavbarComponent implements OnInit {
   LittleNav(){
     setTimeout(() => {
       this.littleNav = !this.littleNav
-    }, 20);
+    }, 52);
   }
 
   first(){
