@@ -88,9 +88,10 @@ namespace OurSite.Core.Services.Repositories.TicketServices
         {
             //find ticket
             var ticket = await _TicketRepository.GetAllEntity().Include(t=>t.TicketStatus).SingleOrDefaultAsync(t => t.Id == request.TicketId);
+            var discussionCount = _DiscussionRepository.GetAllEntity().Count(x => x.TicketId == ticket.Id);
             if (ticket is not null)
             {
-                if (ticket.TicketStatus.Name != "Closed")
+                if (ticket.TicketStatus.Name != "Closed" || discussionCount ==0)
                 {
                     //find sender
                     bool validSender = false;

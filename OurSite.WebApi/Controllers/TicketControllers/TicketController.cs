@@ -57,7 +57,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
                         HttpContext.Response.StatusCode = 201;
                         return JsonStatusResponse.Success(message: "ticket has been created successfully , attachment uploaded", ReturnData: request);
                     case ResOperation.Success when res.AttachmentStatus == resFileUploader.NoContent:
-                        HttpContext.Response.StatusCode = 204;
+                        HttpContext.Response.StatusCode = 201;
                         return JsonStatusResponse.Success(message: "ticket has been created successfully , No attachment found", ReturnData: request);
                     case ResOperation.Failure when res.AttachmentStatus == resFileUploader.Failure:
                         HttpContext.Response.StatusCode = 500;
