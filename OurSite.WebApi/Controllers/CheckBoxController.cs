@@ -34,7 +34,7 @@ public class CheckBoxController : Controller
         return JsonStatusResponse.Error("CheckBox was not created");
     }
     /// <summary>
-    /// delete CheckBoxس
+    /// delete CheckBoxes
     /// </summary>
     /// <param name="CheckBoxId"></param>
     /// <returns></returns>

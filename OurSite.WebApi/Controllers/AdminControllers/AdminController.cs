@@ -158,15 +158,15 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                         
                         case ResUpdate.Success:
                         HttpContext.Response.StatusCode = 200;
-                            return JsonStatusResponse.Success("Profile photo changed");
+                            return JsonStatusResponse.Success("admin has been updated");
                         case ResUpdate.Error:
                         HttpContext.Response.StatusCode = 500;
-                            return JsonStatusResponse.Error("change profile photo failed");
+                            return JsonStatusResponse.Error("failed");
                         case ResUpdate.NotFound:
                         HttpContext.Response.StatusCode = 404;
                             return JsonStatusResponse.NotFound("Admin not found");
                         default:
-                        HttpContext.Response.StatusCode = 400;
+                        HttpContext.Response.StatusCode = 500;
                             return JsonStatusResponse.UnhandledError();
                     }
                 }

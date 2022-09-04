@@ -41,7 +41,7 @@ namespace OurSite.Core.Utilities
             );
 
             var token = new JwtSecurityTokenHandler().WriteToken(tokenOption);
-            return token;
+            return $"Bearer {token}";
         }
 
         public  async Task<string> GenerateAdminToken(Admin admin,Role role, int Expire)
@@ -63,7 +63,7 @@ namespace OurSite.Core.Utilities
             var Token = JwtTokenHandler.CreateToken(tokenDescriptor);
             var JwtToken = JwtTokenHandler.WriteToken(Token);
 
-            return JwtToken;
+            return $"Bearer {JwtToken}" ;
         }
 
         private async Task<List<Claim>> AllValidClaims(Admin admin)
