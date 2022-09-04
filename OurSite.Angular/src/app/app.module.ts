@@ -41,7 +41,7 @@ import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-
 import {MatIconModule} from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserComponent } from './pages/user/user.component';
-import { AuthInterceptor } from './services/auth.interceptor';
+import { AuthInterceptor } from './shared/services/auth.interceptor';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
 import { AdminManagmentComponent } from './pages/admin/admin-managment/admin-managment.component';
@@ -100,7 +100,10 @@ import { AdminuserHeaderComponent } from './shared/adminuser-header/adminuser-he
 import { AdminuserNavbarComponent } from './shared/adminuser-navbar/adminuser-navbar.component';
 import { FillterComponent } from './shared/fillter/fillter.component';
 import { AdminWelcomeComponent } from './pages/admin/admin-welcome/admin-welcome.component';
-
+import { AdminTicketCategoryComponent } from './pages/admin/admin-ticket/admin-ticket-category/admin-ticket-category.component';
+import { AdminNotificationsComponent } from './pages/admin/admin-notifications/admin-notifications.component';
+import { Filter2Component } from "./shared/filter2/filter2.component";
+import { Card14Component } from "./shared/card14/card14.component";
 
 @NgModule({
   declarations: [
@@ -187,7 +190,11 @@ import { AdminWelcomeComponent } from './pages/admin/admin-welcome/admin-welcome
     AdminuserHeaderComponent,
     AdminuserNavbarComponent,
     FillterComponent,
-    AdminWelcomeComponent
+    AdminWelcomeComponent,
+    AdminTicketCategoryComponent,
+    AdminNotificationsComponent,
+    Filter2Component,
+    Card14Component,
 
   ],
   imports: [
