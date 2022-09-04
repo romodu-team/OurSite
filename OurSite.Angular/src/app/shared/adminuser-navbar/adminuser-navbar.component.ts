@@ -11,7 +11,7 @@ export class AdminuserNavbarComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
+  littleNav:boolean = true
   First:boolean = false
   First1:boolean = false
   Second:boolean = false
@@ -25,6 +25,12 @@ export class AdminuserNavbarComponent implements OnInit {
   openSubmenu2:string = 'open-submenu-back'
   openSubmenu3:string = 'open-submenu-back'
   openSubmenu4:string = 'open-submenu-back'
+
+  LittleNav(){
+    setTimeout(() => {
+      this.littleNav = !this.littleNav
+    }, 20);
+  }
 
   first(){
     this.First = !this.First
