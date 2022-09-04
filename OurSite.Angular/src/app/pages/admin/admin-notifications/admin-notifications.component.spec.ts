@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MainCardComponent } from './main-card.component';
+import { AdminNotificationsComponent } from './admin-notifications.component';
 
-describe('MainCardComponent', () => {
-  let component: MainCardComponent;
-  let fixture: ComponentFixture<MainCardComponent>;
+describe('AdminNotificationsComponent', () => {
+  let component: AdminNotificationsComponent;
+  let fixture: ComponentFixture<AdminNotificationsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MainCardComponent ]
+      declarations: [ AdminNotificationsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MainCardComponent);
+    fixture = TestBed.createComponent(AdminNotificationsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

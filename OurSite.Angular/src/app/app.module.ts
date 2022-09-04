@@ -32,7 +32,6 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { Dialog1Component } from './pages/contact-us/dialog1/dialog1.component';
 import { Dialog2Component } from './pages/contact-us/dialog2/dialog2.component';
-import { LoginComponent } from './pages/login/login.component';
 
 
 import { Card5Component } from './shared/card5/card5.component';
@@ -40,13 +39,11 @@ import { DemoFormComponent } from './shared/demo-form/demo-form.component';
 import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-detail-header.component';
 
 import {MatIconModule} from '@angular/material/icon';
-import { RegisterComponent } from './pages/register/register.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserComponent } from './pages/user/user.component';
 import { AuthInterceptor } from './shared/services/auth.interceptor';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
-import { MainCardComponent } from './pages/admin/admin-dashboard/main-card/main-card.component';
 import { AdminManagmentComponent } from './pages/admin/admin-managment/admin-managment.component';
 import { AdminManagementModalComponent } from './pages/admin/admin-managment/admin-management-modal/admin-management-modal.component';
 import { AdminManagementEditComponent } from './pages/admin/admin-managment/admin-management-edit/admin-management-edit.component';
@@ -102,8 +99,9 @@ import { Card13Component } from './shared/card13/card13.component';
 import { AdminuserHeaderComponent } from './shared/adminuser-header/adminuser-header.component';
 import { AdminuserNavbarComponent } from './shared/adminuser-navbar/adminuser-navbar.component';
 import { FillterComponent } from './shared/fillter/fillter.component';
-import { Filter2Component } from './shared/filter2/filter2.component';
-import { Card14Component } from './shared/card14/card14.component';
+import { AdminWelcomeComponent } from './pages/admin/admin-welcome/admin-welcome.component';
+import { AdminTicketCategoryComponent } from './pages/admin/admin-ticket/admin-ticket-category/admin-ticket-category.component';
+import { AdminNotificationsComponent } from './pages/admin/admin-notifications/admin-notifications.component';
 
 
 @NgModule({
@@ -123,7 +121,6 @@ import { Card14Component } from './shared/card14/card14.component';
     Card6Component,
     Card7Component,
     AboutUsComponent,
-    Card7Component,
 
     DemoMainComponent,
     Card4Component,
@@ -131,15 +128,12 @@ import { Card14Component } from './shared/card14/card14.component';
     ContactUsComponent,
     Dialog1Component,
     Dialog2Component,
-    LoginComponent,
 
     Card5Component,
     DemoFormComponent,
     DemoDetailHeaderComponent,
-    RegisterComponent,
     UserComponent,
     AdminDashboardComponent,
-    MainCardComponent,
     AdminManagmentComponent,
     AdminManagementModalComponent,
     AdminManagementEditComponent,
@@ -195,8 +189,9 @@ import { Card14Component } from './shared/card14/card14.component';
     AdminuserHeaderComponent,
     AdminuserNavbarComponent,
     FillterComponent,
-    Filter2Component,
-    Card14Component
+    AdminWelcomeComponent,
+    AdminTicketCategoryComponent,
+    AdminNotificationsComponent
 
   ],
   imports: [
