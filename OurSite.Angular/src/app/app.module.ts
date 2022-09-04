@@ -103,6 +103,7 @@ import { AdminWelcomeComponent } from './pages/admin/admin-welcome/admin-welcome
 import { AdminTicketCategoryComponent } from './pages/admin/admin-ticket/admin-ticket-category/admin-ticket-category.component';
 import { AdminNotificationsComponent } from './pages/admin/admin-notifications/admin-notifications.component';
 import { Filter2Component } from "./shared/filter2/filter2.component";
+import { Card14Component } from "./shared/card14/card14.component";
 
 @NgModule({
   declarations: [
@@ -193,6 +194,7 @@ import { Filter2Component } from "./shared/filter2/filter2.component";
     AdminTicketCategoryComponent,
     AdminNotificationsComponent,
     Filter2Component,
+    Card14Component,
 
   ],
   imports: [
