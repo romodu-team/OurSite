@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-card10',
@@ -12,4 +12,8 @@ export class Card10Component implements OnInit {
   ngOnInit(): void {
   }
 
+  @Input() title:string = 'اسنپ'
+  @Input() description:string = 'شرکت ایده گزین ارتباطات روماک'
+  @Input() condition:string = 'در حال انجام'
+  @Input() link:string = 'www.sanp.ir'
 }

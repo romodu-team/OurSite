@@ -41,7 +41,7 @@ import { DemoDetailHeaderComponent } from './pages/demo/demo-detail-header/demo-
 import {MatIconModule} from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserComponent } from './pages/user/user.component';
-import { AuthInterceptor } from './services/auth.interceptor';
+import { AuthInterceptor } from './shared/services/auth.interceptor';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
 import { AdminManagmentComponent } from './pages/admin/admin-managment/admin-managment.component';
