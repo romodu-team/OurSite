@@ -1,0 +1,26 @@
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
+})
+export class RegisterComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+  number : number = 1
+
+  next(){
+    this.number++
+  }
+
+  past(){
+    this.number--
+  }
+
+
+}

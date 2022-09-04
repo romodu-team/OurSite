@@ -1,1 +1,47 @@
-<p>card12 works!</p>
+<section class="d-flex container mt-3" dir="rtl">
+    <div class="col-2">
+
+        <div class="d-flex justify-content-between" dir="rtl">
+            <div class="">
+                <img class="rounded" src="../../../assets/imgs/bill-gates-wealthiest-person.jpg" alt="" width="93px">
+            </div>
+    
+            <div class=" d-flex align-items-center flex-column rounded bg-dark text-white justify-content-center col-6 fs-m-2">
+                    <p class="mt-1">{{name}}</p>
+                    <p class="text-secondary">ziba</p>
+            </div>
+        </div>
+
+        <div class="col- bg-dark text-white p-1 rounded d-flex mt-2" dir="rtl">
+            <div class="col-5 fs-m-1">
+                <p>نام کاربری :{{userName}}</p>
+                <p>تاریخ لاگ این :{{loginDate}}</p>
+                <p>واریزی :{{deposit}}</p>
+            </div>
+
+            <div class="col-5 fs-m-1">
+                <p>شماره :{{number}}</p>
+                <p>دسته بندی :{{grouping}}</p>
+                <p>وضعیت :{{condition}}</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-8 mx-3 p-3 shadow-sm rounded position-relative bg-white" dir="rtl">
+        <p class="fs-m-3 fw-bold">{{projectName}}</p>
+        <span class="line "></span>
+        <p class="fs-m-2">{{description}}</p>
+    </div>
+
+    <div class="col-2 ">
+        <button class="btn btn-primary btn-lg w-100 p-3">ثبت پاسخ</button>
+        <button class="btn btn-secondary w-100 p-2 my-3">ویرایش سریع</button>
+        <button class="btn btn-outline-primary w-100 p-2">مشاهده فایل ارسالی</button>
+
+        <div class="mt-4 w-100">
+            <button class="btn btn-danger btn-sm  p-2 ">حذف درخواست</button>
+            <button class="btn btn-primary btn-sm py-2 px-3 mx-2 ">ارسال پاسخ</button>
+        </div>
+    </div>
+</section>

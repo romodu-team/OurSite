@@ -12,4 +12,20 @@ export class AdminManagementEditComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  
+  number: number = 1
+  isDisabled : boolean = true;
+
+  next(){
+    this.number++
+  }
+
+  past(){
+    this.number--
+  }
+
+  editAdmin(){
+
+  }
+
 }

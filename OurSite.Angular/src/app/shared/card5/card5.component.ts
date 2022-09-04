@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-card5',
@@ -11,6 +11,8 @@ export class Card5Component implements OnInit {
 
   ngOnInit(): void {
   }
+
+  @Input() title:string = 'صفحه اصلی'
 
   hover:string = 'bg-white'
   shadow:string = 'shadow-sm'
