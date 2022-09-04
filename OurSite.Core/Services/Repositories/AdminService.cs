@@ -242,7 +242,8 @@ namespace OurSite.Core.Services.Repositories
                 Mobile = admin.Mobile,
                 NationalCode = admin.NationalCode,
                 UserName = admin.UserName,
-                RoleName = adminRole.Title
+                RoleName = adminRole.Title,
+                IsActive=admin.IsActive
             };
             if (additionalData != null)
             {
@@ -261,11 +262,11 @@ namespace OurSite.Core.Services.Repositories
         #endregion
 
         #region Add new admin
-        public async Task<RessingupDto> RegisterAdmin(ReqRegisterAdminDto req)
+        public async Task<ResRegisterAdminDto> RegisterAdmin(ReqRegisterAdminDto req)
         {
             var check = await IsAdminExist(req.UserName.Trim().ToLower(), req.Email.ToLower().Trim());
             if (check)
-                return RessingupDto.Exist;
+                return new ResRegisterAdminDto { RessingupDto = RessingupDto.Exist };
             Admin newAdmin = new Admin()
             {
                 UserName = req.UserName.Trim().ToLower(),
@@ -292,14 +293,14 @@ namespace OurSite.Core.Services.Repositories
                 };
                 var res = await roleService.AddRoleToAdmin(accountInRole);
                 if (res)
-                    return RessingupDto.success;
-                return RessingupDto.Failed;
+                    return new ResRegisterAdminDto { RessingupDto = RessingupDto.success ,AdminId= newAdmin.Id,AdminUUID=newAdmin.UUID };
+                return new ResRegisterAdminDto { RessingupDto = RessingupDto.Failed };
 
             }
             catch (Exception)
             {
 
-                return RessingupDto.Failed;
+                return new ResRegisterAdminDto { RessingupDto = RessingupDto.Failed };
             }
 
         }
@@ -414,7 +415,7 @@ namespace OurSite.Core.Services.Repositories
 
             var count = (int)Math.Ceiling(adminQuery.Count() / (double)filter.TakeEntity);
             var pager = Pager.Build(count, filter.PageId, filter.TakeEntity);
-            var list = await adminQuery.Paging(pager).Select(x => new GetAllAdminDto { UUID=x.UUID,Email = x.Email, FirstName = x.FirstName, LastName = x.LastName, AdminId = x.Id, UserName = x.UserName, IsDelete = x.IsRemove }).ToListAsync();    //use the genric interface options and save values in variable
+            var list = await adminQuery.Paging(pager).Select(x => new GetAllAdminDto { UUID=x.UUID,Email = x.Email, FirstName = x.FirstName, LastName = x.LastName, AdminId = x.Id, UserName = x.UserName, IsDelete = x.IsRemove,IsActive=x.IsActive }).ToListAsync();    //use the genric interface options and save values in variable
 
             var result = new ResFilterAdminDto();
             result.SetPaging(pager);

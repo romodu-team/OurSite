@@ -24,7 +24,6 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         }
         #endregion
 
-
         #region singup
         /// <summary>
         ///  API for Register new Admin by system administrator {Get request from body}
@@ -37,11 +36,11 @@ namespace OurSite.WebApi.Controllers.AdminControllers
             if (ModelState.IsValid)
             {
                 var res = await adminService.RegisterAdmin(req);
-                switch (res)
+                switch (res.RessingupDto)
                 {
                     case RessingupDto.success:
                         HttpContext.Response.StatusCode = 201;
-                        return JsonStatusResponse.Success("Admin has been registered");
+                        return JsonStatusResponse.Success(new {AdminId=res.AdminId,AdminUUID=res.AdminUUID },"Admin has been registered");
                     case RessingupDto.Exist:
                         HttpContext.Response.StatusCode = 409;
                         return JsonStatusResponse.Error("Username or Email exist");
@@ -55,7 +54,6 @@ namespace OurSite.WebApi.Controllers.AdminControllers
 
         }
         #endregion
-
 
         #region Change admin status
         /// <summary>
