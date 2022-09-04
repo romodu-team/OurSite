@@ -102,7 +102,7 @@ import { FillterComponent } from './shared/fillter/fillter.component';
 import { AdminWelcomeComponent } from './pages/admin/admin-welcome/admin-welcome.component';
 import { AdminTicketCategoryComponent } from './pages/admin/admin-ticket/admin-ticket-category/admin-ticket-category.component';
 import { AdminNotificationsComponent } from './pages/admin/admin-notifications/admin-notifications.component';
-
+import { Filter2Component } from "./shared/filter2/filter2.component";
 
 @NgModule({
   declarations: [
@@ -191,7 +191,8 @@ import { AdminNotificationsComponent } from './pages/admin/admin-notifications/a
     FillterComponent,
     AdminWelcomeComponent,
     AdminTicketCategoryComponent,
-    AdminNotificationsComponent
+    AdminNotificationsComponent,
+    Filter2Component,
 
   ],
   imports: [
