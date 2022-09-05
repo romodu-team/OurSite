@@ -1,10 +1,6 @@
-.card-size{
-    width: 300px;
-    height: 300px;
+.h{
+    height: 400px;
 }
-
-.more{
-    position: absolute;
-    left: 7px;
-    top: 390px;
+.margin-more{
+    margin-top: 280px;
 }
