@@ -160,6 +160,8 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        ///<remarks>The Birthday type must be input with "/" like 1400/02/20 </remarks>
+        /// <returns></returns>
         [HttpPost("signUp-user")]
         public async Task<IActionResult> SingupUser([FromBody] ReqSingupUserDto userDto)
         {
@@ -197,7 +199,7 @@ namespace OurSite.WebApi.Controllers
         ///  API for Update User Profile by user{Get request from form}
         /// </summary>
         /// <param name="request"></param>
-        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
+        /// <remarks>The file size of the profile image must be less than 3 MB, also The Birthday type must be input with "/" like 1400/02/20 </remarks>
         /// <returns></returns>
         [HttpPut("Update-Profile")]
         public async Task<IActionResult> UpDate([FromForm] ReqUpdateUserDto userdto)
