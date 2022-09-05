@@ -351,7 +351,6 @@ namespace OurSite.Core.Services.Repositories
         public async Task<ReqViewUserDto> ViewProfile(long id)
         {
             var user = await userService.GetAllEntity().Include(u=>u.AdditionalDataOfUser).SingleOrDefaultAsync(u=>u.Id==id);
-            var additionalData = additionalDataRepository.GetAllEntity().SingleOrDefault(a => a.UserId == id);
             ReqViewUserDto userdto = new ReqViewUserDto();
             if (user is not null)
             {
@@ -368,7 +367,8 @@ namespace OurSite.Core.Services.Repositories
                 
                 if(user.AdditionalDataOfUser != null)
                 {
-                    userdto.Gender = additionalData.Gender.Value.ToString();
+                    if (user.AdditionalDataOfUser.Gender is not null)
+                        userdto.Gender = user.AdditionalDataOfUser.Gender.Value.ToString();
                     userdto.Address = user.AdditionalDataOfUser.Address;
                     userdto.Phone = user.AdditionalDataOfUser.Phone;
                     userdto.Birthday = user.AdditionalDataOfUser.Birthday is not null? user.AdditionalDataOfUser.Birthday.Value.PersianDate():null;
