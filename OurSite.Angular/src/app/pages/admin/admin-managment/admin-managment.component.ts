@@ -15,7 +15,7 @@ export class AdminManagmentComponent implements OnInit {
   }
 
   openDialog() {
-    this.dialog.open(AdminManagementModalComponent);
+    this.dialog.open(AdminManagementModalComponent, {width: '50%'});
 
   }
 
