@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { AdminManagementModalComponent } from './admin-management-modal/admin-management-modal.component';
 
 @Component({
   selector: 'app-admin-managment',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminManagmentComponent implements OnInit {
 
-  constructor() { }
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {
+  }
+
+  openDialog() {
+    this.dialog.open(AdminManagementModalComponent);
+
   }
 
 }

@@ -26,6 +26,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { UserComponent } from './pages/user/user.component';
 import { AuthGuard } from './shared/services/auth.guard';
 import { DemoFormComponent } from './shared/demo-form/demo-form.component';
+import { AdminManagementEditComponent } from './pages/admin/admin-managment/admin-management-edit/admin-management-edit.component';
 
 const routes: Routes = [
   { path:'', component:HomeComponent },
@@ -41,6 +42,7 @@ const routes: Routes = [
     { path: 'counseling', component: AdminCounselingComponent },
     { path: 'contact', component: AdminCountactComponent },
     { path: 'admin/management', component: AdminManagmentComponent },
+    { path: 'admin/management/edit', component: AdminManagementEditComponent },
     { path: 'payment', component: AdminPaymentComponent },
     { path: 'admin/project', component: AdminProjectComponent },
     { path: 'admin/role-management', component: AdminRoleManagementComponent },

@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-card9',
@@ -7,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class Card9Component implements OnInit {
 
-  constructor() { }
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {
   }
@@ -15,5 +16,7 @@ export class Card9Component implements OnInit {
   @Input() title:string = 'فایزه بلقان آبادی'
   @Input() description:string = 'ادمین' 
   @Input() image:string = ' ../../../assets/imgs/bill-gates-wealthiest-person.jpg '
+  @Input() editUrl:string = ''
+  @Input() openDialog!: () => void
 
 }
