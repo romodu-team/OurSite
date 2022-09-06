@@ -1,12 +1,6 @@
-.Line{
-    width: 95%;
+.line{
+    background-color: black;
+    width: 84%;
     height: 1px;
-    background-color: rgba(0, 0, 0, 0.271);
-}
-
-.Circle{
-    width: 20px;
-    height: 20px;
-    background-color: #F8BC23;
-    border-radius: 50%;
+    opacity: 0.6;
 }
