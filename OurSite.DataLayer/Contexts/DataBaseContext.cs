@@ -49,6 +49,7 @@ namespace OurSite.DataLayer.Contexts
         public DbSet<TicketPriority> TicketPriorities { get; set; }
         public DbSet<TicketStatus> TicketStatuses { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

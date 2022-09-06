@@ -66,9 +66,9 @@ builder.Services.AddSwaggerGen(option =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 #region addservices
 //test database
-builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
+//builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
 //real database
-//builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserService, UserService>();
@@ -82,16 +82,10 @@ builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IProject, ProjectService>();
 builder.Services.AddScoped<IPayment, PaymentService>();
 builder.Services.AddScoped<ICheckBoxService, CheckBoxService>();
+
 #endregion
 #region Autentication
-builder.Services.AddAuthentication(options=>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>{
-options.SaveToken=true;
-options.TokenValidationParameters = new TokenValidationParameters()
+var TokenValidationParameters= new TokenValidationParameters()
 {
     ValidateIssuer = true,
     ValidateAudience = false,
@@ -100,6 +94,15 @@ options.TokenValidationParameters = new TokenValidationParameters()
     ValidateIssuerSigningKey = true,
     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Wx7Xl6rPABrWvLbLaXoBcaLQ8nQJg7L1Dce3zfE0"))
 };
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.TokenValidationParameters = TokenValidationParameters;
 }
 );
 #endregion
@@ -108,16 +111,21 @@ builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestServi
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IimageGalleryService, ImageGalleryService>();
 builder.Services.AddScoped<IWorkSampleService, WorkSampleService>();
-builder.Services.AddScoped<IWorkSampleCategoryService,WorkSampleCategoryService >();
+builder.Services.AddScoped<IWorkSampleCategoryService, WorkSampleCategoryService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
 builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
 builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddSingleton(TokenValidationParameters);
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("viewUser", policy => policy.RequireClaim("viewUser"));
-    
+    foreach (var permission in StaticPermissions.GetPermissions())
+    {
+        options.AddPolicy(permission, policy => policy.RequireClaim(permission));
+    }
+
+
 });
 
 #region Cors
@@ -138,13 +146,13 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor |
     ForwardedHeaders.XForwardedProto
-});  
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(options =>
-    options.SerializeAsV2 = true); 
-    app.UseSwaggerUI(options=>
+    options.SerializeAsV2 = true);
+    app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 
 }

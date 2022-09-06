@@ -205,6 +205,7 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="Paydto"></param>
         /// <returns></returns>
+        [Authorize(Policy =StaticPermissions.PermissionEditPayment)]
         [HttpPut("edit-payment")]
         public async Task<IActionResult> EditPay([FromBody] EditPayDto Paydto)
         {

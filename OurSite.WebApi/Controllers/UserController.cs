@@ -14,6 +14,8 @@ using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
+using OurSite.DataLayer.Entities.Access;
+using OurSite.DataLayer.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,12 +27,13 @@ namespace OurSite.WebApi.Controllers
         #region constructor
         private IUserService userservice;
         private IRoleService Roleservice;
+        private IGenericRepository<RefreshToken> _RefreshTokenRepository;
 
-        public UserController(IRoleService Roleservice,IUserService userService)
+        public UserController(IRoleService Roleservice,IUserService userService, IGenericRepository<RefreshToken> refreshTokenRepository)
         {
             this.userservice = userService;
-            this.Roleservice=Roleservice;
-
+            this.Roleservice = Roleservice;
+            _RefreshTokenRepository = refreshTokenRepository;
         }
         #endregion
 
@@ -45,16 +48,16 @@ namespace OurSite.WebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                AuthenticationHelper authenticationHelper = new AuthenticationHelper(Roleservice);
+                AuthenticationHelper authenticationHelper = new AuthenticationHelper(Roleservice,_RefreshTokenRepository);
                 var res = await userservice.LoginUser(request);
                 switch (res)
                 {
                     case ResLoginDto.Success:
 
                         var user = await userservice.GetUserByUserPass(request.UserName, request.Password);
-                        var token = authenticationHelper.GenerateUserToken(user, 3);
+                        var token = authenticationHelper.GenerateUserTokenAsync(user);
                         HttpContext.Response.StatusCode = 200;
-                        return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName }, "login success");
+                        return JsonStatusResponse.Success(new { Auth=token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName }, "login success");
                     case ResLoginDto.IncorrectData:
                         HttpContext.Response.StatusCode = 400;
                         return JsonStatusResponse.NotFound("Username ot password is wrong");
