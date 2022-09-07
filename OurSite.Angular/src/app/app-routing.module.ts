@@ -30,6 +30,8 @@ import { AdminManagementEditComponent } from './pages/admin/admin-managment/admi
 import { AdminUserProjectEditUserComponent } from './pages/admin/admin-user-project/admin-user-project-edit-user/admin-user-project-edit-user.component';
 import { AdminProjectEditComponent } from './pages/admin/admin-project/admin-project-edit/admin-project-edit.component';
 import { AdminProjectFeaturesComponent } from './pages/admin/admin-project/admin-project-features/admin-project-features.component';
+import { AdminWorksampleEditComponent } from './pages/admin/admin-worksample/admin-worksample-edit/admin-worksample-edit.component';
+import { AdminWorksampleCategoryCreateeditComponent } from './pages/admin/admin-worksample/admin-worksample-category/admin-worksample-category-createedit/admin-worksample-category-createedit.component';
 
 const routes: Routes = [
   { path:'', component:HomeComponent },
@@ -52,9 +54,10 @@ const routes: Routes = [
     { path: 'admin/project/edit', component: AdminProjectEditComponent },
     { path: 'admin/project/features', component: AdminProjectFeaturesComponent },
     { path: 'admin/role-management', component: AdminRoleManagementComponent },
-    { path: 'admin/role-management', component: AdminRoleManagementComponent },
     { path: 'admin/worksample/worksample', component: AdminWorksampleComponent },
+    { path: 'admin/worksample/worksample/edit', component: AdminWorksampleEditComponent },
     { path: 'admin/worksample/category', component: AdminWorksampleCategoryComponent },
+    { path: 'admin/worksample/category/edit', component: AdminWorksampleCategoryCreateeditComponent },
     { path: 'admin/user-project', component: AdminUserProjectComponent },
     { path: 'admin/user-project/edit', component: AdminUserProjectEditUserComponent },
 

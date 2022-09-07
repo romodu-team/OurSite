@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { EssService } from 'src/app/shared/services/ess.service';
 
 @Component({
   selector: 'app-admin-worksample-edit',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminWorksampleEditComponent implements OnInit {
 
-  constructor() { }
+  constructor(public essSer:EssService) { }
 
   ngOnInit(): void {
   }

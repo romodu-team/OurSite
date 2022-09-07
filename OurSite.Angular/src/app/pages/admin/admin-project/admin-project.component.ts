@@ -16,7 +16,6 @@ export class AdminProjectComponent implements OnInit {
 
   openDialog() {
     this.dialog.open(AdminProjectModalComponent);
-    console.log('mobin');
 
   }
 
