@@ -22,8 +22,8 @@
 
         <div class="d-flex justify-content-between align-items-center">
             <mat-icon class="text-danger fs-m-4">delete_outline</mat-icon>
-            <mat-icon class="text-secondary fs-m-4">create</mat-icon>
-            <mat-icon class="text-secondary fs-m-4">filter_none</mat-icon>
+            <mat-icon class="text-secondary fs-m-4" [routerLink]="[editUrl]" style="cursor: pointer;">create</mat-icon>
+            <mat-icon class="text-secondary fs-m-4" (click)="openDialog()" style="cursor: pointer;">filter_none</mat-icon>
 
             <div class="form-check fs-m-4 check-box">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>

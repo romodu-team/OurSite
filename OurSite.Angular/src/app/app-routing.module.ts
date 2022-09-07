@@ -27,6 +27,9 @@ import { UserComponent } from './pages/user/user.component';
 import { AuthGuard } from './shared/services/auth.guard';
 import { DemoFormComponent } from './shared/demo-form/demo-form.component';
 import { AdminManagementEditComponent } from './pages/admin/admin-managment/admin-management-edit/admin-management-edit.component';
+import { AdminUserProjectEditUserComponent } from './pages/admin/admin-user-project/admin-user-project-edit-user/admin-user-project-edit-user.component';
+import { AdminProjectEditComponent } from './pages/admin/admin-project/admin-project-edit/admin-project-edit.component';
+import { AdminProjectFeaturesComponent } from './pages/admin/admin-project/admin-project-features/admin-project-features.component';
 
 const routes: Routes = [
   { path:'', component:HomeComponent },
@@ -39,20 +42,28 @@ const routes: Routes = [
   { path: 'admin', component: AdminWelcomeComponent, children: [
     { path: 'more/checkbox', component: AdminCheckboxComponent },
     { path: 'more/notifications', component: AdminNotificationsComponent },
+
     { path: 'counseling', component: AdminCounselingComponent },
     { path: 'contact', component: AdminCountactComponent },
+
     { path: 'admin/management', component: AdminManagmentComponent },
     { path: 'admin/management/edit', component: AdminManagementEditComponent },
-    { path: 'payment', component: AdminPaymentComponent },
     { path: 'admin/project', component: AdminProjectComponent },
+    { path: 'admin/project/edit', component: AdminProjectEditComponent },
+    { path: 'admin/project/features', component: AdminProjectFeaturesComponent },
     { path: 'admin/role-management', component: AdminRoleManagementComponent },
+    { path: 'admin/role-management', component: AdminRoleManagementComponent },
+    { path: 'admin/worksample/worksample', component: AdminWorksampleComponent },
+    { path: 'admin/worksample/category', component: AdminWorksampleCategoryComponent },
+    { path: 'admin/user-project', component: AdminUserProjectComponent },
+    { path: 'admin/user-project/edit', component: AdminUserProjectEditUserComponent },
+
     { path: 'ticket/ticket', component: AdminTicketComponent },
     { path: 'ticket/category', component: AdminTicketCategoryComponent },
     { path: 'ticket/status', component: AdminTicketStatusComponent },
     { path: 'ticket/priority', component: AdminTicketPriovityComponent },
-    { path: 'admin/user-project', component: AdminUserProjectComponent },
-    { path: 'admin/worksample/worksample', component: AdminWorksampleComponent },
-    { path: 'admin/worksample/category', component: AdminWorksampleCategoryComponent },
+
+    { path: 'payment', component: AdminPaymentComponent },
     { path: 'dashboard', component: AdminDashboardComponent },
   ] }
 ];

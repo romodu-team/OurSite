@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-card10',
@@ -7,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class Card10Component implements OnInit {
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
@@ -16,4 +17,6 @@ export class Card10Component implements OnInit {
   @Input() description:string = 'شرکت ایده گزین ارتباطات روماک'
   @Input() condition:string = 'در حال انجام'
   @Input() link:string = 'www.sanp.ir'
+  @Input() openDialog!: () => void
+  @Input() editUrl:string = ''
 }

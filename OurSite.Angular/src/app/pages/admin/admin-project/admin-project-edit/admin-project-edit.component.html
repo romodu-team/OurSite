@@ -1,5 +1,5 @@
 <section class="container d-flex justify-content-between mt-5" dir="rtl">
-    <div class="">
+    <div class="col-9">
 
         <div>
 
@@ -68,9 +68,8 @@
         <div dir="ltr">
             <div class="mt-4 col-5 d-flex justify-content-between">
                 <button class="btn btn-primary">ثبت نهایی</button>
-                <button class="btn btn-primary">مشاهده امکانات</button>
-                <button class="btn btn-primary">امکانات</button>
-                <button class="btn btn-secondary">خروج</button>
+                <button class="btn btn-primary" [routerLink]="['/admin/admin/project/features']">امکانات</button>
+                <button class="btn btn-secondary" (click)="essSer.back()">خروج</button>
             </div>
         </div>
 

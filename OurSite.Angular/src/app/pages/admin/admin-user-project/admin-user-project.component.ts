@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { AdminUserProjectModalComponent } from './admin-user-project-modal/admin-user-project-modal.component';
 
 @Component({
   selector: 'app-admin-user-project',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminUserProjectComponent implements OnInit {
 
-  constructor() { }
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit(): void {
+  }
+
+  openDialog() {
+    this.dialog.open(AdminUserProjectModalComponent);
+
   }
 
 }
