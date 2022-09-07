@@ -15,7 +15,7 @@ export class AdminPaymentComponent implements OnInit {
   }
 
   openDialog() {
-    this.dialog.open(AdminPaymentModalComponent);
+    this.dialog.open(AdminPaymentModalComponent, {width:'40%'});
   }
 
 }
