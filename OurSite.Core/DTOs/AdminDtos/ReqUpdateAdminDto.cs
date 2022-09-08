@@ -49,11 +49,6 @@ namespace OurSite.Core.DTOs.AdminDtos
         [DisplayName("آدرس")]
         public string? Address { get; set; }
 
-
-        [DisplayName("عکس کاربری")]
-        public string? ImageName { get; set; }
-
-
         [DisplayName("تاریخ تولد")]
         public string? Birthday { get; set; }
 
