@@ -256,5 +256,20 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
+
+
+        #region view project's payment
+        [HttpGet("get-list-payments-of-project")]
+        public async Task<IActionResult> GetPayments(long ProjectId)
+        {
+            var result = await Paymentservice.GetPayments(ProjectId);
+            if (result is not null)
+            {
+                return JsonStatusResponse.Success(ReturnData: result,"sucsess");
+            }
+            return JsonStatusResponse.NotFound("faild");
+        }
+        #endregion
+
     }
 }
