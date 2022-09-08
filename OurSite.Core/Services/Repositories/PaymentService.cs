@@ -231,6 +231,12 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
+        public async Task<List<Payment>> GetPayments(long ProjectId)
+        {
+            var payment = await PaymentRepositories.GetAllEntity().Where(x => x.ProId == ProjectId).ToListAsync();
+            return payment;
+        }
+
     }
 
 
