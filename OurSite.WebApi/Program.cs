@@ -25,6 +25,7 @@ using OurSite.OurSite.Core.Services.Repositories;
 using OurSite.Core.Services.Interfaces.TicketInterfaces;
 using OurSite.Core.Services.Repositories.TicketServices;
 using Microsoft.AspNetCore.HttpOverrides;
+using OurSite.Core.Utilities.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,12 +64,11 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 #region addservices
 //test database
-//builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
+builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
 //real database
-builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserService, UserService>();
@@ -133,7 +133,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("EnableCors", mybuilder =>
     {
-        mybuilder.WithOrigins("*")
+        mybuilder.WithOrigins()
             .AllowAnyHeader()
             .AllowAnyMethod();
     }
@@ -150,19 +150,23 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(options =>
-    options.SerializeAsV2 = true);
-    app.UseSwaggerUI(options =>
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
+
 
 }
+app.UseSwagger(options =>
+options.SerializeAsV2 = true);
+app.UseSwaggerUI(options =>
+options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 
 app.UseHttpsRedirection();
 app.UseCors("EnableCors");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-app.MapControllers();
+if (app.Environment.IsDevelopment())
+    app.MapControllers().AllowAnonymous();
+else
+    app.MapControllers();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
