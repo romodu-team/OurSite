@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static OurSite.Core.DTOs.RoleDtos.ReqUpdateRoleDto;
+using OurSite.Core.Utilities;
 
 namespace OurSite.Core.Services.Repositories
 {
@@ -320,6 +321,7 @@ namespace OurSite.Core.Services.Repositories
 
         public async Task<List<ResGetAllPermissions>> GetAllPermission(long roleId)
         {
+          
             var SelectedPermissions =await RolePermissionRepository.GetAllEntity().Where(rp => rp.RolesId == roleId).Include(rp => rp.Permission).Select(p => new ResGetAllPermissions {IsCheck=true, PermissionId = p.Permission.Id, PermissionName = p.Permission.PermissionName, PermissionTitle = p.Permission.PermissionTitle, ParentId = p.Permission.ParentId }).ToListAsync();
             var allPermissions =await PermissionRepository.GetAllEntity().ToListAsync();
             foreach (var item in allPermissions)
