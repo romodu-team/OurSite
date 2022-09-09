@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using OurSite.Core.DTOs.TicketDtos;
@@ -29,16 +30,17 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         }
         #endregion
         /// <summary>
-        /// create ticket with optional attachment,user id = ID of the user for whom the ticket will be registered , Sender id= The ID of the person who created the tick and sent the first message , IsAdmin = Set true if the sender is an admin , set false for user
+        /// create ticket by admin with optional attachment,user id = ID of the user for whom the ticket will be registered , Sender id= The ID of the person who created the tick and sent the first message
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("create-ticket")]
-        public async Task<IActionResult> CreateTicket([FromForm] ReqCreateTicketDto request)
+        [HttpPost("Admin-create-ticket")]
+        [Authorize(Policy =StaticPermissions.PermissionCreateTicket)]
+        public async Task<IActionResult> AdminCreateTicket([FromForm] ReqCreateTicketDto request)
         {
             if (ModelState.IsValid)
             {
-                var res = await _ticketService.CreateTicket(request);
+                var res = await _ticketService.CreateTicket(request,true);
                 switch (res.DiscussionStatus)
                 {
                     case ResOperation.notAllowed:
@@ -75,10 +77,60 @@ namespace OurSite.WebApi.Controllers.TicketControllers
 
         }
         /// <summary>
+        /// create ticket by user with optional attachment,user id = ID of the user for whom the ticket will be registered , Sender id= The ID of the person who created the tick and sent the first message
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("User-create-ticket")]
+        [Authorize]
+        public async Task<IActionResult> UserCreateTicket([FromForm] ReqCreateTicketDto request)
+        {
+            if (ModelState.IsValid)
+            {
+                var res = await _ticketService.CreateTicket(request,false);
+                switch (res.DiscussionStatus)
+                {
+                    case ResOperation.notAllowed:
+                        HttpContext.Response.StatusCode = 403;
+                        return JsonStatusResponse.Error("The ticket status for this operation is not allowed");
+                    case ResOperation.NotFound:
+                        HttpContext.Response.StatusCode = 404;
+                        return JsonStatusResponse.NotFound("ticket not found");
+                    case ResOperation.UserNotFound:
+                        HttpContext.Response.StatusCode = 404;
+                        return JsonStatusResponse.NotFound("User not found");
+                    case ResOperation.SenderNotFound:
+                        HttpContext.Response.StatusCode = 404;
+                        return JsonStatusResponse.NotFound("ticket sender not found");
+                    case ResOperation.Success when res.AttachmentStatus == resFileUploader.Success:
+                        HttpContext.Response.StatusCode = 201;
+                        return JsonStatusResponse.Success(message: "ticket has been created successfully , attachment uploaded", ReturnData: request);
+                    case ResOperation.Success when res.AttachmentStatus == resFileUploader.NoContent:
+                        HttpContext.Response.StatusCode = 201;
+                        return JsonStatusResponse.Success(message: "ticket has been created successfully , No attachment found", ReturnData: request);
+                    case ResOperation.Failure when res.AttachmentStatus == resFileUploader.Failure:
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.Error("server error");
+                    default:
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.UnhandledError();
+                }
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 400;
+                return JsonStatusResponse.InvalidInput();
+            }
+
+        }
+
+        /// <summary>
         /// update ticket,Enter the fields you want to update
         /// </summary>
         /// <returns></returns>
         [HttpPut("update-ticket")]
+        [Authorize(Policy = StaticPermissions.PermissionUpdateTicket)]
+
         public async Task<IActionResult> UploadTicket([FromBody] ReqUpdateTicketDto request)
         {
             if (ModelState.IsValid)
@@ -109,6 +161,8 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="TicketId"></param>
         /// <returns></returns>
         [HttpDelete("delete-ticket")]
+        [Authorize(Policy = StaticPermissions.PermissionDeleteTicket)]
+
         public async Task<IActionResult> DeleteTicket([FromQuery] long TicketId)
         {
             var res = await _ticketService.DeleteTicket(TicketId);
@@ -132,6 +186,8 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="StatusId"></param>
         /// <returns></returns>
         [HttpPut("change-ticket-status")]
+        [Authorize(Policy = StaticPermissions.PermissionChangeTicketStatus)]
+
         public async Task<IActionResult> ChangeTicketStatus([FromQuery] long TicketId, [FromQuery] long StatusId)
         {
             var res = await _ticketService.ChangeTicketStatus(TicketId, StatusId);
@@ -162,6 +218,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("Get-Ticket-Assigned-To-Admin")]
+        [Authorize]
         public async Task<IActionResult> GetTicketAssignedToAdmin([FromQuery] long adminId, [FromQuery] ReqGetAllTicketDto request)
         {
             var res = await _ticketService.GetTicketAssignedToAdmin(adminId, request);
@@ -180,6 +237,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("get-User-tickets")]
+        [Authorize]
         public async Task<IActionResult> GetUserTickets([FromQuery] long UserId, [FromQuery] ReqGetAllUserTicketsDto request)
         {
             var res = await _ticketService.GetUserTickets(UserId, request);
@@ -197,6 +255,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("get-all-tickets")]
+        [Authorize(Policy =StaticPermissions.PermissionViewAllTickets)]
         public async Task<IActionResult> GetAllTickets([FromQuery] ReqGetAllTicketDto request)
         {
             var res = await _ticketService.GetAllTickets(request);
@@ -214,6 +273,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="TicketId"></param>
         /// <returns></returns>
         [HttpGet("get-ticket/{TicketId}")]
+        [Authorize]
         public async Task<IActionResult> GetTicket([FromRoute] long TicketId)
         {
             var res = await _ticketService.GetTicket(TicketId);
@@ -230,6 +290,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("ticket-reports")]
+        [Authorize]
         public async Task<IActionResult> TicketReport()
         {
             var res = await _ticketService.TicketReport();
@@ -248,6 +309,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("create-discussion")]
+        [Authorize]
         public async Task<IActionResult> CreateDiscussion([FromForm] ReqCreateDiscussion request)
         {
 
@@ -291,6 +353,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
         /// <param name="DiscussionsId"></param>
         /// <returns></returns>
         [HttpDelete("delete-discussion")]
+        [Authorize(Policy =StaticPermissions.PermissionDeleteDiscussion)]
         public async Task<IActionResult> DeleteDiscussion([FromBody] List<long> DiscussionsId)
         {
             var res = await _ticketService.DeleteDiscussion(DiscussionsId);

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.WorkSampleDtos;
 using OurSite.Core.Services.Interfaces;
@@ -26,6 +27,7 @@ public class WorkSampleController : Controller
     /// <remarks>ShortDescription and Content can contain html. ProjectName is required - The file size must be less than 10 MB</remarks>
     /// <returns></returns>
     [HttpPost("create-WorkSample")]
+    [Authorize(Policy =StaticPermissions.PermissionCreateWorkSample)]
     public async Task<IActionResult> CreateWorkSample([FromForm]CreateWorkSampleDto request){
         if(ModelState.IsValid){
             var res =await _workSampleService.CreateWorkSample(request);
@@ -88,6 +90,7 @@ public class WorkSampleController : Controller
     /// <param name="Name"></param>
     /// <returns></returns>
     [HttpPost("Create-WorkSample-Category")]
+    [Authorize(Policy =StaticPermissions.PermissionCreateWorkSampleCategory)]
     public async Task<IActionResult> CreateWorkSampleCategory([FromQuery] string Title, [FromQuery] string Name)
     {
         var res = await _workSampleCategoryService.AddCategory(Title, Name);
@@ -106,6 +109,8 @@ public class WorkSampleController : Controller
     /// <param name="categoryId"></param>
     /// <returns></returns>
     [HttpDelete("delete-WorkSample-Category/{categoryId}")]
+    [Authorize(Policy = StaticPermissions.PermissionDeleteWorkSampleCategory)]
+
     public async Task<IActionResult> DeleteWorkSampleCategory([FromRoute] long categoryId)
     {
         var res = await _workSampleCategoryService.DeleteCategory(categoryId);
@@ -126,6 +131,7 @@ public class WorkSampleController : Controller
     /// <param name="Name"></param>
     /// <returns></returns>
     [HttpPut("Update-WorkSample-Category")]
+    [Authorize(Policy =StaticPermissions.PermissionUpdateWorkSampleCategory)]
     public async Task<IActionResult> UpdateWorkSampleCategory([FromQuery] long CategoryId, [FromQuery] string? Title, [FromQuery] string? Name)
     {
         var res = await _workSampleCategoryService.Editcategory(CategoryId,Title,Name);
@@ -187,6 +193,7 @@ public class WorkSampleController : Controller
     /// <param name="worksampleId"></param>
     /// <returns></returns>
     [HttpDelete("delete-WorkSample/{worksampleId}")]
+    [Authorize(Policy =StaticPermissions.PermissionDeleteWorkSample)]
     public async Task<IActionResult> DeleteWorkSample([FromRoute] long worksampleId)
     {
         var res = await _workSampleService.DeleteWorkSample(worksampleId);
@@ -211,6 +218,7 @@ public class WorkSampleController : Controller
     /// <remarks>The file size must be less than 10 MB</remarks>
     /// <returns></returns>
     [HttpPut("update-workSample/{worksampleId}")]
+    [Authorize(Policy =StaticPermissions.PermissionEditWorkSample)]
     public async Task<IActionResult> UpdateWorkSample([FromRoute] long worksampleId, [FromForm] EditWorkSampleDto request)
     {
         var res = await _workSampleService.EditWorkSample(worksampleId, request);

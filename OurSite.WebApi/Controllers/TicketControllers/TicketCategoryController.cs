@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.Services.Interfaces.TicketInterfaces;
 using OurSite.Core.Utilities;
@@ -7,6 +8,7 @@ namespace OurSite.WebApi.Controllers.TicketControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = StaticPermissions.PermissionManageTicketCategory)]
     public class TicketCategoryController : ControllerBase
     {
         #region Constructor

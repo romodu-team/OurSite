@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.AdminDtos;
 using OurSite.Core.DTOs.UserDtos;
@@ -31,6 +32,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("register-admin")]
+        [Authorize(Policy =StaticPermissions.PermissionRegisterAdmin)]
         public async Task<IActionResult> RegisterAdmin([FromBody] ReqRegisterAdminDto req)
         {
             if (ModelState.IsValid)
@@ -62,6 +64,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("change-admin-status/{adminId}")]
+        [Authorize(Policy = StaticPermissions.PermissionChangeAdminStatus)]
         public async Task<IActionResult> ChangeAdminStatus([FromRoute] long adminId)
         {
             var res = await adminService.ChangeAdminStatus(adminId);
@@ -83,6 +86,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <returns></returns>
         //[Authorize(Roles = "General Manager")]
         [HttpDelete("delete-admin")]
+        [Authorize(Policy = StaticPermissions.PermissionDeleteAdmin)]
         public async Task<IActionResult> DeleteAdmin([FromQuery] long adminId)
         {
             var res = await adminService.DeleteAdmin(adminId);
@@ -103,6 +107,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("view-admin/{adminId}")]
+        [Authorize(Policy = StaticPermissions.PermissionViewAdmin)]
         public async Task<IActionResult> GetAdmin([FromRoute] long adminId)
         {
             var res = await adminService.GetAdminById(adminId);
@@ -124,6 +129,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("Admin-list")]
+        [Authorize(Policy = StaticPermissions.PermissionViewAllAdmin)]
         public async Task<IActionResult> GetAllAdmin([FromQuery] ReqFilterUserDto filter)
         {
             var list = await adminService.GetAllAdmin(filter);
@@ -146,6 +152,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("Update-another-Admin-profile")]
+        [Authorize(Policy = StaticPermissions.PermissionUpdateAnotherAdmin)]
         public async Task<IActionResult> UpdateAnotherAdmin([FromForm] ReqUpdateAdminDto req, long id)
         {
             if (ModelState.IsValid)

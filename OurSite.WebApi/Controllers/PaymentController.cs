@@ -58,10 +58,19 @@ namespace OurSite.WebApi.Controllers
             _zarinPalResponseModel.Amount = paymentRequestDto.amount;
            
             var finalUrl = $"https://sandbox.zarinpal.com/pg/StartPay/{_zarinPalResponseModel.Authority/*+"/Sad"*/}";
-            _zarinPalResponseModel.GateWayUrl = finalUrl;
-            
-            return Ok(_zarinPalResponseModel);
+            //_zarinPalResponseModel.GateWayUrl = finalUrl;
 
+            // return Ok(_zarinPalResponseModel);
+            if (_response.StatusCode != System.Net.HttpStatusCode.OK) // Post Error
+                return BadRequest("Post Error");
+
+            if (_zarinPalResponseModel.Status != 100) //Zarinpal Did not Accepted the payment
+                return BadRequest("Zarinpal Did not Accepted the payment");
+
+            // [/ُSad] will redirect to the sadad gateway if you already have zarin gate enabled, let's read here
+            // https://www.zarinpal.com/blog/زرین-گیت،-درگاهی-اختصاصی-به-نام-وبسایت/
+            //return Redirect("https://www.zarinpal.com/pg/StartPay/" + _zarinPalResponseModel.Authority/*+"/Sad"*/);
+            return Redirect("https://sandbox.zarinpal.com/pg/StartPay/" + _zarinPalResponseModel.Authority); //HttpContext.Response.Redirect("https://www.zarinpal.com/pg/StartPay/" + _zarinPalResponseModel.Authority);
         }
         #endregion
 
@@ -125,6 +134,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="paydto"></param>
         /// <returns></returns>
         [HttpPost("create-payment-by-admin")]
+        [Authorize(Policy =StaticPermissions.PermissionCreatePayment)]
          public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto paydto)
          {
                 var res = await Paymentservice.CreatePayment(paydto);
@@ -164,6 +174,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="PayId"></param>
         /// <returns></returns>
         [HttpGet("view-payment/{PayId}")]
+        [Authorize]
         public async Task<IActionResult> GetPayment([FromRoute]long PayId)
         {
             var pay = await Paymentservice.GetPayment(PayId);
@@ -185,6 +196,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpGet("payments-list")]
+        [Authorize]
         public async Task<IActionResult> GetAllPayments([FromQuery] ReqFilterPayDto filter)
         {
             var Pay = await Paymentservice.GetAllPayments(filter);
@@ -205,8 +217,9 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="Paydto"></param>
         /// <returns></returns>
-        [Authorize(Policy =StaticPermissions.PermissionEditPayment)]
+        
         [HttpPut("edit-payment")]
+        [Authorize(Policy = StaticPermissions.PermissionEditPayment)]
         public async Task<IActionResult> EditPay([FromBody] EditPayDto Paydto)
         {
             var res = await Paymentservice.EditPay(Paydto);
@@ -230,6 +243,7 @@ namespace OurSite.WebApi.Controllers
 
         #region Delete paymet
         [HttpDelete("delete-payment")]
+        [Authorize(Policy = StaticPermissions.PermissionDeletePayment)]
         public async Task<IActionResult> DeletePayment([FromQuery]long PayId)
         {
             if (User.Identity.IsAuthenticated)

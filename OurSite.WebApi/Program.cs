@@ -133,7 +133,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("EnableCors", mybuilder =>
     {
-        mybuilder.WithOrigins()
+        mybuilder.WithOrigins("*")
             .AllowAnyHeader()
             .AllowAnyMethod();
     }

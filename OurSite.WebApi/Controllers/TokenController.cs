@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using OurSite.Core.DTOs;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
@@ -9,6 +10,7 @@ using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 
 namespace OurSite.WebApi.Controllers
 {
@@ -22,14 +24,16 @@ namespace OurSite.WebApi.Controllers
         private IGenericRepository<User> _UserRepository;
         private IGenericRepository<Admin> _AdminRepository;
         private IRoleService _roleService;
+        private readonly IConfiguration _configuration;
 
-        public TokenController(IRoleService RoleService, TokenValidationParameters tokenValidationParams, IGenericRepository<RefreshToken> RefreshTokenRepository, IGenericRepository<User> UserRepository, IGenericRepository<Admin> AdminRepository)
+        public TokenController(IConfiguration configuration, IRoleService RoleService, TokenValidationParameters tokenValidationParams, IGenericRepository<RefreshToken> RefreshTokenRepository, IGenericRepository<User> UserRepository, IGenericRepository<Admin> AdminRepository)
         {
             _tokenValidationParams = tokenValidationParams;
             _RefreshTokenRepository = RefreshTokenRepository;
             _UserRepository = UserRepository;
             _AdminRepository = AdminRepository;
             _roleService = RoleService;
+            _configuration = configuration;
         }
 
 
@@ -71,7 +75,6 @@ namespace OurSite.WebApi.Controllers
                 Result = false
             });
         }
-
         private async Task<AuthResult> VerifyAndGenerateToken(TokenRequest tokenRequest)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();

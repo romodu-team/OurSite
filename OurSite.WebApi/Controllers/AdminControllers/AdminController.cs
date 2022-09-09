@@ -79,7 +79,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     return JsonStatusResponse.Success("password has been changed successfully");
                 }
                 HttpContext.Response.StatusCode = 500;
-                return JsonStatusResponse.Error("password has");
+                return JsonStatusResponse.Error("password has not changed");
             }
             HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
@@ -120,7 +120,9 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
         /// <param name="req"></param>
         /// <returns></returns>
+        
         [HttpPut("update-admin-profile")]
+        [Authorize]
         public async Task<IActionResult> UpdateAdminBySelf([FromForm] ReqUpdateAdminDto req)
         {
             if (User.Identity.IsAuthenticated)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.AdminDtos;
 using OurSite.Core.DTOs.UserDtos;
@@ -17,6 +18,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
     {
         private readonly IAdminService adminService;
         private readonly IUserService userService;
+        
         public UserManagementController(IAdminService adminService, IUserService userService)
         {
             this.adminService = adminService;
@@ -30,6 +32,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("view-user/{userid}")] //view user by admin
+        [Authorize(Policy = StaticPermissions.PermissionViewUser)]
         public async Task<IActionResult> ViewUser([FromRoute] long userid)
         {
             var user = await userService.ViewUser(userid);
@@ -50,8 +53,10 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("view-all-users")] //Get user list
+        [Authorize(Policy = StaticPermissions.PermissionViewAllUser)]
         public async Task<IActionResult> GetAllUser([FromQuery] ReqFilterUserDto filter)
         {
+            
             var users = await userService.GetAlluser(filter);
             if (users.Users.Any())
             {
@@ -71,6 +76,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("change-user-status/{userId}")]
+        [Authorize(Policy = StaticPermissions.PermissionChangeUserStatus)]
         public async Task<IActionResult> ChangeUserStatus([FromRoute] long userId)
         {
             var res = await userService.ChangeUserStatus(userId);
@@ -92,6 +98,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <returns></returns>
         //[Authorize(Roles = "General Manager,Admin")]
         [HttpPost("add-user")]
+        [Authorize(Policy = StaticPermissions.PermissionRegisterUserByAdmin)]
         public async Task<IActionResult> AddUser([FromBody] ReqAddUserAdminDto userDto)
         {
             var add = await userService.AddUser(userDto);
@@ -122,6 +129,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
         /// <returns></returns>
         [HttpPut("update-user-profile")]
+        [Authorize(Policy = StaticPermissions.PermissionUpdateUserByAdmin)]
         public async Task<IActionResult> UpdateUserByAdmin([FromForm] ReqUpdateUserDto userDto, long id)
         {
             if (User.Identity.IsAuthenticated)
@@ -186,6 +194,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete("delete-user")]
+        [Authorize(Policy = StaticPermissions.PermissionDeleteUserByAdmin)]
         public async Task<IActionResult> DeleteUser([FromQuery] long id)
         {
             var check = await userService.DeleteUser(id);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.RoleDtos;
 using OurSite.Core.Services.Interfaces;
@@ -34,6 +35,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <remarks>Role id should be null</remarks>
         /// <returns></returns>
         [HttpPost("add-role")]
+        [Authorize(Policy =StaticPermissions.PermissionAddNewRole)]
         public async Task<IActionResult> AddRole([FromQuery] string title,[FromQuery]string name)
         {
             var res = await roleService.AddRole(title,name);
@@ -66,6 +68,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete("delete-role")]
+        [Authorize(Policy = StaticPermissions.PermissionDeleteRole)]
         public async Task<IActionResult> RemoveRole([FromQuery] long RoleId)
         {
             var remove = await roleService.RemoveRole(RoleId);
@@ -94,6 +97,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("update-role")]
+        [Authorize(Policy = StaticPermissions.PermissionUpdateRole)]
         public async Task<IActionResult> UpdateRole([FromBody] ReqUpdateRoleDto reqUpdate)
         {
             if (ModelState.IsValid)
@@ -130,6 +134,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("view-Role/{RoleId}")]
+        [Authorize(Policy = StaticPermissions.PermissionViewRole)]
         public async Task<IActionResult> GetRoleById([FromRoute] long RoleId)
         {
             var role = await roleService.GetRoleById(RoleId);
@@ -150,6 +155,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("view-Roles")]
+        [Authorize(Policy = StaticPermissions.PermissionViewAllRole)]
         public async Task<IActionResult> GetAllRoles([FromQuery] ReqFilterRolesDto filter)
         {
             var roles = await roleService.GetActiveRoles(filter);
@@ -173,6 +179,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="RoleId"></param>
         /// <returns></returns>
         [HttpPut("Update-admin-role")]
+        [Authorize(Policy = StaticPermissions.PermissionUpdateAdminRole)]
         public async Task<IActionResult> UpdateAdminRole(long adminId,long RoleId)
         {
             var res = await _adminService.UpdateAdminRole(adminId, RoleId);
@@ -208,6 +215,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="roleId"></param>
         /// <returns></returns>
         [HttpGet("get-all-permissions/{roleId}")]
+        [Authorize(Policy = StaticPermissions.PermissionViewAllPermissions)]
         public async Task<IActionResult> GetAllPermissions([FromRoute]long roleId)
         {
             var permissions =await roleService.GetAllPermission(roleId);
@@ -229,6 +237,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("update-permissions-role")]
+        [Authorize(Policy = StaticPermissions.PermissionUpdateRolePermissions)]
         public async Task<IActionResult> UpdatePermissionRole([FromBody]ReqUpdatePermissionRole request)
         {
             var res =await roleService.UpdatePermissionRole(request);

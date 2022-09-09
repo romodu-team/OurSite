@@ -203,6 +203,7 @@ namespace OurSite.WebApi.Controllers
         /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
         /// <returns></returns>
         [HttpPut("Update-Profile")]
+        [Authorize]
         public async Task<IActionResult> UpDate([FromForm] ReqUpdateUserDto userdto)
         {
             if (User.Identity.IsAuthenticated)
@@ -269,6 +270,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("View-Profile/{id}")]
+        [Authorize]
         public async Task<IActionResult> ViewProfile([FromRoute]long id)
         {
             var userid = User.FindFirst(ClaimTypes.Sid).Value;

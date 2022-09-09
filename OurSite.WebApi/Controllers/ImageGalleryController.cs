@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.ImageGalleryDtos;
 using OurSite.Core.Services.Interfaces;
@@ -32,6 +33,8 @@ public class ImageGalleryController:Controller
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("add-image-gallery")]
+    [Authorize(Policy = StaticPermissions.PermissionAddImageToGallery)]
+
     public async Task<IActionResult> AddImageToGallery([FromForm] ReqAddImageToGallery request)
     {
         var result = await imageGalleryService.AddImageToGallery(request.SiteSection,request.WorkSampleId,request.Image,request.ImageAlt);
@@ -72,6 +75,8 @@ public class ImageGalleryController:Controller
     /// <param name="ImageId"></param>
     /// <returns></returns>
     [HttpDelete("Delete-image-from-gallery")]
+    [Authorize(Policy = StaticPermissions.PermissionDeleteImageFromGallery)]
+
     public async Task<IActionResult> DeleteImageFromGallery(long ImageId)
     {
         var result = await imageGalleryService.DeleteImageFromGallery(ImageId);
