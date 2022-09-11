@@ -281,6 +281,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="ProjectId"></param>
         /// <returns></returns>
         [HttpGet("get-list-payments-of-project")]
+        [Authorize]
         public async Task<IActionResult> GetPayments([FromQuery]long ProjectId)
         {
             var result = await Paymentservice.GetPayments(ProjectId);
