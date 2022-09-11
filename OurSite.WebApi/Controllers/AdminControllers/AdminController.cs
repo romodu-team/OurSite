@@ -12,6 +12,7 @@ using System.Linq;
 using System.Security.Claims;
 using OurSite.DataLayer.Interfaces;
 using OurSite.DataLayer.Entities.Access;
+using Wangkanai.Detection.Services;
 
 namespace OurSite.WebApi.Controllers.AdminControllers
 {
@@ -23,13 +24,16 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         private readonly IAdminService adminService;
         private readonly IUserService userService;
         private readonly IRoleService roleService;
+        private readonly IDetectionService _detectionService;
+
         private IGenericRepository<RefreshToken> _RefreshTokenRepository;
-        public AdminController(IAdminService adminService, IUserService userService, IRoleService roleService, IGenericRepository<RefreshToken> RefreshTokenRepository)
+        public AdminController(IDetectionService detectionService, IAdminService adminService, IUserService userService, IRoleService roleService, IGenericRepository<RefreshToken> RefreshTokenRepository)
         {
             this.adminService = adminService;
             this.userService = userService;
             this.roleService = roleService;
             _RefreshTokenRepository = RefreshTokenRepository;
+            _detectionService = detectionService;
         }
         #endregion
 
@@ -42,22 +46,29 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         [HttpPost("login-Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] ReqLoginDto reqLogin)
         {
-            AuthenticationHelper authenticationHelper = new AuthenticationHelper(roleService, _RefreshTokenRepository);
-            if (ModelState.IsValid)
+            if (!User.Identity.IsAuthenticated)
             {
-                var admin = await adminService.Login(reqLogin);
-                if (admin is null)
+
+                AuthenticationHelper authenticationHelper = new AuthenticationHelper(roleService, _RefreshTokenRepository, _detectionService);
+                if (ModelState.IsValid)
                 {
-                    HttpContext.Response.StatusCode = 404;
-                    return JsonStatusResponse.NotFound("there isn't any admin with this information");
+                    var admin = await adminService.Login(reqLogin);
+                    if (admin is null)
+                    {
+                        HttpContext.Response.StatusCode = 404;
+                        return JsonStatusResponse.NotFound("there isn't any admin with this information");
+                    }
+
+                    var token = await authenticationHelper.GenerateAdminToken(admin);
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonStatusResponse.Success(new { Auth = token, AdminId = admin.Id, UUID = admin.UUID, admin.FirstName, admin.LastName }, "Success");
                 }
-                   
-                var token =await authenticationHelper.GenerateAdminToken(admin);
-                HttpContext.Response.StatusCode = 200;
-                return JsonStatusResponse.Success(new { Auth=token, AdminId = admin.Id, admin.FirstName, admin.LastName }, "Success");
+                HttpContext.Response.StatusCode = 500;
+                return JsonStatusResponse.InvalidInput();
             }
-            HttpContext.Response.StatusCode = 500;
-            return JsonStatusResponse.InvalidInput();
+            HttpContext.Response.StatusCode = 400;
+
+            return JsonStatusResponse.Error("You are already logged in");
         }
         #endregion
 

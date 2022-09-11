@@ -16,6 +16,7 @@ using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Interfaces;
+using Wangkanai.Detection.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,13 +28,16 @@ namespace OurSite.WebApi.Controllers
         #region constructor
         private IUserService userservice;
         private IRoleService Roleservice;
+        private readonly IDetectionService _detectionService;
         private IGenericRepository<RefreshToken> _RefreshTokenRepository;
 
-        public UserController(IRoleService Roleservice,IUserService userService, IGenericRepository<RefreshToken> refreshTokenRepository)
+        public UserController(IDetectionService detectionService, IRoleService Roleservice,IUserService userService, IGenericRepository<RefreshToken> refreshTokenRepository)
         {
             this.userservice = userService;
             this.Roleservice = Roleservice;
             _RefreshTokenRepository = refreshTokenRepository;
+
+            _detectionService = detectionService;
         }
         #endregion
 
@@ -48,32 +52,37 @@ namespace OurSite.WebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                AuthenticationHelper authenticationHelper = new AuthenticationHelper(Roleservice,_RefreshTokenRepository);
-                var res = await userservice.LoginUser(request);
-                switch (res)
+                if (!User.Identity.IsAuthenticated)
                 {
-                    case ResLoginDto.Success:
+                    AuthenticationHelper authenticationHelper = new AuthenticationHelper(Roleservice, _RefreshTokenRepository, _detectionService);
+                    var res = await userservice.LoginUser(request);
+                    switch (res)
+                    {
+                        case ResLoginDto.Success:
 
-                        var user = await userservice.GetUserByUserPass(request.UserName, request.Password);
-                        var token = authenticationHelper.GenerateUserTokenAsync(user);
-                        HttpContext.Response.StatusCode = 200;
-                        return JsonStatusResponse.Success(new { Auth=token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName }, "login success");
-                    case ResLoginDto.IncorrectData:
-                        HttpContext.Response.StatusCode = 400;
-                        return JsonStatusResponse.NotFound("Username ot password is wrong");
+                            var user = await userservice.GetUserByUserPass(request.UserName, request.Password);
+                            var token = authenticationHelper.GenerateUserTokenAsync(user);
+                            HttpContext.Response.StatusCode = 200;
+                            return JsonStatusResponse.Success(new { Auth = token, UserId = user.Id, UUID = user.UUID, FirstName = user.FirstName, LastName = user.LastName }, "login success");
+                        case ResLoginDto.IncorrectData:
+                            HttpContext.Response.StatusCode = 400;
+                            return JsonStatusResponse.NotFound("Username ot password is wrong");
 
-                    case ResLoginDto.NotActived:
-                        HttpContext.Response.StatusCode = 401;
-                        return JsonStatusResponse.Error("You not verified");
+                        case ResLoginDto.NotActived:
+                            HttpContext.Response.StatusCode = 401;
+                            return JsonStatusResponse.Error("You not verified");
 
-                    case ResLoginDto.Error:
-                        HttpContext.Response.StatusCode = 400;
-                        return JsonStatusResponse.Error("try agian later");
-                    default:
-                        HttpContext.Response.StatusCode = 500;
-                        return JsonStatusResponse.UnhandledError();
+                        case ResLoginDto.Error:
+                            HttpContext.Response.StatusCode = 400;
+                            return JsonStatusResponse.Error("try agian later");
+                        default:
+                            HttpContext.Response.StatusCode = 500;
+                            return JsonStatusResponse.UnhandledError();
 
+                    }
                 }
+                HttpContext.Response.StatusCode = 400;
+                return JsonStatusResponse.Error("You are already logged in");
             }
             HttpContext.Response.StatusCode = 400;
             return JsonStatusResponse.InvalidInput();
