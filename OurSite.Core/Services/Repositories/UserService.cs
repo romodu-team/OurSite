@@ -367,7 +367,8 @@ namespace OurSite.Core.Services.Repositories
                 
                 if(user.AdditionalDataOfUser != null)
                 {
-                    userdto.Gender = (DTOs.UserDtos.gender?)user.AdditionalDataOfUser.Gender;
+                    if (user.AdditionalDataOfUser.Gender is not null)
+                        userdto.Gender = user.AdditionalDataOfUser.Gender.Value.ToString();
                     userdto.Address = user.AdditionalDataOfUser.Address;
                     userdto.Phone = user.AdditionalDataOfUser.Phone;
                     userdto.Birthday = user.AdditionalDataOfUser.Birthday is not null? user.AdditionalDataOfUser.Birthday.Value.PersianDate():null;
@@ -565,7 +566,8 @@ namespace OurSite.Core.Services.Repositories
                 adminview.AccountType = (accountType?)user.AccountType;
                 if (user.AdditionalDataOfUser != null)
                 {
-                    adminview.Gender = (gender?)user.AdditionalDataOfUser.Gender;
+                    if (user.AdditionalDataOfUser.Gender is not null)
+                        adminview.Gender = user.AdditionalDataOfUser.Gender.Value.ToString();
                     adminview.Address = user.AdditionalDataOfUser.Address;
                     adminview.Phone = user.AdditionalDataOfUser.Phone;
                     adminview.Birthday = user.AdditionalDataOfUser.Birthday is not null? user.AdditionalDataOfUser.Birthday.Value.PersianDate():null;

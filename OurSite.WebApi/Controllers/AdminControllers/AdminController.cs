@@ -128,7 +128,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <summary>
         ///  API for Update admin profile by self{Get request from form}
         /// </summary>
-        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
+        /// <remarks>The file size of the profile image must be less than 3 MB, also The Birthday type must be input with "/" like 1400/02/20</remarks>
         /// <param name="req"></param>
         /// <returns></returns>
         

@@ -271,5 +271,26 @@ namespace OurSite.WebApi.Controllers
         }
         #endregion
 
+
+
+        #region view project's payment
+        /// <summary>
+        /// view payments of a project.
+        /// </summary>
+        /// <remarks> data for show user/admin must manage. e.g. isRemove must not show for user</remarks>
+        /// <param name="ProjectId"></param>
+        /// <returns></returns>
+        [HttpGet("get-list-payments-of-project")]
+        public async Task<IActionResult> GetPayments([FromQuery]long ProjectId)
+        {
+            var result = await Paymentservice.GetPayments(ProjectId);
+            if (result is not null)
+            {
+                return JsonStatusResponse.Success(ReturnData: result,"sucsess");
+            }
+            return JsonStatusResponse.NotFound("faild");
+        }
+        #endregion
+
     }
 }
