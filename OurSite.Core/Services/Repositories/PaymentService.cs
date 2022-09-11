@@ -231,9 +231,9 @@ namespace OurSite.Core.Services.Repositories
         }
         #endregion
 
-        public async Task<List<Payment>> GetPayments(long ProjectId)
+        public async Task<List<GetAllPayDto>> GetPayments(long ProjectId)
         {
-            var payment = await PaymentRepositories.GetAllEntity().Where(x => x.ProId == ProjectId).ToListAsync();
+            var payment = await PaymentRepositories.GetAllEntity().Where(x => x.ProId == ProjectId).Select(x => new GetAllPayDto { DatePay = x.DatePay != null ? x.DatePay.Value.PersianDate() : null, PayId = x.Id, status = (StatusPay)x.status, IsRemove = x.IsRemove, Username = x.User.UserName, ProId = x.ProId, Price = x.Price }).ToListAsync();
             return payment;
         }
 
