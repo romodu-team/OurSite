@@ -15,6 +15,8 @@ namespace OurSite.DataLayer.Entities.Access
         public bool IsUsed { get; set; }
         public bool IsRevoked { get; set; }
         public DateTime ExpieryDate { get; set; }
+        public string UserBrowser { get; set; }
+        public string UserPlatform { get; set; }
 
     }
 }

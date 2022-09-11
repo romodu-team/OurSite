@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,11 +8,13 @@ using Newtonsoft.Json;
 using OurSite.Core.DTOs;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
+using OurSite.Core.Utilities.Extentions;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using Wangkanai.Detection.Services;
 
 namespace OurSite.WebApi.Controllers
 {
@@ -25,8 +29,8 @@ namespace OurSite.WebApi.Controllers
         private IGenericRepository<Admin> _AdminRepository;
         private IRoleService _roleService;
         private readonly IConfiguration _configuration;
-
-        public TokenController(IConfiguration configuration, IRoleService RoleService, TokenValidationParameters tokenValidationParams, IGenericRepository<RefreshToken> RefreshTokenRepository, IGenericRepository<User> UserRepository, IGenericRepository<Admin> AdminRepository)
+        private readonly IDetectionService detectionService;
+        public TokenController(IDetectionService detectionService, IConfiguration configuration, IRoleService RoleService, TokenValidationParameters tokenValidationParams, IGenericRepository<RefreshToken> RefreshTokenRepository, IGenericRepository<User> UserRepository, IGenericRepository<Admin> AdminRepository)
         {
             _tokenValidationParams = tokenValidationParams;
             _RefreshTokenRepository = RefreshTokenRepository;
@@ -34,6 +38,7 @@ namespace OurSite.WebApi.Controllers
             _AdminRepository = AdminRepository;
             _roleService = RoleService;
             _configuration = configuration;
+            this.detectionService = detectionService;
         }
 
 
@@ -170,7 +175,7 @@ namespace OurSite.WebApi.Controllers
                 storedToken.IsUsed = true;
                 _RefreshTokenRepository.UpDateEntity(storedToken);
                 await _RefreshTokenRepository.SaveEntity();
-                AuthenticationHelper authenticationHelper = new AuthenticationHelper(_roleService, _RefreshTokenRepository);
+                AuthenticationHelper authenticationHelper = new AuthenticationHelper(_roleService, _RefreshTokenRepository,detectionService);
                 var dbUser = await _UserRepository.GetAllEntity().SingleOrDefaultAsync(u=>u.UUID==storedToken.UserUUID && u.IsRemove==false);
                 if(dbUser != null)
                     return await authenticationHelper.GenerateUserTokenAsync(dbUser);
@@ -210,5 +215,118 @@ namespace OurSite.WebApi.Controllers
 
             return dateTimeVal;
         }
+        /// <summary>
+        /// View the list of active user sessions
+        /// </summary>
+        /// <param name="AccountUUID"></param>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
+        [HttpGet("View-All-Session")]
+        [Authorize]
+        public async Task<IActionResult> ViewAllSession([FromQuery] Guid AccountUUID,[FromQuery]string refreshToken)
+        {
+            var session = await _RefreshTokenRepository.GetAllEntity().Where(r => r.UserUUID == AccountUUID && r.IsRevoked == false && r.IsRemove == false && r.ExpieryDate>=DateTime.UtcNow).Select(x=> new ViewAllSessionDto { Id=x.Id,Browser=x.UserBrowser,Platform=x.UserPlatform,LoginDate=x.CreateDate.PersianDate(),IsCurrentSession=x.Token==refreshToken}).ToListAsync();
+            return Ok(session);
+
+        }
+
+        /// <summary>
+        /// revoke a session
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <returns></returns>
+        [HttpPost("Revoke-session")]
+        [Authorize]
+        public async Task<IActionResult> RevokeSession([FromQuery] long sessionId)
+        {
+            var sessionToken = await _RefreshTokenRepository.GetAllEntity().SingleOrDefaultAsync(x => x.Id == sessionId && x.IsRemove == false);
+            if(sessionToken is not null){
+                if (sessionToken.IsRevoked)
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    return JsonStatusResponse.Error("It has already been revoked");
+
+                }
+                else
+                {
+                    sessionToken.IsRevoked = true;
+                    try
+                    {
+                        _RefreshTokenRepository.UpDateEntity(sessionToken);
+                        await _RefreshTokenRepository.SaveEntity();
+                        HttpContext.Response.StatusCode = 200;
+                        return JsonStatusResponse.Success("success");
+                    }
+                    catch (Exception)
+                    {
+                        HttpContext.Response.StatusCode = 500;
+                        return JsonStatusResponse.Error("server error");
+                    }
+                   
+                }
+            }
+            HttpContext.Response.StatusCode = 404;
+
+            return JsonStatusResponse.NotFound("session not found");
+        }
+        /// <summary>
+        /// revoke all user sessions except current session 
+        /// </summary>
+        /// <param name="AccountUUID"></param>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
+        [HttpPost("revoke-all-sessions")]
+        [Authorize]
+        public async Task<IActionResult> RevokeAllSessions([FromQuery] Guid AccountUUID, [FromQuery] string refreshToken)
+        {
+            var sessions = await _RefreshTokenRepository.GetAllEntity().Where(x => x.UserUUID == AccountUUID && x.IsRemove == false && x.IsRevoked == false && x.Token != refreshToken).ToListAsync();
+            foreach (var session in sessions)
+            {
+                 session.IsRevoked = true;
+                _RefreshTokenRepository.UpDateEntity(session);
+            }
+            try
+            {
+                await _RefreshTokenRepository.SaveEntity();
+                HttpContext.Response.StatusCode = 200;
+                return JsonStatusResponse.Success("success");
+            }
+            catch (Exception)
+            {
+
+                HttpContext.Response.StatusCode = 500;
+                return JsonStatusResponse.Error("server error");
+            }
+        }
+        /// <summary>
+        /// revoke session from database
+        /// </summary>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
+        [HttpPost("log-out")]
+        public async Task<IActionResult> LogOut([FromBody] string refreshToken)
+        {
+            var session = await _RefreshTokenRepository.GetAllEntity().SingleOrDefaultAsync(x=>x.Token==refreshToken && x.IsRemove==false && x.IsRevoked == false);
+            if(session is not null)
+            {
+                session.IsRevoked = true;
+                try
+                {
+                    _RefreshTokenRepository.UpDateEntity(session);
+                    await _RefreshTokenRepository.SaveEntity();
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonStatusResponse.Success("success");
+                }
+                catch (Exception)
+                {
+
+                    HttpContext.Response.StatusCode = 500;
+                    return JsonStatusResponse.Error("server error");
+                }
+            }
+            HttpContext.Response.StatusCode = 404;
+            return JsonStatusResponse.NotFound("session not found");
+        }
+
     }
 }

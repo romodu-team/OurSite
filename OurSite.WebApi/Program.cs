@@ -127,7 +127,7 @@ builder.Services.AddAuthorization(options =>
 
 
 });
-
+builder.Services.AddDetection();
 #region Cors
 builder.Services.AddCors(options =>
 {
@@ -163,6 +163,8 @@ app.UseCors("EnableCors");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
+app.UseDetection();
+
 if (app.Environment.IsDevelopment())
     app.MapControllers().AllowAnonymous();
 else

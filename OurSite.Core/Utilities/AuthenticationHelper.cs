@@ -15,6 +15,7 @@ using OurSite.DataLayer.Entities.Accounts;
 using OurSite.DataLayer.Interfaces;
 using OurSite.Core.DTOs;
 using OurSite.DataLayer.Repositories;
+using Wangkanai.Detection.Services;
 
 namespace OurSite.Core.Utilities
 {
@@ -22,10 +23,12 @@ namespace OurSite.Core.Utilities
     {
         private readonly IRoleService _roleService;
         private IGenericRepository<RefreshToken> _RefreshTokenRepository;
-        public AuthenticationHelper(IRoleService roleService, IGenericRepository<RefreshToken> RefreshTokenRepository)
+        private readonly IDetectionService _detectionService;
+        public AuthenticationHelper(IRoleService roleService, IGenericRepository<RefreshToken> RefreshTokenRepository, IDetectionService detectionService)
         {
             _RefreshTokenRepository = RefreshTokenRepository;
             _roleService = roleService;
+            _detectionService = detectionService;
         }
         public async Task<AuthResult> GenerateUserTokenAsync(User user)
         {
@@ -56,7 +59,10 @@ namespace OurSite.Core.Utilities
                 ExpieryDate = DateTime.UtcNow.AddMonths(6),
                 IsRevoked = false,
                 IsUsed = false,
-                UserUUID = user.UUID
+                UserUUID = user.UUID,
+                UserBrowser = _detectionService.Browser.Name + " " + _detectionService.Browser.Version,
+                UserPlatform=_detectionService.Platform.Name + " " + _detectionService.Platform.Version
+
             };
             await _RefreshTokenRepository.AddEntity(refreshToken);
             await _RefreshTokenRepository.SaveEntity();
@@ -95,7 +101,9 @@ namespace OurSite.Core.Utilities
                 ExpieryDate = DateTime.UtcNow.AddMonths(6),
                 IsRevoked=false,
                 IsUsed=false,
-                UserUUID=admin.UUID
+                UserUUID=admin.UUID,
+                UserBrowser = _detectionService.Browser.Name + " " + _detectionService.Browser.Version,
+                UserPlatform=_detectionService.Platform.Name + " " + _detectionService.Platform.Version
             };
             await _RefreshTokenRepository.AddEntity(refreshToken);
             await _RefreshTokenRepository.SaveEntity();
