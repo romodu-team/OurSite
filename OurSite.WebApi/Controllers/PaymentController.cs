@@ -259,6 +259,12 @@ namespace OurSite.WebApi.Controllers
 
 
         #region view project's payment
+        /// <summary>
+        /// view payments of a project.
+        /// </summary>
+        /// <remarks> data for show user/admin must manage. e.g. isRemove must not show for user</remarks>
+        /// <param name="ProjectId"></param>
+        /// <returns></returns>
         [HttpGet("get-list-payments-of-project")]
         public async Task<IActionResult> GetPayments([FromQuery]long ProjectId)
         {
