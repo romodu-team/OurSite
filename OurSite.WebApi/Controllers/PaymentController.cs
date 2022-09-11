@@ -260,7 +260,7 @@ namespace OurSite.WebApi.Controllers
 
         #region view project's payment
         [HttpGet("get-list-payments-of-project")]
-        public async Task<IActionResult> GetPayments(long ProjectId)
+        public async Task<IActionResult> GetPayments([FromQuery]long ProjectId)
         {
             var result = await Paymentservice.GetPayments(ProjectId);
             if (result is not null)
