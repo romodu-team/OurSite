@@ -41,6 +41,7 @@ const routes: Routes = [
   { path:'feature', component: FeatureComponent },
   { path:'login', component: LoginComponent },
   { path: 'user', component: UserComponent, canActivate: [AuthGuard], canActivateChild: [AuthGuard] },
+  { path:'admin', redirectTo:'admin/dashboard', pathMatch:'full' },
   { path: 'admin', component: AdminWelcomeComponent, children: [
     { path: 'more/checkbox', component: AdminCheckboxComponent },
     { path: 'more/notifications', component: AdminNotificationsComponent },
