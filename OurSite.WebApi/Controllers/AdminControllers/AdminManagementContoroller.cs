@@ -46,6 +46,9 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     case RessingupDto.Exist:
                         HttpContext.Response.StatusCode = 409;
                         return JsonStatusResponse.Error("Username or Email exist");
+                    case RessingupDto.RoleNotFound:
+                        HttpContext.Response.StatusCode = 400;
+                        return JsonStatusResponse.Error("Role not found");
                     default:
                         HttpContext.Response.StatusCode = 500;
                         return JsonStatusResponse.UnhandledError();

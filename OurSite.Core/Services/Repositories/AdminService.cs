@@ -267,6 +267,12 @@ namespace OurSite.Core.Services.Repositories
             var check = await IsAdminExist(req.UserName.Trim().ToLower(), req.Email.ToLower().Trim());
             if (check)
                 return new ResRegisterAdminDto { RessingupDto = RessingupDto.Exist };
+            if (req.AdminRoleId is not null)
+            {
+                if (await roleService.GetRoleById(req.AdminRoleId.Value) is null)
+                    return new ResRegisterAdminDto { RessingupDto = RessingupDto.RoleNotFound };
+            }
+
             Admin newAdmin = new Admin()
             {
                 UserName = req.UserName.Trim().ToLower(),
@@ -284,17 +290,23 @@ namespace OurSite.Core.Services.Repositories
 
                 await adminRepository.AddEntity(newAdmin);
                 await adminRepository.SaveEntity();
-                var accountInRole = new AccounInRole
+                if (req.AdminRoleId is not null)
                 {
-                    AdminId = newAdmin.Id,
-                    RoleId = req.AdminRoleId.Value,
-                    CreateDate = DateTime.Now,
-                    LastUpdate = DateTime.Now
-                };
-                var res = await roleService.AddRoleToAdmin(accountInRole);
-                if (res)
-                    return new ResRegisterAdminDto { RessingupDto = RessingupDto.success ,AdminId= newAdmin.Id,AdminUUID=newAdmin.UUID };
-                return new ResRegisterAdminDto { RessingupDto = RessingupDto.Failed };
+                        var accountInRole = new AccounInRole
+                        {
+                            AdminId = newAdmin.Id,
+                            RoleId = req.AdminRoleId.Value,
+                            CreateDate = DateTime.Now,
+                            LastUpdate = DateTime.Now
+                        };
+                        var res = await roleService.AddRoleToAdmin(accountInRole);
+                        if (!res)
+                        {
+                            // return new ResRegisterAdminDto { RessingupDto = RessingupDto.success, AdminId = newAdmin.Id, AdminUUID = newAdmin.UUID };
+                            return new ResRegisterAdminDto { RessingupDto = RessingupDto.Failed };
+                        }
+                }
+                return new ResRegisterAdminDto { RessingupDto = RessingupDto.success, AdminId = newAdmin.Id, AdminUUID = newAdmin.UUID };
 
             }
             catch (Exception)
