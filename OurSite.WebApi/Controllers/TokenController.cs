@@ -44,8 +44,8 @@ namespace OurSite.WebApi.Controllers
 
         #endregion
         /// <summary>
-        /// If the user's jwt token expires (it will expire every 1 minute), use this controller to get a new jwt token.
-        ///If the user's refresh token is still valid, you will receive the new jwt token.
+        /// If the user's jwt token expires (it will expire every 1 minute), use this controller to get a new jwt token and new refreshToken.
+        ///If the user's refresh token is still valid, you will receive the new jwt token and new refreshToken.
         ///Otherwise, you will receive "Invalid tokens" or "Expired tokens" errors that the user must login again.
         /// </summary>
         /// <param name="tokenRequest"></param>
@@ -99,23 +99,6 @@ namespace OurSite.WebApi.Controllers
                     if (result == false)
                         return null;
                 }
-
-                //var utcExpiryDate = long.Parse(tokenInVerification.Claims
-                //    .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-
-
-                //var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
-                //if (expiryDate < DateTime.UtcNow)
-                //{
-                //    return new AuthResult()
-                //    {
-                //        Result = false,
-                //        Errors = new List<string>()
-                //    {
-                //        "Expired token"
-                //    }
-                //    };
-                //}
 
                 var storedToken = await _RefreshTokenRepository.GetAllEntity().FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
 
@@ -299,7 +282,7 @@ namespace OurSite.WebApi.Controllers
             }
         }
         /// <summary>
-        /// revoke session from database
+        /// !important :call this method for revoke session from database , The frontend still needs to remove the token from the cookie or...
         /// </summary>
         /// <param name="refreshToken"></param>
         /// <returns></returns>

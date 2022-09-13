@@ -66,7 +66,7 @@ builder.Services.AddSwaggerGen(option =>
 
 #region addservices
 //test database
-//builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
+builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
 //real database
 builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
