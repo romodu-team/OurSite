@@ -32,6 +32,10 @@ import { AdminProjectEditComponent } from './pages/admin/admin-project/admin-pro
 import { AdminProjectFeaturesComponent } from './pages/admin/admin-project/admin-project-features/admin-project-features.component';
 import { AdminWorksampleEditComponent } from './pages/admin/admin-worksample/admin-worksample-edit/admin-worksample-edit.component';
 import { AdminWorksampleCategoryCreateeditComponent } from './pages/admin/admin-worksample/admin-worksample-category/admin-worksample-category-createedit/admin-worksample-category-createedit.component';
+import { UesrDashboardComponent } from './pages/user/uesr-dashboard/uesr-dashboard.component';
+import { UesrTicketComponent } from './pages/user/uesr-ticket/uesr-ticket.component';
+import { UesrProjectComponent } from './pages/user/uesr-project/uesr-project.component';
+import { UesrProfileComponent } from './pages/user/uesr-profile/uesr-profile.component';
 
 const routes: Routes = [
   { path:'', component:HomeComponent },
@@ -40,7 +44,16 @@ const routes: Routes = [
   { path:'about', component:AboutUsComponent },
   { path:'feature', component: FeatureComponent },
   { path:'login', component: LoginComponent },
-  { path: 'user', component: UserComponent, canActivate: [AuthGuard], canActivateChild: [AuthGuard] },
+  // { path: 'user', component: UserComponent, canActivate: [AuthGuard], canActivateChild: [AuthGuard] },
+
+  { path: 'user', redirectTo:'user/dashboard', pathMatch:'full' },
+  { path: 'user', component: UserComponent, children:[
+    { path: 'dashboard', component:UesrDashboardComponent },
+    { path: 'ticket', component:UesrTicketComponent },
+    { path: 'project', component:UesrProjectComponent },
+    { path: 'profile', component:UesrProfileComponent },
+  ] },
+
   { path:'admin', redirectTo:'admin/dashboard', pathMatch:'full' },
   { path: 'admin', component: AdminWelcomeComponent, children: [
     { path: 'more/checkbox', component: AdminCheckboxComponent },

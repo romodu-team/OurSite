@@ -105,6 +105,7 @@ import { AdminNotificationsComponent } from './pages/admin/admin-notifications/a
 import { Filter2Component } from "./shared/filter2/filter2.component";
 import { Card14Component } from "./shared/card14/card14.component";
 import { Card15Component } from './shared/card15/card15.component';
+import { UserNavbarComponent } from './shared/user-navbar/user-navbar.component';
 
 @NgModule({
   declarations: [
@@ -197,6 +198,7 @@ import { Card15Component } from './shared/card15/card15.component';
     Filter2Component,
     Card14Component,
     Card15Component,
+    UserNavbarComponent,
 
   ],
   imports: [

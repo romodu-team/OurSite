@@ -1,0 +1,61 @@
+<mat-drawer-container class="example-container" style="height: 100vh;" autosize >
+    <mat-drawer #drawer class="example-sidenav bg-dark" mode="side" position="end" (mouseleave)="[drawer.close(), LittleNav()]">
+        <div class="d-flex justify-content-start p-2 bg-secondary" [routerLink]="['/admin/dashboard']" style="cursor: pointer;">
+            <div>
+                <img src="../../../assets/imgs/Logo-Nicode copy-fin3.png" width="50px" alt="">
+            </div>
+
+            <div class="d-flex flex-column justify-content-center ms-2 text-white">
+                <small class="fw-bold">NICODE</small>
+                <small>Hi, Mobin!</small>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column align-items-end text-white">
+            <section class="d-flex align-items-center justify-content-end w-100 p-2" [routerLink]="['/user/dashboard']"
+            routerLinkActive="bg-primary" style="cursor: pointer;" (mouseenter)="first()" (mouseleave)="first()">
+                <p class="mt-3 me-3">داشبورد</p>
+                <mat-icon style="font-size: 25px;" class="me-4"> dashboard</mat-icon>
+            </section>
+
+            <section class="d-flex align-items-center justify-content-end w-100 p-2" [routerLink]="['/user/ticket']"
+            routerLinkActive="bg-primary" style="cursor: pointer;" (mouseenter)="first()" (mouseleave)="first()">
+                <p class="mt-3 me-3">تیکت ها</p>
+                <mat-icon style="font-size: 25px;" class="me-4"> message</mat-icon>
+            </section>
+
+            <section class="d-flex align-items-center justify-content-end w-100 p-2" [routerLink]="['/user/profile']"
+            routerLinkActive="bg-primary" style="cursor: pointer;" (mouseenter)="first()" (mouseleave)="first()">
+                <p class="mt-3 me-3">پروفایل</p>
+                <mat-icon style="font-size: 25px;" class="me-4"> person</mat-icon>
+            </section>
+
+        </div>
+    </mat-drawer>  
+
+    <div class="bg-dark text-white" style="position: absolute; top: 0;bottom: 0;;right: 0;" (mouseenter)="[drawer.open(), LittleNav()]" *ngIf="littleNav">
+        <div class="d-flex justify-content-center p-2 bg-secondary">
+            <img src="../../../assets/imgs/Logo-Nicode copy-fin3.png" width="50px" alt="">
+        </div>
+
+        <section class="d-flex align-items-center justify-content-center p-4" [routerLink]="['/user/dashboard']"
+        routerLinkActive="bg-primary">
+            <mat-icon style="font-size: 25px;">dashboard</mat-icon>
+        </section>
+
+        
+        <section class="d-flex align-items-center justify-content-center p-4" [routerLink]="['/admin/ticket']"
+        routerLinkActive="bg-primary">
+        <mat-icon style="font-size: 25px;">message</mat-icon>
+        </section>
+
+        <section class="d-flex align-items-center justify-content-center p-4" [routerLink]="['/admin/profile']"
+        routerLinkActive="bg-primary">
+        <mat-icon style="font-size: 25px;"> person</mat-icon>
+    </section>
+    </div>
+    <div style="height: 100vh;overflow: auto; direction: rtl;">
+        <!-- <app-adminuser-header></app-adminuser-header> -->
+        <router-outlet></router-outlet>
+    </div>
+</mat-drawer-container>  
