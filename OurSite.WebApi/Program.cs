@@ -29,11 +29,13 @@ using OurSite.Core.Utilities.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.Configure<MailSettingsDto>(builder.Configuration.GetSection("MailSettings"));
+
+#region Swagger
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
@@ -64,16 +66,26 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-#region addservices
-//test database
-builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
-//real database
-builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+#endregion
+#region DateBase
+if (builder.Environment.IsDevelopment() || builder.Environment.IsStaging())
+{
+    //test database
+    builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestConnection")));
+}
+else
+{
+    //real database
+    builder.Services.AddDbContext<DataBaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+}
+
+#endregion
+#region add services
+
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
-builder.Services.Configure<MailSettingsDto>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -82,9 +94,19 @@ builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
 builder.Services.AddScoped<IProject, ProjectService>();
 builder.Services.AddScoped<IPayment, PaymentService>();
 builder.Services.AddScoped<ICheckBoxService, CheckBoxService>();
-
+builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
+builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IimageGalleryService, ImageGalleryService>();
+builder.Services.AddScoped<IWorkSampleService, WorkSampleService>();
+builder.Services.AddScoped<IWorkSampleCategoryService, WorkSampleCategoryService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
+builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
+builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 #endregion
-#region Autentication
+#region Autentication and Authorization
 var TokenValidationParameters= new TokenValidationParameters()
 {
     ValidateIssuer = true,
@@ -105,18 +127,6 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = TokenValidationParameters;
 }
 );
-#endregion
-builder.Services.AddScoped<IContactWithUsService, ContactWithUsService>();
-builder.Services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
-builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IimageGalleryService, ImageGalleryService>();
-builder.Services.AddScoped<IWorkSampleService, WorkSampleService>();
-builder.Services.AddScoped<IWorkSampleCategoryService, WorkSampleCategoryService>();
-builder.Services.AddScoped<ITicketService, TicketService>();
-builder.Services.AddScoped<ITicketCategoryService, TicketCategoryService>();
-builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
-builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddSingleton(TokenValidationParameters);
 builder.Services.AddAuthorization(options =>
 {
@@ -127,7 +137,8 @@ builder.Services.AddAuthorization(options =>
 
 
 });
-builder.Services.AddDetection();
+
+#endregion
 #region Cors
 builder.Services.AddCors(options =>
 {
@@ -141,7 +152,10 @@ builder.Services.AddCors(options =>
     );
 });
 #endregion
+builder.Services.AddDetection();
+
 var app = builder.Build();
+app.
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor |
@@ -150,13 +164,12 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-
-
-}
 app.UseSwagger(options =>
 options.SerializeAsV2 = true);
 app.UseSwaggerUI(options =>
 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
+
+}
 
 app.UseHttpsRedirection();
 app.UseCors("EnableCors");
