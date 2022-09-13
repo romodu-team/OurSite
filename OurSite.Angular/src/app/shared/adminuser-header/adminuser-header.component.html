@@ -1,4 +1,4 @@
-<div class="w-100 bg-white px-4 d-flex " style="height: 68px;direction: ltr;" >
+<div class="w-100 bg-white px-4 d-flex justify-content-between align-items-center" style="height: 68px;direction: ltr;" >
         <div class="d-flex align-items-center text-secondary">
             <img src="../../../assets/imgs/bill-gates-wealthiest-person.jpg" width="35px" class="rounded">
             <div class="d-flex flex-column ms-3">
@@ -14,5 +14,17 @@
             onMouseOut="this.style.color='grey'" mat-raised-button
             matTooltip="خروج از حساب کاربری"
             aria-label="Button that displays a tooltip when focused or hovered over">exit_to_app</mat-icon>
+        </div>
+
+        <div class="me-5">
+            <div class="me-5 d-flex align-items-center" dir="rtl">
+                <p class="h4 fw-bold mt-2">{{ pageTitle }}</p>
+                <div class="d-flex align-items-center" style="height: 20%;">
+                    <button class="px-4 btn-sm btn btn-primary me-3"
+                     *ngIf="btnTitle != 'ثبت' && headerFunction1" (click)="headerFunction1()">{{ btnTitle }}</button>
+                    <button class=" btn btn-sm btn-dark me-3 fw-bold px-2" 
+                    style="font-size: 13px !important;" *ngIf="headerFunction2" (click)="headerFunction2()">+</button>
+                </div>
+            </div>
         </div>
 </div>

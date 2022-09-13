@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
@@ -12,5 +12,10 @@ export class AdminuserHeaderComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  @Input() pageTitle:string = 'داشبورد'
+  @Input() btnTitle:string = 'ثبت'
+  @Input() headerFunction1!: () => void
+  @Input() headerFunction2!: () => void
 
 }
