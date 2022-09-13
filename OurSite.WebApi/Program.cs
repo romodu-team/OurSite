@@ -155,7 +155,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddDetection();
 
 var app = builder.Build();
-app.
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor |
