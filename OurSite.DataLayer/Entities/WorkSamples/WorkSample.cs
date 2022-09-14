@@ -1,6 +1,5 @@
 using System;
 using OurSite.DataLayer.Entities.BaseEntities;
-using OurSite.DataLayer.Entities.Comments;
 using OurSite.DataLayer.Entities.ImageGalleries;
 using OurSite.DataLayer.Entities.RatingModel;
 using System.Web.Mvc;

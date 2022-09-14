@@ -12,17 +12,25 @@ using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Services.Repositories;
 using OurSite.DataLayer.Entities.Access;
 using OurSite.DataLayer.Entities.Accounts;
+using OurSite.DataLayer.Interfaces;
+using OurSite.Core.DTOs;
+using OurSite.DataLayer.Repositories;
+using Wangkanai.Detection.Services;
 
 namespace OurSite.Core.Utilities
 {
     public class AuthenticationHelper
     {
-       private readonly IRoleService _roleService;
-        public AuthenticationHelper(IRoleService roleService)
+        private readonly IRoleService _roleService;
+        private IGenericRepository<RefreshToken> _RefreshTokenRepository;
+        private readonly IDetectionService _detectionService;
+        public AuthenticationHelper(IRoleService roleService, IGenericRepository<RefreshToken> RefreshTokenRepository, IDetectionService detectionService)
         {
-            _roleService=roleService;
+            _RefreshTokenRepository = RefreshTokenRepository;
+            _roleService = roleService;
+            _detectionService = detectionService;
         }
-        public  string GenerateUserToken(User user,int Expire)
+        public async Task<AuthResult> GenerateUserTokenAsync(User user)
         {
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Wx7Xl6rPABrWvLbLaXoBcaLQ8nQJg7L1Dce3zfE0"));
             var signInCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -30,76 +38,116 @@ namespace OurSite.Core.Utilities
                 issuer: PathTools.Domain,
                 claims: new List<Claim>()
                 {
-                                new Claim(ClaimTypes.Name, String.Concat(user.FirstName,user.LastName)),
-                                new Claim(ClaimTypes.NameIdentifier,user.UUID.ToString()),
-                                new Claim(ClaimTypes.Sid,user.Id.ToString()),
-                                new Claim(ClaimTypes.Role,"Customer")
+                    new Claim(ClaimTypes.Name, String.Concat(user.FirstName,user.LastName)),
+                    new Claim(ClaimTypes.NameIdentifier,user.UUID.ToString()),
+                    new Claim(ClaimTypes.Sid,user.Id.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString())
 
                 },
-                expires: DateTime.Now.AddDays(Expire),
+                expires: DateTime.UtcNow.Add(TimeSpan.Parse("00:01")),
                 signingCredentials: signInCredentials
             );
 
             var token = new JwtSecurityTokenHandler().WriteToken(tokenOption);
-            return token;
+
+            var refreshToken = new RefreshToken
+            {
+                JwtId = tokenOption.Id,
+                Token = RandomStringGenerator(23),
+                ExpieryDate = DateTime.UtcNow.AddMonths(6),
+                IsRevoked = false,
+                IsUsed = false,
+                UserUUID = user.UUID,
+                UserBrowser = _detectionService.Browser.Name + " " + _detectionService.Browser.Version,
+                UserPlatform=_detectionService.Platform.Name + " " + _detectionService.Platform.Version
+
+            };
+            await _RefreshTokenRepository.AddEntity(refreshToken);
+            await _RefreshTokenRepository.SaveEntity();
+            return new AuthResult
+            {
+                Token = token,
+                RefreshToken = refreshToken.Token,
+                Result = true
+            };
         }
 
-        public  async Task<string> GenerateAdminToken(Admin admin,Role role, int Expire)
+        public async Task<AuthResult> GenerateAdminToken(Admin admin)
         {
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Wx7Xl6rPABrWvLbLaXoBcaLQ8nQJg7L1Dce3zfE0"));
             var signInCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-              var JwtTokenHandler = new JwtSecurityTokenHandler();
+            var JwtTokenHandler = new JwtSecurityTokenHandler();
             //get all user claims
-            var claims =await AllValidClaims(admin);
-            var tokenDescriptor  = new SecurityTokenDescriptor(){
+            var claims = await AllValidClaims(admin);
+            var tokenDescriptor = new SecurityTokenDescriptor()
+            {
                 Subject = new ClaimsIdentity(claims),
-                Issuer=PathTools.Domain
-                ,
-                Expires=DateTime.Now.AddHours(3),
-                SigningCredentials=new SigningCredentials(secretKey,SecurityAlgorithms.HmacSha256)
-              
-        };
+                Issuer = PathTools.Domain,
+                Expires = DateTime.UtcNow.Add(TimeSpan.Parse("00:01")),
+                SigningCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256)
+
+            };
 
             var Token = JwtTokenHandler.CreateToken(tokenDescriptor);
-            var JwtToken = JwtTokenHandler.WriteToken(Token);
 
-            return JwtToken;
+            var JwtToken =new JwtSecurityTokenHandler().WriteToken(Token);
+
+            var refreshToken = new RefreshToken
+            {
+                JwtId = Token.Id,
+                Token = RandomStringGenerator(23),
+                ExpieryDate = DateTime.UtcNow.AddMonths(6),
+                IsRevoked=false,
+                IsUsed=false,
+                UserUUID=admin.UUID,
+                UserBrowser = _detectionService.Browser.Name + " " + _detectionService.Browser.Version,
+                UserPlatform=_detectionService.Platform.Name + " " + _detectionService.Platform.Version
+            };
+            await _RefreshTokenRepository.AddEntity(refreshToken);
+            await _RefreshTokenRepository.SaveEntity();
+
+            return new AuthResult
+            {
+                Token = JwtToken,
+                RefreshToken = refreshToken.Token,
+                Result = true
+            };
         }
 
         private async Task<List<Claim>> AllValidClaims(Admin admin)
         {
             var _options = new IdentityOptions();
 
-            var claims= new List<Claim>()
+            var claims = new List<Claim>()
             {
                     new Claim(ClaimTypes.NameIdentifier,admin.UUID.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Sub,admin.Email),
                     new Claim(ClaimTypes.Sid,admin.Id.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email,admin.Email),
+                    new Claim(JwtRegisteredClaimNames.Email,admin.Email ?? ""),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat,DateTime.Now.ToUniversalTime().ToString()),
             };
-            //getting the claims that we have assigned to the user
-            //var userClaims = await _userManager.GetClaimsAsync(user);
-           // claims.AddRange(userClaims);
-            //get the user roles and add it to claims
-               var userRoles = await _roleService.GetAdminRole(admin.Id);
+            var userRoles = await _roleService.GetAdminRole(admin.Id);
 
-            
-              
-                
-                if (userRoles != null)
+            if (userRoles != null)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRoles.Name));
+                var permissions = await _roleService.GetSelectedPermissionOfRole(userRoles.Id);
+                foreach (var permission in permissions)
                 {
-                      claims.Add(new Claim(ClaimTypes.Role, userRoles.Name));
-                    var roleClaim = await _roleService.GetSelectedPermissionOfRole(userRoles.Id);
-                    foreach (var RoleClaim in roleClaim)
-                    {
-                        claims.Add(new Claim(RoleClaim.PermissionName,RoleClaim.PermissionName));
-                    }
+                    claims.Add(new Claim(permission.PermissionName, "true"));
                 }
-           
+            }
 
             return claims;
+        }
+
+        private string RandomStringGenerator(int length)
+        {
+            var random = new Random();
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz_";
+            return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }

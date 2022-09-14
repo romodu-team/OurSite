@@ -12,6 +12,7 @@ namespace OurSite.Core.DTOs.AdminDtos
         public Guid UUID { get; set; }
         public DateTime CreateDate { get; set; }
         public bool IsRemove { get; set; }
+        public bool IsActive { get; set; }
         public DateTime LastUpdate { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -4,11 +4,13 @@ using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 using OurSite.Core.DTOs.NotificationDtos;
 using OurSite.Core.DTOs.TicketDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OurSite.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class NotificationController : ControllerBase
     {
         #region constructor
@@ -27,6 +29,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("create-Notification")]
+        [Authorize(Policy =StaticPermissions.PermissionCreateNotification)]
         public async Task<IActionResult> CreateNotification([FromBody]ReqCreateNotificationDto request)
         {
             var res = await _notificationService.CreateNotification(request);
@@ -83,6 +86,8 @@ namespace OurSite.WebApi.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("Update-Notification")]
+        [Authorize(Policy = StaticPermissions.PermissionUpdateNotification)]
+
         public async Task<IActionResult> UpdateNotification([FromBody]ReqUpdateNotificationDto request)
         {
             var res = await _notificationService.UpdateNotification(request);
@@ -127,6 +132,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="notificationsId"></param>
         /// <returns></returns>
         [HttpPut("notification-markAsRead")]
+        
         public async Task<IActionResult> MarkAsRead([FromBody]List<long> notificationsId)
         {
             var res = await _notificationService.MarkAsRead(notificationsId);

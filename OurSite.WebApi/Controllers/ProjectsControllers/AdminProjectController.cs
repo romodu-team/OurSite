@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.MailDtos;
 using OurSite.Core.DTOs.NotificationDtos;
@@ -40,6 +41,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpPost("create-project")]
+        [Authorize(Policy = StaticPermissions.PermissionAdminCreateProject)]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto prodto, long userId)
         {
             var res = await projectservice.CreateProject(prodto, userId);
@@ -73,6 +75,8 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="prodto"></param>
         /// <returns></returns>
         [HttpPut("edit-Project")]
+        [Authorize(Policy = StaticPermissions.PermissionAdminEditProject)]
+
         public async Task<IActionResult> EditProject([FromBody] EditProjectDto prodto)
         {
             var res = await projectservice.EditProject(prodto);
@@ -101,6 +105,8 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="ProId"></param>
         /// <returns></returns>
         [HttpDelete("admin-delete-project")]
+        [Authorize(Policy = StaticPermissions.PermissionAdminDeleteProject)]
+
         public async Task<IActionResult> DeleteProject([FromQuery] long ProId)
         {
             if (User.Identity.IsAuthenticated)
@@ -135,6 +141,8 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="ProjectId"></param>
         /// <returns></returns>
         [HttpGet("view-project-by-admin/{ProjectId}")]
+        [Authorize(Policy = StaticPermissions.PermissionAdminViewProject)]
+
         public async Task<IActionResult> GetProject([FromRoute] long ProjectId)
         {
             var res = await projectservice.GetProject(ProjectId);
@@ -150,13 +158,14 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
 
         #region Upload contract File
         /// <summary>
-        /// Api for Upload contract in projrct order {get request from body}
+        /// Api for Upload contract in projrct order {get request from form}
         /// </summary>
         /// <remarks>The size of the contract file must be less than 10 MB</remarks>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost]
-        [Route("Upload-Contract")]
+        [HttpPost("Upload-Contract")]
+        [Authorize(Policy = StaticPermissions.PermissionAdminUploadProjectContracts)]
+
         public async Task<IActionResult> UploadContract([FromForm] ReqUploadContractDto request)
         {
             var res = await projectservice.UploadContract(request);
@@ -197,6 +206,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpGet("project-list")]
+        [Authorize(Policy = StaticPermissions.PermissionAdminViewAllProject)]
         public async Task<IActionResult> GetAllProject([FromQuery] ReqFilterProjectDto filter)
         {
             var projects = await projectservice.GetAllProject(filter);

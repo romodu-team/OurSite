@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.ContactWithUsDtos;
 using OurSite.Core.Services.Interfaces;
@@ -54,6 +55,7 @@ namespace OurSite.WebApi.Controllers.Forms
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpGet("view-all-ContactWithUs")]
+        [Authorize(Policy = StaticPermissions.PermissionViewAllContactWithUs)]
         public async Task<IActionResult> GetAllContactWithUs([FromQuery] ReqFilterContactWithUsDto filter)
         {
             var contactWithUs = await contactWithUsService.GetAllContactWithUs(filter);
@@ -70,6 +72,7 @@ namespace OurSite.WebApi.Controllers.Forms
 
         #region Answer To Contact us Message
         [HttpPost("Send-Answer-ToUser")]
+        [Authorize(Policy = StaticPermissions.PermissionAnswerToContactWithUs)]
         public async Task<IActionResult> AnswerToContactUSMessage([FromForm]string ToEmail,[FromForm]string subject,[FromForm]string Content,[FromForm]List<IFormFile>? Attachments)
         {
             var res = await contactWithUsService.AnswerToMessage(ToEmail,subject,Content,Attachments);

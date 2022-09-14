@@ -19,7 +19,6 @@ namespace OurSite.Core.DTOs.TicketDtos
         public long? SupporterId { get; set; }
         public long UserId { get; set; }
         public long SenderId { get; set; }
-        public bool IsAdmin { get; set; }
         public long? ProjectId { get; set; }
         public IFormFile? Attachment { get; set; }
     }

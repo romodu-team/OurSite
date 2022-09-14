@@ -15,6 +15,7 @@ using static OurSite.Core.DTOs.ProjectDtos.CreateProjectDto;
 namespace OurSite.WebApi.Controllers.ProjectsControllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class UserProjectController : Controller
     {
         private IProject projectservice;
@@ -30,6 +31,7 @@ namespace OurSite.WebApi.Controllers.ProjectsControllers
         /// <param name="prodto"></param>
         /// <returns></returns>
         [HttpPost("create-project-by-User")]
+
         public async Task<IActionResult> CreateProject([FromBody]CreateProjectDto prodto)
         {
             if (User.Identity.IsAuthenticated)

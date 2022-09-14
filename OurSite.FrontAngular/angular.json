@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "OurSite.Angular": {
+    "OurSite.FrontAngular": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/our-site.angular",
+            "outputPath": "dist/our-site.front-angular",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -68,18 +68,21 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "OurSite.Angular:build:production"
+              "browserTarget": "OurSite.FrontAngular:build:production"
             },
             "development": {
-              "browserTarget": "OurSite.Angular:build:development"
+              "browserTarget": "OurSite.FrontAngular:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "src/proxy.conf.js"
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "OurSite.Angular:build"
+            "browserTarget": "OurSite.FrontAngular:build"
           }
         },
         "test": {
@@ -102,5 +105,5 @@
       }
     }
   },
-  "defaultProject": "OurSite.Angular"
+  "defaultProject": "OurSite.FrontAngular"
 }
