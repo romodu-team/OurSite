@@ -287,7 +287,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="refreshToken"></param>
         /// <returns></returns>
         [HttpPost("log-out")]
-        public async Task<IActionResult> LogOut([FromBody] string refreshToken)
+        public async Task<IActionResult> LogOut([FromQuery] string refreshToken)
         {
             var session = await _RefreshTokenRepository.GetAllEntity().SingleOrDefaultAsync(x=>x.Token==refreshToken && x.IsRemove==false && x.IsRevoked == false);
             if(session is not null)
