@@ -18,7 +18,6 @@ namespace OurSite.Core.DTOs.ProjectDtos
         public situations? Situation { get; set; }
         public List<long>? PlanDetails { get; set; }
         public long? AdminId { get; set; }
-        public string? ContractFileName { get; set; }
         
 
 

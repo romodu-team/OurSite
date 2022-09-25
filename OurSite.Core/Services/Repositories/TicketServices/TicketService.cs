@@ -88,9 +88,10 @@ namespace OurSite.Core.Services.Repositories.TicketServices
         {
             //find ticket
             var ticket = await _TicketRepository.GetAllEntity().Include(t=>t.TicketStatus).SingleOrDefaultAsync(t => t.Id == request.TicketId);
+            var discussionCount = _DiscussionRepository.GetAllEntity().Count(x => x.TicketId == ticket.Id);
             if (ticket is not null)
             {
-                if (ticket.TicketStatus.Name != "Closed")
+                if (ticket.TicketStatus.Name != "Closed" || discussionCount ==0)
                 {
                     //find sender
                     bool validSender = false;
@@ -175,7 +176,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
             return new ResCreateDiscussionDto { AttachmentStatus = resFileUploader.NoContent, DiscussionStatus = ResOperation.NotFound };
         }
 
-        public async Task<ResCreateDiscussionDto> CreateTicket(ReqCreateTicketDto request)
+        public async Task<ResCreateDiscussionDto> CreateTicket(ReqCreateTicketDto request,bool IsAdmin)
         {
             //if user is exist
             var isUserExist = await _UserService.IsUserExist(request.UserId);
@@ -199,7 +200,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                     await _TicketRepository.SaveEntity();
                     //send notification and email
                     //find accaount
-                    if (!request.IsAdmin)//if sender is user , send notificatin to  admins and send mail to site email
+                    if (!IsAdmin)//if sender is user , send notificatin to  admins and send mail to site email
                     {
 
                         var accounts = await _AdminService.GetAllAdmin(new ReqFilterUserDto { PageId=1,TakeEntity=1000});
@@ -222,7 +223,7 @@ namespace OurSite.Core.Services.Repositories.TicketServices
                             await _mailService.SendEmailAsync(new MailRequestDto { ToEmail = account.Email, Subject = $"تیکت جدید برای شما با موضوع {ticket.Title} ایجاد شد.", Attachments = null, Body = $"عنوان تیکت:{ticket.Title}\nمتن تیکت:{request.Description}\nشماره تیکت:{ticket.Id}" });
                     }
                     //create first discussion
-                    var res = await CreateDiscussion(new ReqCreateDiscussion { Attachment = request.Attachment, Content = request.Description, TicketId = ticket.Id, SenderId = request.SenderId, IsAdmin = request.IsAdmin });
+                    var res = await CreateDiscussion(new ReqCreateDiscussion { Attachment = request.Attachment, Content = request.Description, TicketId = ticket.Id, SenderId = request.SenderId, IsAdmin = IsAdmin });
                     return new ResCreateDiscussionDto { AttachmentStatus = res.AttachmentStatus, DiscussionStatus = res.DiscussionStatus };
                 }
                 catch (Exception)

@@ -18,7 +18,7 @@ namespace OurSite.Core.DTOs.AdminDtos
         public string? NationalCode { get; set; }
         public string? Email { get; set; }
         public string? Mobile { get; set; }
-        public gender? Gender { get; set; }
+        public string? Gender { get; set; }
         public string? Address { get; set; }
         public string? ImageName { get; set; }
         public string? Birthday { get; set; }

@@ -10,6 +10,9 @@ using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
 using System.Linq;
 using System.Security.Claims;
+using OurSite.DataLayer.Interfaces;
+using OurSite.DataLayer.Entities.Access;
+using Wangkanai.Detection.Services;
 
 namespace OurSite.WebApi.Controllers.AdminControllers
 {
@@ -21,13 +24,16 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         private readonly IAdminService adminService;
         private readonly IUserService userService;
         private readonly IRoleService roleService;
+        private readonly IDetectionService _detectionService;
 
-        public AdminController(IAdminService adminService, IUserService userService, IRoleService roleService)
+        private IGenericRepository<RefreshToken> _RefreshTokenRepository;
+        public AdminController(IDetectionService detectionService, IAdminService adminService, IUserService userService, IRoleService roleService, IGenericRepository<RefreshToken> RefreshTokenRepository)
         {
             this.adminService = adminService;
             this.userService = userService;
             this.roleService = roleService;
-
+            _RefreshTokenRepository = RefreshTokenRepository;
+            _detectionService = detectionService;
         }
         #endregion
 
@@ -40,24 +46,29 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         [HttpPost("login-Admin")]
         public async Task<IActionResult> LoginAdmin([FromBody] ReqLoginDto reqLogin)
         {
-            AuthenticationHelper authenticationHelper = new AuthenticationHelper(roleService);
-            if (ModelState.IsValid)
+            if (!User.Identity.IsAuthenticated)
             {
-                var admin = await adminService.Login(reqLogin);
-                if (admin is null)
-                {
-                    HttpContext.Response.StatusCode = 404;
-                    return JsonStatusResponse.NotFound("there isn't any admin mieh this information");
-                }
-                   
-                var role = await roleService.GetAdminRole(admin.Id);
 
-                var token =await authenticationHelper.GenerateAdminToken(admin, role, 3);
-                HttpContext.Response.StatusCode = 200;
-                return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = admin.Id, admin.FirstName, admin.LastName }, "Success");
+                AuthenticationHelper authenticationHelper = new AuthenticationHelper(roleService, _RefreshTokenRepository, _detectionService);
+                if (ModelState.IsValid)
+                {
+                    var admin = await adminService.Login(reqLogin);
+                    if (admin is null)
+                    {
+                        HttpContext.Response.StatusCode = 404;
+                        return JsonStatusResponse.NotFound("there isn't any admin with this information");
+                    }
+
+                    var token = await authenticationHelper.GenerateAdminToken(admin);
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonStatusResponse.Success(new { Auth = token, AdminId = admin.Id, UUID = admin.UUID, admin.FirstName, admin.LastName }, "Success");
+                }
+                HttpContext.Response.StatusCode = 500;
+                return JsonStatusResponse.InvalidInput();
             }
-            HttpContext.Response.StatusCode = 500;
-            return JsonStatusResponse.InvalidInput();
+            HttpContext.Response.StatusCode = 400;
+
+            return JsonStatusResponse.Error("You are already logged in");
         }
         #endregion
 
@@ -79,7 +90,7 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                     return JsonStatusResponse.Success("password has been changed successfully");
                 }
                 HttpContext.Response.StatusCode = 500;
-                return JsonStatusResponse.Error("password has");
+                return JsonStatusResponse.Error("password has not changed");
             }
             HttpContext.Response.StatusCode = 200;
             return JsonStatusResponse.Error("مشکلی در اطلاعات ارسالی وجود دارد");
@@ -117,10 +128,12 @@ namespace OurSite.WebApi.Controllers.AdminControllers
         /// <summary>
         ///  API for Update admin profile by self{Get request from form}
         /// </summary>
-        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
+        /// <remarks>The file size of the profile image must be less than 3 MB, also The Birthday type must be input with "/" like 1400/02/20</remarks>
         /// <param name="req"></param>
         /// <returns></returns>
+        
         [HttpPut("update-admin-profile")]
+        [Authorize]
         public async Task<IActionResult> UpdateAdminBySelf([FromForm] ReqUpdateAdminDto req)
         {
             if (User.Identity.IsAuthenticated)
@@ -158,15 +171,15 @@ namespace OurSite.WebApi.Controllers.AdminControllers
                         
                         case ResUpdate.Success:
                         HttpContext.Response.StatusCode = 200;
-                            return JsonStatusResponse.Success("Profile photo changed");
+                            return JsonStatusResponse.Success("admin has been updated");
                         case ResUpdate.Error:
                         HttpContext.Response.StatusCode = 500;
-                            return JsonStatusResponse.Error("change profile photo failed");
+                            return JsonStatusResponse.Error("failed");
                         case ResUpdate.NotFound:
                         HttpContext.Response.StatusCode = 404;
                             return JsonStatusResponse.NotFound("Admin not found");
                         default:
-                        HttpContext.Response.StatusCode = 400;
+                        HttpContext.Response.StatusCode = 500;
                             return JsonStatusResponse.UnhandledError();
                     }
                 }

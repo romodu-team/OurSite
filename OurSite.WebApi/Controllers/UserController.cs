@@ -14,6 +14,9 @@ using OurSite.Core.DTOs.UserDtos;
 using OurSite.Core.Security;
 using OurSite.Core.Services.Interfaces;
 using OurSite.Core.Utilities;
+using OurSite.DataLayer.Entities.Access;
+using OurSite.DataLayer.Interfaces;
+using Wangkanai.Detection.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,12 +28,16 @@ namespace OurSite.WebApi.Controllers
         #region constructor
         private IUserService userservice;
         private IRoleService Roleservice;
+        private readonly IDetectionService _detectionService;
+        private IGenericRepository<RefreshToken> _RefreshTokenRepository;
 
-        public UserController(IRoleService Roleservice,IUserService userService)
+        public UserController(IDetectionService detectionService, IRoleService Roleservice,IUserService userService, IGenericRepository<RefreshToken> refreshTokenRepository)
         {
             this.userservice = userService;
-            this.Roleservice=Roleservice;
+            this.Roleservice = Roleservice;
+            _RefreshTokenRepository = refreshTokenRepository;
 
+            _detectionService = detectionService;
         }
         #endregion
 
@@ -45,32 +52,37 @@ namespace OurSite.WebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                AuthenticationHelper authenticationHelper = new AuthenticationHelper(Roleservice);
-                var res = await userservice.LoginUser(request);
-                switch (res)
+                if (!User.Identity.IsAuthenticated)
                 {
-                    case ResLoginDto.Success:
+                    AuthenticationHelper authenticationHelper = new AuthenticationHelper(Roleservice, _RefreshTokenRepository, _detectionService);
+                    var res = await userservice.LoginUser(request);
+                    switch (res)
+                    {
+                        case ResLoginDto.Success:
 
-                        var user = await userservice.GetUserByUserPass(request.UserName, request.Password);
-                        var token = authenticationHelper.GenerateUserToken(user, 3);
-                        HttpContext.Response.StatusCode = 200;
-                        return JsonStatusResponse.Success(new { Token = token, Expire = 3, UserId = user.Id, FirstName = user.FirstName, LastName = user.LastName }, "login success");
-                    case ResLoginDto.IncorrectData:
-                        HttpContext.Response.StatusCode = 400;
-                        return JsonStatusResponse.NotFound("Username ot password is wrong");
+                            var user = await userservice.GetUserByUserPass(request.UserName, request.Password);
+                            var token = authenticationHelper.GenerateUserTokenAsync(user);
+                            HttpContext.Response.StatusCode = 200;
+                            return JsonStatusResponse.Success(new { Auth = token, UserId = user.Id, UUID = user.UUID, FirstName = user.FirstName, LastName = user.LastName }, "login success");
+                        case ResLoginDto.IncorrectData:
+                            HttpContext.Response.StatusCode = 400;
+                            return JsonStatusResponse.NotFound("Username ot password is wrong");
 
-                    case ResLoginDto.NotActived:
-                        HttpContext.Response.StatusCode = 401;
-                        return JsonStatusResponse.Error("You not verified");
+                        case ResLoginDto.NotActived:
+                            HttpContext.Response.StatusCode = 401;
+                            return JsonStatusResponse.Error("You not verified");
 
-                    case ResLoginDto.Error:
-                        HttpContext.Response.StatusCode = 400;
-                        return JsonStatusResponse.Error("try agian later");
-                    default:
-                        HttpContext.Response.StatusCode = 500;
-                        return JsonStatusResponse.UnhandledError();
+                        case ResLoginDto.Error:
+                            HttpContext.Response.StatusCode = 400;
+                            return JsonStatusResponse.Error("try agian later");
+                        default:
+                            HttpContext.Response.StatusCode = 500;
+                            return JsonStatusResponse.UnhandledError();
 
+                    }
                 }
+                HttpContext.Response.StatusCode = 400;
+                return JsonStatusResponse.Error("You are already logged in");
             }
             HttpContext.Response.StatusCode = 400;
             return JsonStatusResponse.InvalidInput();
@@ -160,6 +172,8 @@ namespace OurSite.WebApi.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        ///<remarks>The Birthday type must be input with "/" like 1400/02/20 </remarks>
+        /// <returns></returns>
         [HttpPost("signUp-user")]
         public async Task<IActionResult> SingupUser([FromBody] ReqSingupUserDto userDto)
         {
@@ -197,9 +211,10 @@ namespace OurSite.WebApi.Controllers
         ///  API for Update User Profile by user{Get request from form}
         /// </summary>
         /// <param name="request"></param>
-        /// <remarks>The file size of the profile image must be less than 3 MB</remarks>
+        /// <remarks>The file size of the profile image must be less than 3 MB, also The Birthday type must be input with "/" like 1400/02/20 </remarks>
         /// <returns></returns>
         [HttpPut("Update-Profile")]
+        [Authorize]
         public async Task<IActionResult> UpDate([FromForm] ReqUpdateUserDto userdto)
         {
             if (User.Identity.IsAuthenticated)
@@ -266,6 +281,7 @@ namespace OurSite.WebApi.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet("View-Profile/{id}")]
+        [Authorize]
         public async Task<IActionResult> ViewProfile([FromRoute]long id)
         {
             var userid = User.FindFirst(ClaimTypes.Sid).Value;

@@ -9,7 +9,7 @@ namespace OurSite.Core.Services.Interfaces.TicketInterfaces
 {
     public interface ITicketService: IDisposable
     {
-        Task<ResCreateDiscussionDto> CreateTicket(ReqCreateTicketDto request);
+        Task<ResCreateDiscussionDto> CreateTicket(ReqCreateTicketDto request,bool IsAdmin);
         Task<ResOperation> UpdateTicket(ReqUpdateTicketDto request);
         Task<ResOperation> DeleteTicket(long TicketId);
         Task<ResOperation> ChangeTicketStatus(long TicketId, long StatusId);

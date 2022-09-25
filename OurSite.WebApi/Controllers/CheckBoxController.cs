@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.CheckBoxDtos;
 using OurSite.Core.Services.Interfaces;
@@ -22,6 +23,7 @@ public class CheckBoxController : Controller
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("create-CheckBox")]
+    [Authorize(Policy =StaticPermissions.PermissionManageCheckBox)]
     public async Task<IActionResult> CreateCheckBox(ReqCreateCheckBoxDto request)
     {
         var res = await _CheckBoxService.CreateCheckBox(request.Title, request.IconName, request.Description, request.SiteSectionId);
@@ -34,11 +36,13 @@ public class CheckBoxController : Controller
         return JsonStatusResponse.Error("CheckBox was not created");
     }
     /// <summary>
-    /// delete CheckBoxس
+    /// delete CheckBoxes
     /// </summary>
     /// <param name="CheckBoxId"></param>
     /// <returns></returns>
     [HttpDelete("Delete-CheckBox")]
+    [Authorize(Policy = StaticPermissions.PermissionManageCheckBox)]
+
     public async Task<IActionResult> DeleteCheckBox([FromBody] List<long> CheckBoxId)
     {
         var res = await _CheckBoxService.DeleteCheckBox(CheckBoxId);
@@ -80,6 +84,8 @@ public class CheckBoxController : Controller
     /// </summary>
     /// <param name="request"></param>
     [HttpPut("Update-CheckBox")]
+    [Authorize(Policy = StaticPermissions.PermissionManageCheckBox)]
+
     public async Task<IActionResult> UpdateCheckBox([FromBody] ReqUpdateCheckBox request)
     {
         var res = await _CheckBoxService.UpdateCheckBox(request.CheckBoxId, request.Title, request.IconName, request.Description, (int?)request.SiteSectionId);

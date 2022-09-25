@@ -22,6 +22,7 @@
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
+		<PackageReference Include="Wangkanai.Detection" Version="5.5.300" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,6 +41,10 @@
 		<None Remove="Controllers\AdminControllers\" />
 		<None Remove="Controllers\Forms\" />
 		<None Remove="Controllers\ProjectController\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="appsettings.json" />
 	</ItemGroup>
 
 	<ItemGroup>

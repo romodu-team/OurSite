@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OurSite.Core.DTOs.ConsultationRequestDtos;
 using OurSite.Core.Services.Interfaces;
@@ -99,6 +100,7 @@ namespace OurSite.WebApi.Controllers.Forms
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpGet("view-all-ConsultationRequest")]
+        [Authorize(Policy =StaticPermissions.PermissionViewAllConsultationFroms)]
         public async Task<IActionResult> GetAllConsultationRequest([FromQuery] ReqFilterConsultationRequestDto filter)
         {
             var consultationRequest = await consultationRequestService.GetAllConsultationRequest(filter);
@@ -121,6 +123,8 @@ namespace OurSite.WebApi.Controllers.Forms
         /// <param name="ConsultationFormId"></param>
         /// <returns></returns>
         [HttpGet("get-consulationFtom/{ConsultationFormId}")]
+        [Authorize(Policy = StaticPermissions.PermissionViewConsultationFrom)]
+
         public async Task<IActionResult> GetConsulationForm([FromRoute] long ConsultationFormId)
         {
             var res = await consultationRequestService.GetConsulationForm(ConsultationFormId);
@@ -141,6 +145,7 @@ namespace OurSite.WebApi.Controllers.Forms
         /// <param name="ConsulationId"></param>
         /// <returns></returns>
         [HttpPut("Change-Consulation-Read-Status")]
+        [Authorize]
         public async Task<IActionResult> ChangeReadStatus(long ConsulationId){
             var res= await consultationRequestService.ChangeReadStatus(ConsulationId);
             if (res)

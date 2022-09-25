@@ -193,8 +193,7 @@ namespace OurSite.Core.Services.Repositories
                     await CheckBoxService.ChangeProjectPlans(prodto.ProId , prodto.PlanDetails);
                 if (prodto.AdminId is null)
                     pro.AdminId = prodto.AdminId;
-                if (!string.IsNullOrWhiteSpace(prodto.ContractFileName))
-                    pro.ContractFileName = prodto.ContractFileName;
+
                 try
                 {
                     ProjectsRepository.UpDateEntity(pro);
@@ -332,6 +331,7 @@ namespace OurSite.Core.Services.Repositories
             return null;
         }
         #endregion
+
 
         #region Contract Manage
         public async Task<resUploadContract> UploadContract(ReqUploadContractDto reqUploadContract)

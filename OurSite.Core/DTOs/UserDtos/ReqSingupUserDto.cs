@@ -31,7 +31,8 @@ namespace OurSite.Core.DTOs.UserDtos
 		success,
 		Failed,
 		Exist,
-        MobileExist
+        MobileExist,
+        RoleNotFound
     };
 
     public enum ResActiveUser
