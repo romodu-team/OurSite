@@ -1,22 +1,34 @@
 <div class="container">
     <div class="text-center mb-4">
         <h2> خدمات ارایه شده</h2>
-        <h4 class="text-primary fw-normal my-3">توسط تیم سیپا</h4>
+        <h4 class="text-primary fw-normal my-3">توسط تیم نیـکد</h4>
 
         <div class="d-flex justify-content-center">
-            <h4 class="fw-light col-6">لورم ایسپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</h4>
+            <h4 class="fw-light col-6" dir="rtl">تیم ما مفتخر است با داشتن دانش  بالا، انواع وبسایت های موردنیاز شما را با پرفورمنس بسیار بالا تولید کند!</h4>
         </div>
     </div>
 
     <div class="d-flex justify-content-around flex-wrap">
         <!-- <app-card1 *ngFor="let card of cards$ |async" class="col-3 mx-1 my-4"
          [title]="card.title" [discription]="card.discription" [link]="card.url"></app-card1> -->
-         <app-card1 class="col-3 mx-2 mt-5"></app-card1>
-         <app-card1 class="col-3 mx-2 mt-5"></app-card1>
-         <app-card1 class="col-3 mx-2 mt-5"></app-card1>
-         <app-card1 class="col-3 mx-2 mt-5"></app-card1>
-         <app-card1 class="col-3 mx-2 mt-5"></app-card1>
-         <app-card1 class="col-3 mx-2 mt-5"></app-card1>
+         <app-card1 class="col-3 mx-2 mt-5"
+            [title]="'وبسایت فروشگاهی'"
+            [discription]="'\nبه دنبال راهی برای برندسازی هستی؟\n دنبال مشتری بیشتر درسطح کشور هستی؟ \n وبسایت فروشگاهی بهترین مسیر برای وصل شدن به مشتری های جدید!\n'"></app-card1>
+         <app-card1 class="col-3 mx-2 mt-5"
+            [title]="'وبسایت شخصی'"
+            [discription]="''"></app-card1>
+         <app-card1 class="col-3 mx-2 mt-5"
+            [title]="'وبسایت شرکتی'"
+            [discription]="''"></app-card1>
+         <app-card1 class="col-3 mx-2 mt-5"
+            [title]="'دسکتاپ وب اپلیکیشن'"
+            [discription]="''"></app-card1>
+         <app-card1 class="col-3 mx-2 mt-5"
+            [title]="'موبایل وب اپلیکیشن'"
+            [discription]="''"></app-card1>
+         <app-card1 class="col-3 mx-2 mt-5"
+            [title]="'انواع سایت های وردپرسی'"
+            [discription]="''"></app-card1>
     </div>
 </div>
 
